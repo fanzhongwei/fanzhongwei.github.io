@@ -53,6 +53,10 @@
   #}{{ __('footer.theme') }} – {{ next_url('https://theme-next.org', 'NexT.' + theme.scheme, {class: 'theme-link'}) }}{#
   #}{% if theme.footer.theme.version %} v{{ version }}{% endif %}{#
 #}</div>
+
+	<div class="BbeiAn-info">
+		<a target="_blank"  href="http://www.beian.miit.gov.cn/">蜀ICP备17004833号-1</a>
+	</div>
 {% endif %}
 
 {% if theme.footer.custom_text %}
