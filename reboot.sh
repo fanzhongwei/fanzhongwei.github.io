@@ -8,7 +8,6 @@ git pull
 
 hexo clean
 
-sleep 2s
 
 hexo g
 
