@@ -7,6 +7,9 @@ git reset --hard origin/master
 git pull
 
 hexo clean
+
+sleep 2s
+
 hexo hexo g
 
 
