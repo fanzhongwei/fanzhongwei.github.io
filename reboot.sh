@@ -1,4 +1,10 @@
 #!/bin/bash
+
+git fetch --all  
+git reset --hard origin/master 
+git pull
+
+
 APP_NAME=hexo
 
 tpid=`ps -ef|grep $APP_NAME|grep -v grep|grep -v kill|awk '{print $2}'`
