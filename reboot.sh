@@ -6,8 +6,8 @@ git fetch --all
 git reset --hard origin/master 
 git pull
 
-sudo clean
-sudo hexo g
+hexo clean
+hexo hexo g
 
 
 /usr/local/nginx/sbin/nginx -s stop
