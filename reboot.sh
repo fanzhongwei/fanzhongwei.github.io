@@ -6,27 +6,12 @@ git fetch --all
 git reset --hard origin/master 
 git pull
 
+sudo clean
+sudo hexo g
 
-APP_NAME=hexo
 
-tpid=`ps -ef|grep $APP_NAME|grep -v grep|grep -v kill|awk '{print $2}'`
-if [ -n "$tpid" ];
-then
-    echo 'Stop hexo server Process...'
-    kill -15 $tpid
-fi
-sleep 5
-tpid=`ps -ef|grep $APP_NAME|grep -v grep|grep -v kill|awk '{print $2}'`
-if [ -n "$tpid" ];
-then
-    echo 'Kill hexo server Process!'
-    kill -9 $tpid
-else
-    echo 'Stop hexo server Success!'
-fi
+/usr/local/nginx/sbin/nginx -s stop
 
-echo 'Start hexo server and listening 80 port...'
-
-nohup hexo server -p 80 > blog.out 2>&1 &
+/usr/local/nginx/sbin/nginx -c /usr/local/nginx/conf/nginx.conf
 
 echo 'Hexo server is started!'
