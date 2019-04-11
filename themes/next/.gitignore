@@ -17,3 +17,7 @@ source/lib/font-awesome/scss/
 !source/lib/jquery/
 
 !source/lib/velocity/
+
+!source/lib/canvas-nest/
+
+!source/lib/pace
