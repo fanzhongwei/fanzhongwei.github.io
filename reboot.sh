@@ -10,7 +10,7 @@ hexo clean
 
 sleep 2s
 
-hexo hexo g
+hexo g
 
 
 /usr/local/nginx/sbin/nginx -s stop
