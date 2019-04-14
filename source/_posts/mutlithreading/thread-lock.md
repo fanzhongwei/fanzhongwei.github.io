@@ -417,5 +417,5 @@ public class SimpleReentrantLock{
 
 # 参考文献
 
-- [Java并发性和多线程介绍 ](http://ifeve.com/java-concurrency-thread-directory/)
+- [并发编程网--Java并发性和多线程介绍 ](http://ifeve.com/java-concurrency-thread-directory/)
 - 《深入理解Java虚拟机：JVM高级特性与最佳实践（第二版）》
