@@ -158,6 +158,8 @@ public class ThreadSafeTest {
 
 # 多线程编程
 
+## 并发编程三要素
+
 当多个线程要共享一个实例对象的值得时候，那么在考虑安全的多线程并发编程时就要保证下面3个要素：
 
 - 原子性（Synchronized, Lock）
@@ -172,15 +174,13 @@ public class ThreadSafeTest {
 
 即程序执行的顺序按照代码的先后顺序执行。
 
-## 乐观锁和悲观锁
-
-### 悲观锁
+## 悲观锁
 
 总是假设最坏的情况，每次去拿数据的时候都认为别人会修改，所以每次在拿数据的时候都会上锁，这样别人想拿这个数据就会阻塞直到它拿到锁。传统的关系型数据库里边就用到了很多这种锁机制，比如行锁，表锁等，读锁，写锁等，都是在做操作之前先上锁。
 
 Java在JDK1.5之前都是靠 synchronized关键字保证同步的，这种通过使用一致的锁定协议来协调对共享状态的访问，可以确保无论哪个线程持有共享变量的锁，都采用独占的方式来访问这些变量。这就是一种独占锁，独占锁其实就是一种悲观锁，所以可以说 synchronized、Lock都是悲观锁。
 
-#### synchronized
+### synchronized
 - 实例方法
 ```java
 synchronized void methodB(){
@@ -254,15 +254,149 @@ private static class InStaticMethodSync{
 }
 ```
 这个地方同步构造器中是InStaticMethodSync.class，那么这里监视的就是class对象，因此InStaticMethodSync.class的其它被synchronized修饰的静态方法与该同步块同时只有一个线程能够执行。
-#### lock
+### lock
+
+锁像synchronized同步块一样，是一种线程同步机制，但比Java中的synchronized同步块更复杂。 自Java 5开始，java.util.concurrent.locks包中包含了一些锁的实现，因此我们不用去实现自己的锁了。但是我们仍然需要去了解怎样使用这些锁，且了解这些实现背后的理论也是很有用处的。
+
+ #### 锁的使用
+
+以之前的代码为例，使用Lock代替synchronized达到了同样的目的 ：
+
+```java
+    private Lock lock = new ReentrantLock();
+
+    /** 实例变量非线程安全的 */
+    private int instanceNum;
+    private void addInstanceNum(String username){
+        try {
+            lock.lock();
+            if("b".equals(username)){
+                instanceNum = 200;
+                System.out.println("b set over!");
+            }else{
+                instanceNum = 100;
+                System.out.println("a set over!");
+                Thread.sleep(2000);
+            }
+            System.out.println(username + " num = " + instanceNum);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } finally {
+            lock.unlock();
+        }
+    }
+    @Test
+    public void threadSetInstanceNumTest() throws InterruptedException {
+        Thread threadA = new Thread(()->addInstanceNum("a"));
+        Thread threadB = new Thread(()->addInstanceNum("b"));
+        threadA.start();
+        threadB.start();
+        Thread.sleep(3000);
+    }
+```
+
+lock()方法会对Lock实例对象进行加锁，因此所有对该对象调用lock()方法的线程都会被阻塞，直到该Lock对象的unlock()方法被调用。 
+
+#### 锁的简单实现
+
+```java
+public class SimpleLock{
+	private boolean isLocked = false;
+	public synchronized void lock()
+		throws InterruptedException{
+		while(isLocked){
+			wait();
+		}
+		isLocked = true;
+	}
+	public synchronized void unlock(){
+		isLocked = false;
+		notify();
+	}
+}
+```
+
+注意其中的while(isLocked)循环，它又被叫做“自旋锁”。自旋锁以及wait()和notify()方法在[线程通信](http://ifeve.com/thread-signaling/)这篇文章中有更加详细的介绍。当isLocked为true时，调用lock()的线程在wait()调用上阻塞等待。为防止该线程没有收到notify()调用也从wait()中返回（也称作[虚假唤醒](http://ifeve.com/thread-signaling/#spurious_wakeups)），这个线程会重新去检查isLocked条件以决定当前是否可以安全地继续执行还是需要重新保持等待，而不是认为线程被唤醒了就可以安全地继续执行了。如果isLocked为false，当前线程会退出while(isLocked)循环，并将isLocked设回true，让其它正在调用lock()方法的线程能够在Lock实例上加锁。
+
+当线程完成了[临界区](http://ifeve.com/race-conditions-and-critical-sections/)（位于lock()和unlock()之间）中的代码，就会调用unlock()。执行unlock()会重新将isLocked设置为false，并且通知（唤醒）其中一个（若有的话）在lock()方法中调用了wait()函数而处于等待状态的线程。
+
+#### 锁的可重入性
+
+Java中的synchronized同步块是可重入的，使用以下代码来进行分析：
+
+```java
+static class ReentrantSyncMethodTest{
+    synchronized void methodA(){
+        System.out.println("methodA");
+        methodB();
+    }
+    synchronized void methodB(){
+        System.out.println("methodB");
+    }
+}
+@Test
+/**
+ * 可重入锁：自己可以再次获取自己的内部锁
+ *
+ * 如果不可重入的话
+ * 线程进入methodA获取了该对象的锁，然后执行methodB还是需要获取该对象的锁，
+ * 但是methodA还没有执行完不会将锁释放，就会造成死锁。
+ */
+public void reentrantSyncMethodTest(){
+    ReentrantSyncMethodTest reentrantSyncMethodTest = new ReentrantSyncMethodTest();
+    Thread thread = new Thread(()-> reentrantSyncMethodTest.methodA());
+    thread.start();
+}
+```
+
+ 到这里想一想，我们之前的`SimpleLock`是否是可重入锁，很明显它不是，获取锁的条件是：只有当isLocked为false时lock操作才被允许，而没有考虑是哪个线程锁住了它。 
 
 
 
-##### ReentrantLock
+为了让SimpleLock具有可重入性，我们只需要对其进行简单修改即可：
 
-##### ReentrantReadWriteLock
+```java
+public class SimpleReentrantLock{
+    boolean isLocked = false;
+    Thread  lockedBy = null;
+    int lockedCount = 0;
 
-#### 悲观锁机制存在的问题
+    public synchronized void lock()
+            throws InterruptedException{
+        Thread callingThread =
+                Thread.currentThread();
+        while(isLocked && lockedBy != callingThread){
+            wait();
+        }
+        isLocked = true;
+        lockedCount++;
+        lockedBy = callingThread;
+    }
+
+    public synchronized void unlock(){
+        if(Thread.currentThread() ==
+                this.lockedBy){
+            lockedCount--;
+            if(lockedCount == 0){
+                isLocked = false;
+                notify();
+            }
+        }
+    }
+}
+```
+
+注意到现在的while循环（自旋锁）也考虑到了已锁住该Lock实例的线程。如果当前的锁对象没有被加锁(isLocked = false)，或者当前调用线程已经对该Lock实例加了锁，那么while循环就不会被执行，调用lock()的线程就可以退出该方法。
+
+除此之外，我们需要记录同一个线程重复对一个锁对象加锁的次数。否则，一次unblock()调用就会解除整个锁，即使当前锁已经被加锁过多次。在unlock()调用没有达到对应lock()调用的次数之前，我们不希望锁被解除。
+
+现在这个Lock类就是可重入的了。
+
+#### 锁的公平锁性
+
+#### 读写锁
+
+### 悲观锁机制存在的问题
 
 - 在多线程竞争下，加锁、释放锁会导致比较多的上下文切换和调度延时，引起性能问题。
 
@@ -271,15 +405,17 @@ private static class InStaticMethodSync{
 - 如果一个优先级高的线程等待一个优先级低的线程释放锁会导致优先级倒置，引起性能风险。
 
 
-### 乐观锁
+## 乐观锁
 
 顾名思义，就是很乐观，每次去拿数据的时候都认为别人不会修改，所以不会上锁，**但是在更新的时候会判断一下在此期间别人有没有去更新这个数据**，可以使用版本号等机制。**乐观锁适用于多读的应用类型**，这样可以提高吞吐量，像数据库提供的类似于write_condition机制，其实都是提供的乐观锁。在Java中java.util.concurrent.atomic包下面的原子类就是使用了**乐观锁的一种实现方式CAS**。
 
-#### CAS(Compare-and-Swap)
+### CAS(Compare-and-Swap)
 
+### 
 
+## 锁优化
 
 # 参考文献
 
-- [并发编程网--竞态条件与临界区](http://ifeve.com/race-conditions-and-critical-sections/)
-- [并发编程网--线程安全与共享资源](http://ifeve.com/thread-safety/)
+- [Java并发性和多线程介绍 ](http://ifeve.com/java-concurrency-thread-directory/)
+- 《深入理解Java虚拟机：JVM高级特性与最佳实践（第二版）》
