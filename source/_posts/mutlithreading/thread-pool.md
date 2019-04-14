@@ -2,10 +2,17 @@
 title: 线程池详解
 tags: 
 	- java
+	- java多线程
 	- ThreadPool
 categories:
 	- java多线程
 ---
+
+所谓线程池通俗的理解就是有一个池子，里面存放着已经创建好的线程，当有任务提交给线程池执行时，池子中的 某个线程会主动执行该任务。如果池子中的线程数量不够应付数量众多的任务时，则需要自动扩充新的线程到池子中，但是该数量是有限的，就好比池塘的水界线一样。当任务比较少的时候，池子中的线程能够自动回收，释放 资源。为了能够异步地提交任务和缓存未被处理的任务，需要有一个任务队列。
+
+![ALMKeg.png](https://s2.ax1x.com/2019/04/13/ALMKeg.png)
+
+<!-- more -->
 
 # 前言
 线程的使用：
@@ -28,7 +35,6 @@ categories:
 手段就是尽可能减少创建和销毁对象的次数，特别是一些很耗资源的对象创建和销毁。
 如何利用已有对象来服务就是一个解决的关键问题，这也就是"池化资源"技术产生的原因。
 
-<!-- more -->
 
 线程池是一种多线程处理形式，处理过程中将任务添加到队列，然后在创建线程后自动启动这些任务。
 
@@ -41,6 +47,67 @@ categories:
 - 工作线程（PoolWorker）：线程池中线程，在没有任务时处于等待状态，可以循环的执行任务；
 - 任务接口（Task）：每个任务必须实现的接口，以供工作线程调度任务的执行，它主要规定了任务的入口，任务执行完后的收尾工作，任务的执行状态等；
 - 任务队列（taskQueue）：用于存放没有处理的任务。提供一种缓冲机制。
+
+## 线程池的五种状态
+
+> 线程池状态示意图以及五种状态的说明摘自CSDN一只逗比的程序猿
+
+一共有五种，分别是RUNNING、SHUTDOWN、STOP、TIDYING、TERMINATED
+
+线程池状态切换示意图
+
+[![ALMO0g.md.png](https://s2.ax1x.com/2019/04/13/ALMO0g.md.png)](https://imgchr.com/i/ALMO0g)
+
+- RUNNING
+状态说明：线程池处在RUNNING状态时，能够接收新任务，以及对已添加的任务进行处理
+
+状态切换：线程池的初始化状态是RUNNING。换句话说，线程池被一旦被创建，就处于RUNNING状态，并且线程池中的任务数为0
+
+- SHUTDOWN
+状态说明：线程池处在SHUTDOWN状态时，不接收新任务，但能处理已添加的任务
+
+状态切换：调用线程池的shutdown()接口时，线程池由RUNNING -> SHUTDOWN
+
+注：虽然状态已经不是RUNNING了，但是如果任务队列中还有任务的时候，线程池仍然会继续执行，具体分析请见ThreadPoolExecutor.execute()方法解析
+
+- STOP
+状态说明：线程池处在STOP状态时，不接收新任务，不处理已添加的任务，并且会中断正在处理的任务
+
+状态切换：调用线程池的shutdownNow()接口时，线程池由(RUNNING or SHUTDOWN ) -> STOP
+
+- TIDYING
+状态说明：当所有的任务已终止，ctl记录的”任务数量”为0，线程池会变为TIDYING状态。当线程池变为TIDYING状态时，会执行钩子函数terminated()。terminated()在ThreadPoolExecutor类中是空的，若用户想在线程池变为TIDYING时，进行相应的处理；可以通过重载terminated()函数来实现
+
+状态切换：当线程池在SHUTDOWN状态下，阻塞队列为空并且线程池中执行的任务也为空时，就会由 SHUTDOWN -> TIDYING。 当线程池在STOP状态下，线程池中执行的任务为空时，就会由STOP -> TIDYING
+
+- TERMINATED
+状态说明：线程池彻底终止，就变成TERMINATED状态
+
+状态切换：线程池处在TIDYING状态时，执行完terminated()之后，就会由 TIDYING -> TERMINATED
+
+线程池五种状态的二进制表示
+| 线程池状态 | 二进制 |
+| ---------- | ------ |
+| RUNNING    | 111    |
+| SHUTDOWN   | 000    |
+| STOP       | 001    |
+| TIDYING    | 010    |
+| TERMINATED | 011    |
+
+```
+COUNT_BITS :29
+RUNNING    :11100000 00000000 00000000 00000000
+SHUTDOWN   :00000000 00000000 00000000 00000000
+STOP       :00100000 00000000 00000000 00000000
+TIDYING    :01000000 00000000 00000000 00000000
+TERMINATED :01100000 00000000 00000000 00000000
+RUNNING    :-536870912
+SHUTDOWN   :0
+STOP       :536870912
+TIDYING    :1073741824
+TERMINATED :1610612736
+```
+
 
 ## 工作线程（PoolWorker）
 工作线程是由ThreadPoolExecutor的内部类Worker类实现：
