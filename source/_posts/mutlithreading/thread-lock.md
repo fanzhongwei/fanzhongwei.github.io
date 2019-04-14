@@ -67,10 +67,35 @@ JVM并不是将这段代码：`this.count = this.count + value;`，视为单条�
 局部变量存储在线程自己的栈中。也就是说，局部变量永远也不会被多个线程共享。所以，基础类型的局部变量是线程安全的。下面是基础类型的局部变量的一个例子：
 
 ```java
-public void someMethod(){
-  long threadSafeInt = 0;
-  threadSafeInt++;
-}
+    /**
+     * 方法内的变量是线程安全的
+     * @param username
+     */
+    private void addI(String username){
+        try {
+            int num;
+            if("a".equals(username)){
+                num = 100;
+                System.out.println("a set over!");
+                Thread.sleep(2000);
+            }else{
+                num = 200;
+                System.out.println("b set over!");
+            }
+            System.out.println(username + " num = " + num);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void threadSetPrivateNumTest() throws InterruptedException {
+        Thread threadA = new Thread(()->addI("a"));
+        Thread threadB = new Thread(()->addI("b"));
+        threadA.start();
+        threadB.start();
+        Thread.sleep(3000);
+    }
 ```
 
 ### 局部的对象引用
@@ -78,40 +103,43 @@ public void someMethod(){
 对象的局部引用和基础类型的局部变量不太一样。尽管引用本身没有被共享，但引用所指的对象并没有存储在线程的栈内。所有的对象都存在共享堆中。如果在某个方法中创建的对象不会逃逸出（译者注：即该对象不会被其它方法获得，也不会被非局部变量引用到）该方法，那么它就是线程安全的。
 
 ```java
-public void someMethod(){
-  LocalObject localObject = new LocalObject();
-  localObject.callMethod();
-  method2(localObject);
-  method2(localObject);
-}
-
-public void method2(LocalObject localObject){
-  localObject.increment();
+public class ThreadSafeTest {
+	private int instanceNum;
+    private void addInstanceNum(String username){
+        try {
+            if("b".equals(username)){
+                instanceNum = 200;
+                System.out.println("b set over!");
+            }else{
+                instanceNum = 100;
+                System.out.println("a set over!");
+                Thread.sleep(2000);
+            }
+            System.out.println(username + " num = " + instanceNum);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+	@Test
+    public void localObjectTest() throws InterruptedException {
+        addInstanceNum("a");
+        addInstanceNum("b");
+    }
 }
 ```
 
 上面的示例中，localObject没有传递到其它线程中，那么它就是线程安全的，如果传到其它线程了呢？
 
 ```java
-public void someMethod(){
-  LocalObject localObject = new LocalObject();
-  localObject.callMethod();
-  
-  Thread threadA = new Thread(()->{
-	method2(localObject);
-  });
-  
-  threadA.start();
-  
-  Thread threadB = new Thread(()->{
-	method2(localObject);
-  });
-  threadB.start();
-}
-
-public void method2(LocalObject localObject){
-  localObject.increment();
-}
+	@Test
+    public void localObjectTest() throws InterruptedException {
+        ThreadSafeTest test = new ThreadSafeTest();
+        Thread threadA = new Thread(()->addInstanceNum("a"));
+        Thread threadB = new Thread(()->addInstanceNum("b"));
+        threadA.start();
+        threadB.start();
+        Thread.sleep(3000);
+    }
 ```
 上面的示例中，localObject虽然是局部变量，但是在someMethod方法中将其引用传入到线程A和线程B中，他们的结果可能就不是预期的，那么localObject就不是线程安全的。
 
@@ -155,28 +183,44 @@ Java在JDK1.5之前都是靠 synchronized关键字保证同步的，这种通过
 #### synchronized
 - 实例方法
 ```java
-private int count;
-public synchronized void add(int value){
-    this.count += value;
+synchronized void methodB(){
+    System.out.println("threadName = " + Thread.currentThread().getName() + " enter sync methodB.");
+    try {
+        Thread.sleep(2000);
+    } catch (InterruptedException e) {
+        e.printStackTrace();
+    }
+    System.out.println("threadName = " + Thread.currentThread().getName() + " leave sync methodB.");
 }
 ```
 Java实例方法同步是同步在拥有该方法的对象上。这样，每个实例其方法同步都同步在不同的对象上，即该方法所属的实例对象。
 
 - 静态方法
 ```java
-private static int count;
-public static synchronized void add(int value){
-    count += value;
+synchronized static void methodA(){
+    System.out.println("threadName = " + Thread.currentThread().getName() + " enter sync static methodA.");
+    try {
+        Thread.sleep(2000);
+    } catch (InterruptedException e) {
+        e.printStackTrace();
+    }
+    System.out.println("threadName = " + Thread.currentThread().getName() + " leave sync static methodA.");
 }
 ```
 静态方法的同步是指同步在该方法所在的类对象上。因为在Java虚拟机中一个类只能对应一个类对象(即只能被一个ClassLoader加载)，所以同时只允许一个线程执行同一个类中的静态同步方法。
 
 - 实例方法中的同步块
 ```java
-private int count;
-public void add(int value){
-    synchronized（this){
-        this.count += value;
+void methodA() {
+    System.out.println("methodA time = " + System.currentTimeMillis());
+    synchronized (this){
+        System.out.println("methodA begin time = " + System.currentTimeMillis());
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        System.out.println("methodA end time = " + System.currentTimeMillis());
     }
 }
 ```
@@ -184,20 +228,35 @@ public void add(int value){
 
 - 静态方法中的同步块
 ```java
-public class MyClass{
-    private static int count;
-    public static void add(int value){
-        synchronized（MyClass.class){
-            this.count += value;
+private static class InStaticMethodSync{
+    public static void methodA(){
+        synchronized(InStaticMethodSync.class){
+            System.out.println("methodA begin time = " + System.currentTimeMillis());
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
+        System.out.println("methodA begin time = " + System.currentTimeMillis());
     }
-    public static synchronized void add1(int value){
-        this.count += value;
+    public static void methodB(){
+        synchronized(InStaticMethodSync.class){
+            System.out.println("methodB begin time = " + System.currentTimeMillis());
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        System.out.println("methodB begin time = " + System.currentTimeMillis());
     }
 }
 ```
-这个地方同步构造器中是MyClass.class，那么这里监视的就是class对象，因此MyClass.class的其它被synchronized修饰的静态方法与该同步块同时只有一个线程能够执行。
+这个地方同步构造器中是InStaticMethodSync.class，那么这里监视的就是class对象，因此InStaticMethodSync.class的其它被synchronized修饰的静态方法与该同步块同时只有一个线程能够执行。
 #### lock
+
+
 
 ##### ReentrantLock
 
