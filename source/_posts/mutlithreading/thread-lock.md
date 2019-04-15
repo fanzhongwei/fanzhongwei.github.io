@@ -394,7 +394,15 @@ public class SimpleReentrantLock{
 
 #### 锁的公平锁性
 
+Java的synchronized块并不保证尝试进入它们的线程的顺序。因此，如果多个线程不断竞争访问相同的synchronized同步块，就存在一种风险，其中一个或多个线程永远也得不到访问权 —— 也就是说访问权总是分配给了其它线程。这种情况被称作线程饥饿。为了避免这种问题，锁需要实现公平性。本文所展现的锁在内部是用synchronized同步块实现的，因此它们也不保证公平性。 
+
+`ReentrantLock、ReentrantReadWriteLock`可以通过构造函数指定是否为公平锁。
+
 #### 读写锁
+
+读锁的获取条件：没有线程拥有写锁（writers==0），且没有线程在请求写锁（writeRequests ==0） 
+
+写锁的获取条件：当一个线程想获得写锁的时候，首先会把写锁请求数加1（writeRequests++），然后再去判断是否能够真能获得写锁，当没有线程持有读锁（readers==0 ）,且没有线程持有写锁（writers==0）时就能获得写锁。有多少线程在请求写锁并无关系。 
 
 ### 悲观锁机制存在的问题
 
@@ -409,11 +417,43 @@ public class SimpleReentrantLock{
 
 顾名思义，就是很乐观，每次去拿数据的时候都认为别人不会修改，所以不会上锁，**但是在更新的时候会判断一下在此期间别人有没有去更新这个数据**，可以使用版本号等机制。**乐观锁适用于多读的应用类型**，这样可以提高吞吐量，像数据库提供的类似于write_condition机制，其实都是提供的乐观锁。在Java中java.util.concurrent.atomic包下面的原子类就是使用了**乐观锁的一种实现方式CAS**。
 
-### CAS(Compare-and-Swap)
+### CAS(Compare and swap)
 
-### 
+简单来说，比较和替换是使用一个期望值和一个变量的当前值进行比较，如果当前变量的值与我们期望的值相等，就使用一个新值替换当前变量的值。 
+
+CAS的一个简单实现：
+
+```java
+class MyLock {
+    private boolean locked = false;
+    public synchronized boolean lock() {
+        if(!locked) {
+            locked = true;
+            return true;
+        }
+        return false;
+    }
+}
+```
+
+lock()方法是同步的，所以，在某一时刻只能有一个线程在同一个MyLock实例上执行它。原子的lock方法实际上是一个”compare and swap“的例子。
+
+现在CPU内部已经执行原子的CAS操作。Java5以来，你可以使用java.util.concurrent.atomic包中的一些原子类来使用CPU中的这些功能。
+
+下面是一个使用AtomicBoolean类实现lock()方法的例子：
+
+```java
+public static class MyLock {
+    private AtomicBoolean locked = new AtomicBoolean(false);
+    public boolean lock() {
+        return locked.compareAndSet(false, true);
+    }
+}
+```
 
 ## 锁优化
+
+
 
 # 参考文献
 
