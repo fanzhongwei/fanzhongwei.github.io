@@ -1,6 +1,6 @@
 ---
 title: 多线程与线程安全
-data: 2019-04-14
+date: 2019-04-14
 tags: 
 	- java
 	- java多线程
