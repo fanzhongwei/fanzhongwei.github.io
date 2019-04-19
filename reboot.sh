@@ -8,9 +8,9 @@ git pull
 
 hexo clean
 
-
 hexo g
 
+hexo deploy
 
 /usr/local/nginx/sbin/nginx -s stop
 
