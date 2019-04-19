@@ -124,7 +124,7 @@ seo: true
 index_with_subtitle: true
 
 # Automatically add external URL with BASE64 encrypt & decrypt.
-exturl: false
+exturl: true
 
 # Google Webmaster tools verification.
 # See: https://www.google.com/webmasters
@@ -817,20 +817,21 @@ leancloud_visitors:
 firestore:
   enable: false
   collection: articles #required, a string collection name to access firestore database
-  apiKey: #required
-  projectId: #required
+  apiKey: AIzaSyB5nujE6Y7G_dREwg8THK4zlxuIjTak-oI #required
+  projectId: fanzhongwei-blog #required
   bluebird: false #enable this if you want to include bluebird 3.5.1(core version) Promise polyfill
 
 # Show Views / Visitors of the website / page with busuanzi.
 # Get more information on http://ibruce.info/2015/04/04/busuanzi
 busuanzi_count:
-  enable: false
-  total_visitors: true
+  enable: true
+  total_visitors: false
   total_visitors_icon: user
-  total_views: true
+  total_views: false
   total_views_icon: eye
   post_views: true
   post_views_icon: eye
+
 
 # Tencent analytics ID
 #tencent_analytics:
