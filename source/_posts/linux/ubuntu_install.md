@@ -61,6 +61,7 @@ categories:
  
 # 配置
 
+## 修改软件源
 Deepin官方的软件源慢得跟蜗牛一样，在设置中指定镜像源又不能生效。
 
 so，手工修改/etc/apt/sources.list文件。
@@ -87,10 +88,47 @@ sudo apt-get update
 # 软件更新，可选
 sudo apt-get upgrade
 ```
+然后其它的工具就可以慢慢装啦
 
-然后其它的工具就可以慢慢装啦，我在安装的时候将一块磁盘挂载到/home目录下，将代码下载到该目录下，
+## 修改文件夹权限
+我在安装的时候将一块磁盘挂载到/home目录下，将代码下载到该目录下，
 用idea开发的时候发现没有权限创建文件、文件夹和文件修改等权限，于是乎使出绝招：
 ```
 sudo chomd -R 777 /home
 ```
+
+## 设置ll命令
+在上面查看目录的过程中发现没有`ll`命令，然后网上查询了一下，发现是ll命令其实是 ls -l命令的别名,在deepin中这个配置被注释掉了。
+
+使用下面的命令编辑配置文件打开即可：
+```
+sudo vim ~/.bashrc
+```
+将alias ll=’ls -l’前的注释打开,然后`source ~/.bashrc`刷新一下即可
+
+## 设置su密码
+deepin的用户默认就在sudo组里面，但是每次使用该命令都要输入密码，于是进行如下设置：
+
+1. 打开一个深度终端，然后输入下面的命令
+```
+ sudo passwd 
+ [sudo] password for you ：---> 输入你的密码（你现在这个用户的密码），不回显
+ Enter new UNIX password: --- > 设置root 密码
+ Retype new UNIX password: --> 重复密码
+```
+注：su和sudo的区别是：
+- su的密码是root的密码，而sudo的密码是用户的密码；
+
+- su直接将身份变成root，而sudo是以用户登录后以root的身份运行命令，不需要知道root密码；
+
+## 设置sudo不需要每次都输入密码
+如果想要sudo不每次都输入密码，则修改/etc/sudoers文件：
+
+sudo vi /etc/sudoers
+
+然后在`root ALL=(ALL:ALL) ALL`下一行添加`username ALL=(ALL:ALL) ALL`
+
+修改`%sudo ALL=(ALL:ALL) ALL`为`%sudo ALL=(ALL:ALL) NOPASSWD:ALL`
+然后保存
+
 搞定，本次安装过程记录到此为止，现在开始拥抱Linux吧。
