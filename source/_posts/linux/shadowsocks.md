@@ -35,7 +35,7 @@ categories:
 
 # 下载
 
-改软件的作者已经将其从GitHub上删除了，不再维护了，不过还好找到了备份，传送门：https://github.com/qingshuisiyuan/electron-ssr-backup/releases
+该软件的作者已经将其从GitHub上删除了，不再维护了，不过还好找到了备份，传送门：https://github.com/qingshuisiyuan/electron-ssr-backup/releases
 
 Deepin、Ubuntu系列下载[electron-ssr-0.2.6.deb](https://github.com/qingshuisiyuan/electron-ssr-backup/releases/download/v0.2.6/electron-ssr-0.2.6.deb)
 
