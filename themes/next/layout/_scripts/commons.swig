@@ -1,7 +1,8 @@
 {%
   set js_commons = [
     'utils.js',
-    'motion.js'
+    'motion.js',
+    'pull-refresh.js'
   ]
 %}
 
