@@ -110,7 +110,7 @@ categories:
 
 增量模型（Incremental Model）把待开发的软件系统模块化，将每个模块作为一个增量组件，从而分批次地分析、设计、编码和测试这些增量组件，如下图所示：
 
-![img](https://pic002.cnblogs.com/images/2012/387401/2012070608542475.png)
+![增量模型.png](https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1578284082568&di=a665e58c158964f839fc739660580cce&imgtype=jpg&src=http%3A%2F%2Fimg3.imgtn.bdimg.com%2Fit%2Fu%3D2873046283%2C4198849095%26fm%3D214%26gp%3D0.jpg)
 
 **困难**:
 
@@ -131,7 +131,7 @@ categories:
 
 ​		喷泉模型（fountain model）是一种**以用户需求为动力，以对象为驱动**的模型，主要用于描述面向对象的软件开发过程。该模型认为软件开发过程自下而上周期的各阶段是相互迭代和无间隙的特性，该模型如下图所示：
 
-![img](https://pic002.cnblogs.com/images/2012/387401/2012070609053663.jpg)
+![img.png](https://pic002.cnblogs.com/images/2012/387401/2012070609053663.jpg)
 
 **优点**:
 
