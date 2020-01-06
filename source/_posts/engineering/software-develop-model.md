@@ -131,7 +131,7 @@ categories:
 
 ​		喷泉模型（fountain model）是一种**以用户需求为动力，以对象为驱动**的模型，主要用于描述面向对象的软件开发过程。该模型认为软件开发过程自下而上周期的各阶段是相互迭代和无间隙的特性，该模型如下图所示：
 
-![img.png](https://pic002.cnblogs.com/images/2012/387401/2012070609053663.jpg)
+![喷泉模型.png](https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1578285715275&di=fd8ff6300c55f97f912b110aef1d5ff9&imgtype=0&src=http%3A%2F%2Fwww.cnitpm.com%2Fupload%2F2013-04%2F201304091646335151.jpg)
 
 **优点**:
 
