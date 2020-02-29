@@ -78,7 +78,10 @@ theme: next
 # Deployment
 ## Docs: https://hexo.io/docs/deployment.html
 deploy:
-  type: baidu_url_submitter
+  type: git
+  repository: https://github.com/fanzhongwei/fanzhongwei.github.io.git
+  branch: master
+
 
 search:
   path: search.xml
