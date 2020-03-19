@@ -10,8 +10,4 @@ hexo g
 
 hexo deploy
 
-/usr/local/nginx/sbin/nginx -s stop
-
-/usr/local/nginx/sbin/nginx -c /usr/local/nginx/conf/nginx.conf
-
 echo 'Hexo server is started!'
