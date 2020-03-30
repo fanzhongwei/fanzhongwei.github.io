@@ -1,0 +1,1678 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+  <meta http-equiv="Cache-Control" content="no-transform">
+  <meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+  <meta name="google-site-verification" content="5LFoOb-y-oi59dy2QaWFWoDyyW34_mMWX5MMvqJmVYo">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
+
+<link rel="stylesheet" href="/css/main.css?v=7.1.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/imagesfavicon.ico?v=7.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico?v=7.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.ico?v=7.1.0">
+
+
+  <link rel="mask-icon" href="/images/favicon.ico?v=7.1.0" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '7.1.0',
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false,"dimmer":false},
+    back2top: true,
+    back2top_sidebar: false,
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+<link rel="stylesheet" href="/lib/mescroll/mescroll.min.css?v=1.4.1">
+<script src="/lib/mescroll/mescroll.min.js?v=1.4.1" charset="utf-8"></script>
+
+
+  <meta name="description" content="《Java Concurrency In Practice》的作者Brian Goetz对“线程安全”有一个比较恰当的定义：“当多个线程访问一个对象时，如果不用考虑这些线程在运行时环境下的调度和交替执行，也不需要进行额外的同步，或者在调用方进行任何其他的协调操作，调用这个对象的行为都可以获得正确的结果，那这个对象是线程安全的”。">
+<meta name="keywords" content="java,java多线程,线程安全">
+<meta property="og:type" content="article">
+<meta property="og:title" content="多线程与线程安全">
+<meta property="og:url" content="https://www.fanzhongwei.com/mutlithreading/mutlithreading.html">
+<meta property="og:site_name" content="fanzhongwei">
+<meta property="og:description" content="《Java Concurrency In Practice》的作者Brian Goetz对“线程安全”有一个比较恰当的定义：“当多个线程访问一个对象时，如果不用考虑这些线程在运行时环境下的调度和交替执行，也不需要进行额外的同步，或者在调用方进行任何其他的协调操作，调用这个对象的行为都可以获得正确的结果，那这个对象是线程安全的”。">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://s2.ax1x.com/2019/04/13/AL3oVS.png">
+<meta property="og:image" content="https://static001.geekbang.org/resource/image/e2/ea/e2aa76928b2bc135e08e7590ca36e0ea.png">
+<meta property="og:image" content="https://static001.geekbang.org/resource/image/33/63/33777c468872cb9a99b3cdc1ff597063.png">
+<meta property="og:image" content="http://120.79.172.214/mdpicture/1553328940111.png">
+<meta property="og:image" content="http://120.79.172.214/mdpicture/1553339177594.png">
+<meta property="og:image" content="http://120.79.172.214/mdpicture/1553343294793.png">
+<meta property="og:image" content="http://120.79.172.214/mdpicture/mnmodel.png">
+<meta property="og:image" content="http://120.79.172.214/mdpicture/1553349267664.png">
+<meta property="og:updated_time" content="2020-03-30T15:34:02.371Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="多线程与线程安全">
+<meta name="twitter:description" content="《Java Concurrency In Practice》的作者Brian Goetz对“线程安全”有一个比较恰当的定义：“当多个线程访问一个对象时，如果不用考虑这些线程在运行时环境下的调度和交替执行，也不需要进行额外的同步，或者在调用方进行任何其他的协调操作，调用这个对象的行为都可以获得正确的结果，那这个对象是线程安全的”。">
+<meta name="twitter:image" content="https://s2.ax1x.com/2019/04/13/AL3oVS.png">
+
+
+
+
+
+  
+  
+  <link rel="canonical" href="https://www.fanzhongwei.com/mutlithreading/mutlithreading">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>多线程与线程安全 | fanzhongwei</title>
+  
+
+
+
+
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?c7a6634d526ddd253a5092f6656f4ef6";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">fanzhongwei</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <h1 class="site-subtitle" itemprop="description">blog</h1>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+
+      
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>搜索</a>
+        </li>
+      
+    </ul>
+  
+
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+  
+  
+
+  
+
+  <span class="exturl github-corner" data-url="aHR0cHM6Ly9naXRodWIuY29tL2Zhbnpob25nd2Vp" title="Follow me on GitHub" aria-label="Follow me on GitHub"><svg width="80" height="80" viewbox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"/><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"/><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"/></svg></span>
+
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://www.fanzhongwei.com/mutlithreading/mutlithreading.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="fanzhongwei">
+      <meta itemprop="description" content="个人经验总结：java、JavaScript、HTML、VUE等等">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="fanzhongwei">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">多线程与线程安全
+
+              
+            
+          </h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-04-14 00:00:00" itemprop="dateCreated datePublished" datetime="2019-04-14T00:00:00+08:00">2019-04-14</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2020-03-30 23:34:02" itemprop="dateModified" datetime="2020-03-30T23:34:02+08:00">2020-03-30</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/java多线程/" itemprop="url" rel="index"><span itemprop="name">java多线程</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+              
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+            
+                <span class="post-meta-item-text">评论数：</span>
+                <a href="/mutlithreading/mutlithreading.html#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="mutlithreading/mutlithreading.html" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="post-meta-item-icon">
+            <i class="fa fa-eye"></i>
+             阅读次数： 
+            <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>《Java Concurrency In Practice》的作者Brian Goetz对“线程安全”有一个比较恰当的定义：“当多个线程访问一个对象时，如果不用考虑这些线程在运行时环境下的调度和交替执行，也不需要进行额外的同步，或者在调用方进行任何其他的协调操作，调用这个对象的行为都可以获得正确的结果，那这个对象是线程安全的”。</p>
+<p><img src="https://s2.ax1x.com/2019/04/13/AL3oVS.png" alt="AL3oVS.png"></p>
+<a id="more"></a>
+<p>转载自姜函的：<span class="exturl" data-url="aHR0cDovLzE3Mi4yNS4xNi44MjozMDAwLyMvJUU1JTlCJUEyJUU5JTk4JTlGJUU3JTlCJUI4JUU1JTg1JUIzLyVFNSU5RiVCOSVFOCVBRSVBRCVFNSU4OCU4NiVFNCVCQSVBQi8lRTYlOUQlOTAlRTYlOTYlOTkvMjAxOS8lRTUlQTQlOUElRTclQkElQkYlRTclQTglOEIlRTQlQjglOEUlRTclQkElQkYlRTclQTglOEIlRTUlQUUlODklRTUlODUlQTg=" title="http://172.25.16.82:3000/#/%E5%9B%A2%E9%98%9F%E7%9B%B8%E5%85%B3/%E5%9F%B9%E8%AE%AD%E5%88%86%E4%BA%AB/%E6%9D%90%E6%96%99/2019/%E5%A4%9A%E7%BA%BF%E7%A8%8B%E4%B8%8E%E7%BA%BF%E7%A8%8B%E5%AE%89%E5%85%A8">多线程与线程安全<i class="fa fa-external-link"></i></span></p>
+<h1 id="多线程与线程安全"><a class="header-anchor" href="#多线程与线程安全">¶</a>多线程与线程安全</h1>
+<h2 id="java内存模型"><a class="header-anchor" href="#java内存模型">¶</a>Java内存模型</h2>
+<h3 id="线程不安全的源头"><a class="header-anchor" href="#线程不安全的源头">¶</a>线程不安全的源头</h3>
+<h4 id="cpu-内存-i-o的恩怨情仇"><a class="header-anchor" href="#cpu-内存-i-o的恩怨情仇">¶</a>CPU、内存、I/O的恩怨情仇</h4>
+<p>这些年，我们的 CPU、内存、I/O 设备都在不断迭代，不断朝着更快的方向努力。但是，在这个快速发展的过程中，有一个核心矛盾一直存在，就是这三者的速度差异。我们都知道就速度而言，CPU&gt;&gt;内存&gt;&gt;I/O设备，所以为了平衡这三者之间的速度差异，计算机体系机构、操作系统、编译程序都做出了贡献，主要体现为：</p>
+<ul>
+<li>CPU 增加了缓存，以均衡与内存的速度差异</li>
+<li>操作系统增加了进程、线程，以分时复用 CPU，进而均衡 CPU 与 I/O 设备的速度差异</li>
+<li>编译程序优化指令执行次序，使得缓存能够得到更加合理地利用</li>
+</ul>
+<p>但是，是的，凡事都有但是，这些优化让我们享受的同时，也带来了线程不安全的问题。</p>
+<h4 id="源头之一：缓存导致的可见性"><a class="header-anchor" href="#源头之一：缓存导致的可见性">¶</a>源头之一：缓存导致的可见性</h4>
+<p>多核时代，每颗 CPU 都有自己的缓存，当多个线程在不同的 CPU 上执行时，这些线程操作的是不同的 CPU 缓存。比如下图中，线程 A 操作的是 CPU-1 上的缓存，而线程 B 操作的是 CPU-2 上的缓存，很明显，这个时候线程 A 对变量 V 的操作对于线程 B 而言就不具备可见性了。这个就属于硬件程序员给软件程序员挖的“坑”。</p>
+<p><img src="https://static001.geekbang.org/resource/image/e2/ea/e2aa76928b2bc135e08e7590ca36e0ea.png" alt="img"></p>
+<h4 id="源头之二：线程切换带来的原子性问题"><a class="header-anchor" href="#源头之二：线程切换带来的原子性问题">¶</a>源头之二：线程切换带来的原子性问题</h4>
+<p>操作系统允许某个进程执行一小段时间，例如 50 毫秒，过了 50 毫秒操作系统就会重新选择一个进程来执行（我们称为“任务切换”），这个 50 毫秒称为“时间片“。现代的操作系统都基于更轻量的线程来调度，现在我们提到的“任务切换”都是指“线程切换”。Java 并发程序都是基于多线程的，自然也会涉及到任务切换，也许你想不到，任务切换竟然也是并发编程里诡异 Bug 的源头之一。任务切换的时机大多数是在时间片结束的时候，我们现在基本都使用高级语言编程，高级语言里一条语句往往需要多条 CPU 指令完成，例如大家所熟悉的count++,这个语句需要3条指令才能执行：</p>
+<ul>
+<li>
+<p>指令 1：首先，需要把变量 count 从内存加载到 CPU 的寄存器</p>
+</li>
+<li>
+<p>指令 2：之后，在寄存器中执行 +1 操作</p>
+</li>
+<li>
+<p>指令 3：最后，将结果写入内存（缓存机制导致可能写入的是 CPU 缓存而不是内存）</p>
+</li>
+</ul>
+<p>操作系统做任务切换，可以发生在任何一条CPU指令。对于上面的三条指令来说，我们假设 count=0，如果线程 A 在指令 1 执行完后做线程切换，线程 A 和线程 B 按照下图的序列执行，那么我们会发现两个线程都执行了 count+=1 的操作，但是得到的结果不是我们期望的 2，而是 1。</p>
+<p><img src="https://static001.geekbang.org/resource/image/33/63/33777c468872cb9a99b3cdc1ff597063.png" alt="img"></p>
+<h4 id="源头之三：编译优化带来的有序性问题"><a class="header-anchor" href="#源头之三：编译优化带来的有序性问题">¶</a>源头之三：编译优化带来的有序性问题</h4>
+<p>有序性，顾名思义，有序性指的是程序按照代码的先后顺序执行。编译器为了优化性能，有时候会改变程序中语句的先后顺序，例如程序中：“a=6；b=7；”编译器优化后可能变成“b=7；a=6；”，在这个例子中，编译器调整了语句的顺序，但是不影响程序的最终结果。不过有时候编译器及解释器的优化可能导致意想不到的 Bug。再次拿出这个臭名昭著的DCL单例模式来举栗子：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Singleton</span> </span>&#123;</span><br><span class="line">       </span><br><span class="line">       <span class="keyword">static</span> Singleton instance;</span><br><span class="line">       </span><br><span class="line">       <span class="function"><span class="keyword">static</span> Singleton <span class="title">getInstance</span><span class="params">()</span></span>&#123;</span><br><span class="line">           <span class="keyword">if</span> (instance == <span class="keyword">null</span>) &#123;</span><br><span class="line">               <span class="keyword">synchronized</span>(Singleton.class) &#123;</span><br><span class="line">                   <span class="keyword">if</span> (instance == <span class="keyword">null</span>)</span><br><span class="line">                       instance = <span class="keyword">new</span> Singleton();</span><br><span class="line">               &#125;</span><br><span class="line">           &#125;</span><br><span class="line">           <span class="keyword">return</span> instance;</span><br><span class="line">       &#125;</span><br><span class="line">       </span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+<p>这个创建单例的模式为什么在多线程的情况下会出问题呢？主要是在new Singleton()这一步上，我们凭直觉以为这个new操作是这样的：</p>
+<ul>
+<li>分配一块内存 M</li>
+<li>在内存 M 上初始化 Singleton对象</li>
+<li>然后 M 的地址赋值给 instance 变量</li>
+</ul>
+<p>实际上优化后的执行顺序长这样：</p>
+<ul>
+<li>分配一块内存 M</li>
+<li>将 M 的地址赋值给 instance 变量</li>
+<li>最后在内存 M 上初始化 Singleton 对象</li>
+</ul>
+<p>所以这种情况下当A线程执行这个new操作的时候，这个时候M的地址已经赋给instance 变量，但是还未初始化，这时另外一个线程B同时进入getInstance()方法，检测到instance不为null，直接返回，而返回的是一个无效值，会触发空指针异常。</p>
+<h3 id="java内存模型的概念"><a class="header-anchor" href="#java内存模型的概念">¶</a>Java内存模型的概念</h3>
+<p>Java虚拟机规范中试图定义一种Java内存模型来屏蔽掉各种硬件和操作系统的内存访问差异，以实现让Java程序在各种平台下都能达到一致的并发效果。Java内存模型的主要目标是定义程序中各个变量的访问规则，即在虚拟机中将变量存储到内存和从内存中取出变量这样的底层细节，此处的变量与Java编程中所说的变量略有区别，它包括了实例字段、静态字段和构成数组对象的元素，<br>
+但是不包括局部变量与方法参数，因为后者是线程私有的，不会被共享，自然就不存在竟争问题。</p>
+<p>Java内存模型规定了所有的变量都存储在主内存上，每条线程还有自己的工作内存，线程的工作内存中保存了被该线程使用到的变量的主内存副本拷贝，线程对变量的所有操作(读取、赋值等)都必须在工作内存中进行，而不能直接读写主内存中的变量。不同的线程之间也无法直接访问对方工作内存中的变量，线程间变量值的传递都需要通过主内存来传递，线程、主内存、工作内存的交互关系如下。</p>
+<p><img src="http://120.79.172.214/mdpicture/1553328940111.png" alt="1553328940111"></p>
+<p>JDK在1.5之后对Java内存模型做了很大的修正，我们接下来的讨论也是基于JDK1.5之后的Java内存模型。</p>
+<h4 id="happens-before"><a class="header-anchor" href="#happens-before">¶</a>Happens-Before</h4>
+<p>happens—before规则是Java内存模型中定义的两项操作之间的偏序关系，如果操作A先行发生于操作B，其意思就是说，在发生操作B之前，操作A产生的影响都能被操作B观察到，“影响”包括修改了内存中共享变量的值、发送了消息、调用了方法等，它与时间上的先后发生基本没有太大关系。这个原则特别重要，它是判断数据是否存在竞争、线程是否安全的主要依据。具体包括：</p>
+<ul>
+<li>程序次序规则：在一个单独的线程中，按照程序代码的执行流顺序，（时间上）先执行的操作happen—before（时间上）后执行的操作</li>
+<li>管程锁定规则：一个unlock操作happen—before后面（时间上的先后顺序，下同）对同一个锁的lock操作</li>
+<li>volatile变量规则：对一个volatile变量的写操作happen—before后面对该变量的读操作</li>
+<li>线程启动规则：Thread对象的start（）方法happen—before此线程的每一个动作</li>
+<li>线程终止规则：线程的所有操作都happen—before对此线程的终止检测，可以通过Thread.join（）方法结束或者Thread.isAlive（）的返回值等手段检测到线程已经终止执行</li>
+<li>线程中断规则：对线程interrupt（）方法的调用happen—before发生于被中断线程的代码检测到中断时事件的发生</li>
+<li>对象终结规则：一个对象的初始化完成（构造函数执行结束）happen—before它的finalize（）方法的开始</li>
+<li>传递性：如果操作A happen—before操作B，操作B happen—before操作C，那么可以得出A happen—before操作C</li>
+</ul>
+<p>这是Java中仅有的无须任何同步手段就可以保证先行发生规则，我们可以通过一个简单的getter/setter示例感受一下“先行发生”与”时间上的先后发生“有何区别：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">int</span> value = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getValue</span><span class="params">()</span></span>&#123;</span><br><span class="line">       <span class="keyword">return</span> value;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setValue</span><span class="params">(<span class="keyword">int</span> value)</span></span>&#123;</span><br><span class="line">   	<span class="keyword">this</span>.value = value;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>假设线程A先调用setValue(10)，然后线程B再去调用同一个对象的getValue，那么线程B收到的值是10吗？我们可以根据上述的规则进行分析，没有一个规则适用，也就是说无法保证这两个操作的先行发生关系，所以线程B获得的结果是不确定的，换句话说这是线程不安全的。而让他变得线程安全也至少有两种简单的方案：</p>
+<ul>
+<li>给get/set方法加锁，这样就可以套用管程锁定规则</li>
+<li>让value定义为volatile变量，这样就能套用volatile变量规则</li>
+</ul>
+<h4 id="最轻量级的同步机制volatile"><a class="header-anchor" href="#最轻量级的同步机制volatile">¶</a>最轻量级的同步机制volatile</h4>
+<p>当一个变量为定义为volatile之后，将具备两个特性：</p>
+<ul>
+<li>可见性：这里的可见是指当一个线程修改了变量的值，其他线程可以立即看见。但是请注意，volatile可以保证并发情况下变量在各个线程中保证一致性，但是并不能说在并发条件下是线程安全的，因为volatile并不能保证原子性，我们可以用一个示例的来说明：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">VolatileTest</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">volatile</span> <span class="keyword">int</span> race = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">increase</span><span class="params">()</span></span>&#123;</span><br><span class="line">        race++;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> THREAD_COUNT = <span class="number">20</span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span></span>&#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>;i&lt;THREAD_COUNT;i++)&#123;</span><br><span class="line">            <span class="keyword">new</span> Thread(</span><br><span class="line">                    () -&gt; &#123;</span><br><span class="line">                        <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">0</span>;j&lt;<span class="number">10000</span>;j++)&#123;</span><br><span class="line">                            increase();</span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125;</span><br><span class="line">            ).start();</span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//等待所有累加线程都结束</span></span><br><span class="line">        <span class="keyword">while</span> (Thread.activeCount()&gt;<span class="number">1</span>)&#123;</span><br><span class="line">            Thread.yield(); </span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        System.out.println(race);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>代码发起了20个线程，每个线程对race变量进行10000次更新，如果正确并发结果应该是200000。但是实际上每次的输出结果都不一样，都是一个小于200000的数。这是由于incerese（）方法实际上由4条字节码组成，当getstatic指令将操作数取到栈顶时，race的值上正确的，但是执行icont_1,iadd指令的时候其他线程可能已经改变了race的值，在执行putstatic的时候就不再正确了。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">increase</span><span class="params">()</span></span>&#123;</span><br><span class="line">     Code:</span><br><span class="line">      Stack = <span class="number">2</span>,Local = <span class="number">0</span>,Args_size = <span class="number">0</span>;</span><br><span class="line">      <span class="number">0</span>: getstatic</span><br><span class="line">      <span class="number">3</span>:iconst_1</span><br><span class="line">      <span class="number">4</span>:add</span><br><span class="line">      <span class="number">5</span>:putstatic</span><br><span class="line">      <span class="number">8</span>:<span class="keyword">return</span>    </span><br><span class="line">      </span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+<p>volatile非常适合用作某个操作完成、发生中断或者状态的标志,如下图，调用shutdown方法后，所有线程会停止工作：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">volatile</span> <span class="keyword">boolean</span> requested;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">shutdown</span><span class="params">()</span></span>&#123;</span><br><span class="line">    requested = <span class="keyword">true</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> viod <span class="title">doWork</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="keyword">while</span>(!requested)&#123;</span><br><span class="line">        <span class="comment">// do something </span></span><br><span class="line">        </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>volatile的第二个作用是特性是禁止指令重排序，volatile变量赋值后，会多执行一个“lock add1 $0X0”操作，这个操作相当于一个内存屏障，指令重排时不能把后面的指令重排序到内存屏障之前的位置。还是拿出我们上面那个DCL单例的模式来，这次我们使用volatile变量后，就可以正确的实现单例模式：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Singleton</span> </span>&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">volatile</span> Singleton instance;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">static</span> Singleton <span class="title">getInstance</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (instance == <span class="keyword">null</span>) &#123;</span><br><span class="line">                <span class="keyword">synchronized</span>(Singleton.class) &#123;</span><br><span class="line">                    <span class="keyword">if</span> (instance == <span class="keyword">null</span>)</span><br><span class="line">                        <span class="comment">// 由于是volatile变量，此处不会进行重排序</span></span><br><span class="line">                        instance = <span class="keyword">new</span> Singleton();</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> instance;</span><br><span class="line">            </span><br><span class="line">    &#125;</span><br><span class="line">      </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>通过上述的情况我们大概了解了volatile的基本特性，也知道了volatile是一个轻量级的同步机制，在某些情况下，volatile的性能会优于锁的性能，但是经过虚拟机对锁的优化和消除后，并不能量化的认为volatile就比synchronized快多少，所以我们选择volatile的唯一依据应该是它能否满足我们的应用需求，总结一下，当且仅当以下条件满足时，应该使用volatile变量：</p>
+<ul>
+<li>对变量的写入不依赖变量的当前值，或者能确保只有单个线程更新变量的值；</li>
+<li>改变量不会与其他状态变量一起纳入不变性条件中；</li>
+<li>访问变量时不需要加锁</li>
+</ul>
+<h3 id="java与线程"><a class="header-anchor" href="#java与线程">¶</a>Java与线程</h3>
+<h4 id="线程的实现"><a class="header-anchor" href="#线程的实现">¶</a>线程的实现</h4>
+<p>实现线程主要有三种方式:使用内核线程实现，使用用户线程实现，使用用户线程加轻量级进程混合实现。</p>
+<h5 id="1-使用内核线程实现"><a class="header-anchor" href="#1-使用内核线程实现">¶</a>1.使用内核线程实现</h5>
+<p>内核线程（Kernel Thread,  KLT）就是直接由操作系统内核（Kernel,下称内核）支持的线程，这种线程由内核来完成线程切换，内核通过操纵调度器（Scheduler）对线程进行调度，并负责将线程的任务映射到各个处理器上。每个内核线程都可以看做是内核的一个分身，这样操作系统就有能力同时处理多件事情，支持多线程的内核就叫多线程内核(Multi-Threads Kernel)。程序一般不会直接去使用内核线程，而是去使用内核线程的种高级接口–轻量级进程(Light Weight Process,  LWP),轻量级进程就是我们通常意义上所讲的线程，由于每个轻量级进程都由一个内核线程支持，因此只有先支持内核线程，才能有轻量级进程。这种轻量级进程与内核线程之间1:1的关系称为一对一的线程模型。如图所示:</p>
+<p><img src="http://120.79.172.214/mdpicture/1553339177594.png" alt="1553339177594"></p>
+<p>由于内核线程的支持，每个轻量级进程都成为一个独立的调度单元，即使有一个轻量级进程在系统调用中阻塞了，也不会影响整个进程继续工作，但是轻量级进程具有它的局限性:首先，由于是基于内核线程实现的，所以各种进程操作，如创建、析构及同步，都需要进行系统调用。而系统调用的代价相对较高，需要在用户态(User Mode )和内核态(Kernel Mode)中来回切换其次，每个轻量级进程都需要有一个内核线程的支持，因此轻量级进程要消耗一定的内核资源(如内核线程的栈空间)，因此一个系统支持轻量级进程的数量是有限的。</p>
+<h5 id="2-使用用户线程实现"><a class="header-anchor" href="#2-使用用户线程实现">¶</a>2.使用用户线程实现</h5>
+<p>广义上来讲，一个线程只要不是内核线程，那就可以认为是用户线程（UserThread,  UT ) ,因此从这个定义上来讲轻最级进程也属于用户线程，但轻量级进程的实现始终是建立在内核之上的，许多操作都要进行系统调用，因此效率会受到限制。 而狭义上的用户线程指的是完全建众在用户空间的线程库上，系统内核不能感知到线程存在的实现。用户线程的建立、同步、销毁和调度完全在用户态中完成，不需要内核的帮助。如果程序实现得当，这种线程不需要切换到内核态，因此操作可以是非常快速且低消耗的，也可以支持规模更大的线程数量，部分高性能数据库中的多线程就是由用户线程实现的。这种进程与用户线程之间1:N的关系称为一对多的线程模型，如图所示。</p>
+<p><img src="http://120.79.172.214/mdpicture/1553343294793.png" alt="img"></p>
+<p>使用用户线程的优势在于不需要系统内核支援，劣势也在于没有系统内核的支援，所有的线程操作都需要用户程序自己处理，而线程的创建、切换和调度都是需要考虑问题，而且由于操作系统只把处理器资源分配到进程，那诸如“阻塞如何处理”、“多处理器系统中如何将线程映射到其他处理器上”这类问题解决起来将会异常困难，甚至不可能完成。因而使用用户线程实现的程序一般都比较复杂，除了以前在不支持多线程的操作系统中(如Dos)的多线程程序与少数有特殊需求的程序外，现在使用用户线程的程序越来越少了，Java, Ruby等语言都曾经使用过用户线程，最终又都放弃了<br>
+使用它。</p>
+<h5 id="3-混合实现"><a class="header-anchor" href="#3-混合实现">¶</a>3.混合实现</h5>
+<p>线程除了依赖内核线程实现和完全由用户程序自己实现之外，还有一种将内核线程与用户线程一起使用的实现方式。在这种混合实现下，既存在用户线程，也存在轻量级进程。用户线程还是完全建立在用户空间中，因此用户线程的创建、切换、析构等操作依然廉价，并且可以支持大规模的用户线程并发。而操作系统提供支持的轻量级进程则作为用户线程和内核线程之间的桥梁，这样可以使用内核提供的线程调度功能及处理器映射。井且用户线程的系统调用要通过轻量级线程来完成，大大降低了进程被阻塞的风险。在这种混合模式中，用户线程与轻量级进程的数量比是不的，是M:N的关系，如图所示，这种就是多对多的线程模型。</p>
+<p><img src="http://120.79.172.214/mdpicture/mnmodel.png" alt="img"></p>
+<h5 id="4-java线程的实现"><a class="header-anchor" href="#4-java线程的实现">¶</a>4.Java线程的实现</h5>
+<p>Java线程在JDK1.2之前，是基于名为“绿色线程&quot; (Green Threads)的用户线程实现的，而在JDK l .2中，线程模型被替换为基于操作系统原生线程模型来实现。因此在目前的JDIC版本中，操作系统支持怎样的线程模型，在很大程度上就决定了Java虚拟机的线程是怎样映射的，这点在不同的平台上没有办法达成一致，虚拟机规范中也并未限定Java线程需要使用哪种线程模型来实现。线程模型只对线程的并发规模和操作成本产生影响，对Java程序的编码和运行过程来说，这些差异都是透明的。对于Sun JDK来说，它的Windows版与Linux版都是使用一对一的线程模型来实现的，一条Java线程就映射到一条轻量级进程之中，因为Windows和Linux系统提供的线程模型就是一对一的。</p>
+<h4 id="线程的调度"><a class="header-anchor" href="#线程的调度">¶</a>线程的调度</h4>
+<p>线程调度是指系统为线程分配处理器使用权的过程，主要调度方式有两种。分别是协程式(Cooperative Threads-Scheduling)线程调度和抢占式(Preemptive Threads-Scheduling)线程调度。</p>
+<h5 id="协程式线程调度"><a class="header-anchor" href="#协程式线程调度">¶</a>协程式线程调度</h5>
+<p>如果使用协同式调度的多线程系统，线程的执行时间由线程本身来控制，线程把自己的工作执行完了之后，要主动通知系统切换到另外一个线程上去。协同式多线程的最大好处是实现简单，而且由于线程要把白己的事情干完后才会进行线程切换，切换操作对线程自己是可知的，所以没有什么线程同步的问题。它的坏处也很明显:线程执行时间不可控制，甚至如果一个线程编写有问题，一直不告知系统进行线程切换，那么程序就会一直阻塞在那里。很久以前的Windows 3.x系统就是使用协同式来实现多进程多任务的，那是相当的不稳定，一个进程坚持不让出CPU执行时间就会导致整个系统的崩溃。</p>
+<h5 id="抢占式线程调度"><a class="header-anchor" href="#抢占式线程调度">¶</a>抢占式线程调度</h5>
+<p>如果使用抢占式调度的多线程系统，那么每个线程将由系统来分配执行时间，线程的切换不由线程本身来决定(在Java中，Thread.yield()可以让出执行时间，但是要获取执行时间的话，线程本身是没有什么办法的)。在这种实现线程调度的方式下，线程的执行时间是系统可控的，也不会有一个线程导致整个进程阻塞的问题，Java使用的线程调度方式就是抢占式调度。</p>
+<p>虽然说Java线程调度是系统自动完成的，但是我们还是可以“建议”系统给某些线程多分配一点执行时间，另外的此线程则可以少分配一点。这项操作可以通过设置线程优先级来完成。Java语言一共设置了10个级别的线程优先级，在两个线程同时处于Ready状态时，优先级越高的线程越容易被系统选择执行。但是这种方法并不靠谱，因为Java的线程上被映射到系统的原生线程上实现的，所以最终线程调度还是由操作系统说了算，而不同操作系统的线程优先级不能保证与Java中的线程优先级一 一对应，同时有些操作系统如“Windows”存在一个“线程推进器”，它的大致作用是发现线程运行的特别“勤奋”，会越过线程优先级为线程分配时间。</p>
+<h4 id="线程状态"><a class="header-anchor" href="#线程状态">¶</a>线程状态</h4>
+<p>Java中的线程一共有六种状态：</p>
+<ul>
+<li>NEW（初始化状态）</li>
+<li>RUNNABLE（可运行 / 运行状态）</li>
+<li>BLOCKED（阻塞状态）</li>
+<li>WAITING（无时限等待）</li>
+<li>TIMED_WAITING（有时限等待）</li>
+<li>TERMINATED（终止状态）</li>
+</ul>
+<p>线程可以在这六种状态之间相互转换，如图所示：</p>
+<p><img src="http://120.79.172.214/mdpicture/1553349267664.png" alt="1553349267664"></p>
+<h5 id="从-new-到-runnable-状态"><a class="header-anchor" href="#从-new-到-runnable-状态">¶</a>从 NEW 到 RUNNABLE 状态</h5>
+<ul>
+<li>每个线程刚被创建的时候都是出于new状态，而要转换到RUNNABEL状态很简单，调用线程的start方法即可。</li>
+</ul>
+<h5 id="runnable-与-blocked-的状态转换"><a class="header-anchor" href="#runnable-与-blocked-的状态转换">¶</a>RUNNABLE 与 BLOCKED 的状态转换</h5>
+<p>只有一种场景会触发这种转换:</p>
+<ul>
+<li>就是线程等待 synchronized 的隐式锁。synchronized 修饰的方法、代码块同一时刻只允许一个线程执行，其他线程只能等待，这种情况下，等待的线程就会从 RUNNABLE 转换到 BLOCKED 状态。而当等待的线程获得 synchronized 隐式锁时，就又会从 BLOCKED 转换到 RUNNABLE 状态。</li>
+</ul>
+<h5 id="runnable-与-waiting-的状态转换"><a class="header-anchor" href="#runnable-与-waiting-的状态转换">¶</a>RUNNABLE 与 WAITING 的状态转换</h5>
+<p>总的来说，有三种场景会触发这种改变</p>
+<ul>
+<li>第一种场景，获得 synchronized 隐式锁的线程，调用无参数的 Object.wait() 方法。</li>
+<li>第二种场景，调用无参数的 Thread.join() 方法。其中的 join() 是一种线程同步方法，例如有一个线程对象 thread A，当调用 A.join() 的时候，执行这条语句的线程会等待 thread A 执行完，而等待中的这个线程，其状态会从 RUNNABLE 转换到 WAITING。当线程 thread A 执行完，原来等待它的线程又会从 WAITING 状态转换到 RUNNABLE。</li>
+<li>第三种场景，调用 LockSupport.park() 方法。其中的 LockSupport 对象，也许大家有点陌生，其实 Java 并发包中的锁，都是基于它实现的。调用 LockSupport.park() 方法，当前线程会阻塞，线程的状态会从 RUNNABLE 转换到 WAITING。调用 LockSupport.unpark(Thread thread) 可唤醒目标线程，目标线程的状态又会从 WAITING 状态转换到 RUNNABLE。</li>
+</ul>
+<h5 id="runnable-与-timed-waiting-的状态转换"><a class="header-anchor" href="#runnable-与-timed-waiting-的状态转换">¶</a>RUNNABLE 与 TIMED_WAITING 的状态转换</h5>
+<p>有五种场景会触发这种转换：</p>
+<ul>
+<li>调用带超时参数的 Thread.sleep(long millis) 方法；</li>
+<li>获得 synchronized 隐式锁的线程，调用带超时参数的 Object.wait(long timeout) 方法；</li>
+<li>调用带超时参数的 Thread.join(long millis) 方法；</li>
+<li>调用带超时参数的 LockSupport.parkNanos(Object blocker, long deadline) 方法；</li>
+<li>调用带超时参数的 LockSupport.parkUntil(long deadline) 方法。</li>
+</ul>
+<p>这里你会发现 TIMED_WAITING 和 WAITING 状态的区别，仅仅是触发条件多了带超时参数.</p>
+<h5 id="从-runnable-到-terminated-状态"><a class="header-anchor" href="#从-runnable-到-terminated-状态">¶</a>从 RUNNABLE 到 TERMINATED 状态</h5>
+<ul>
+<li>线程执行完 run() 方法后，会自动转换到 TERMINATED 状态，当然如果执行 run() 方法的时候异常抛出，也会导致线程终止。有时候我们需要强制中断 run() 方法的执行，例如 run() 方法访问一个很慢的网络，我们等不下去了，想终止怎么办呢？Java 的 Thread 类里面倒是有个 stop() 方法，不过已经标记为 @Deprecated，所以不建议使用了。正确的姿势其实是调用 interrupt() 方法。</li>
+</ul>
+<h2 id="线程安全"><a class="header-anchor" href="#线程安全">¶</a>线程安全</h2>
+<h3 id="java语言的线程安全"><a class="header-anchor" href="#java语言的线程安全">¶</a>Java语言的线程安全</h3>
+<p>什么是线程安全？《Java Concurrency In Practice》的作者Brian Goetz对“线程安全”有一个比较恰当的定义:</p>
+<blockquote>
+<p>当多个线程访问一个对象时，如果不用考虑这些线程在运行时环境下的调度和交替执行，也不需要进行额外的同步，或者在调用方进行任何其他的协调操作，调用这个对象的行为都可以获得正确的结果，那这个对象就是线程安全的。</p>
+</blockquote>
+<p>已经有了线程安全的一个抽象定义，那接下来我们就讨论一下在Java语言中，线程安全具体是如何体现的以及有哪些操作是线程安全的。为了更深入理解线程安全，我们可以不把线程安全当做一个非真既假的二元排他概念，按照线程安全的“安全程度”由强到弱，我们把Java语言中各种操作共享的数据分为以下五类:不可变、绝对线程安全、相对线程安全、线程兼容和线程对立。</p>
+<h4 id="1-不可变"><a class="header-anchor" href="#1-不可变">¶</a>1.不可变</h4>
+<p>在Java语言里不可变( Immutalaie)的对象一定是线程安全的，无论是对象的方法实现还是方法的调用者，都不需要再进行任何的线程安全保障措施，只要一个不可变的对象被正确地构建出来，那其外部的可见状态永远也不会改变，永远也不会看到它在多个线程之中处于不一致的状态。“不可变”带来的安全性是最简单最纯粹的。比如String类型就是一个经典的不可变对象，我们调用substring(),replace()等方法时都会返回一个新的字符串对象，而不会影响原来的值。保证对象行为不影响自己状态的途径有很多种，其中最简单的就是把对象中带有状态的变量都声明为final。这样在构造函数结束之后，它就是不可变的。</p>
+<h4 id="2-绝对线程安全"><a class="header-anchor" href="#2-绝对线程安全">¶</a>2.绝对线程安全</h4>
+<p>绝对的线程安全完全满足Brian Goetz给出的线程安全的定义其实是很严格的，一个类要达到“不管运行时环境如何，调用者都不需要任何额外的同步措施”通常需要付出很大的，甚至是不切实际的代价。在Java API中标注自己是线程安全的类，大多数都不是绝对的线程安全。我们可以通过Java API中一个不是“绝对线程安全”的线程安全类来看看这里的“绝对”是什么意思。比如Vector是一个大家公认的线程安全类，但是这并不意味这调用他的时候不在需要任何同步手段了，比如下面这个栗子：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AbsoluteThreadSafeTest</span> </span>&#123;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> Vector&lt;Integer&gt; vector = <span class="keyword">new</span> Vector&lt;&gt;();</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">while</span> (<span class="keyword">true</span>)&#123;</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>;i&lt;<span class="number">10</span>;i++)&#123;</span><br><span class="line">                vector.add(i);</span><br><span class="line">            &#125;</span><br><span class="line">    </span><br><span class="line">            <span class="keyword">new</span> Thread(()-&gt;&#123;</span><br><span class="line">                <span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;vector.size();i++)&#123;</span><br><span class="line">                    vector.remove(i);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;).start();</span><br><span class="line">    </span><br><span class="line">            <span class="keyword">new</span> Thread(()-&gt;&#123;</span><br><span class="line">                <span class="keyword">for</span> (<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;vector.size();i++)&#123;</span><br><span class="line">                    vector.get(i);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;).start();</span><br><span class="line">    </span><br><span class="line">            <span class="comment">//避免创建过多线程</span></span><br><span class="line">            <span class="keyword">while</span> (Thread.activeCount()&gt;<span class="number">20</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>虽然vector的get(),size()以及get()方法都是同步的，但是上面的代码仍然会抛出ArrayIndexOutOfBoundsException异常，我们仍然需要通过加锁的方式来保证这段代码的线程安全性。</p>
+<h4 id="3-相对线程安全"><a class="header-anchor" href="#3-相对线程安全">¶</a>3.相对线程安全</h4>
+<p>相对的线程安全就是我们通常意义上所讲的线程安全，它需要保证对这个对象单独的操作是线程安全的，我们在调用的时候不需要做额外的保障措施，但是对于一些特定顺序的连续调用，就可能需要在调用端使用额外的同步手段来保证调用的正确性。上面的栗子就是相对线程安全的一个很明显的案例。在Java语言中，大部分的线程安全类都属于这种类型，例如Vector,  HashTable,<br>
+Collections的synchronicedCollectiont()方法包装的集合等。</p>
+<h4 id="4-线程兼容"><a class="header-anchor" href="#4-线程兼容">¶</a>4.线程兼容</h4>
+<p>线程兼容是指对象本身并不是线程安全的，但是可以通过在调用端正确地使用同步手段来保证对象在并发环境中安全地使用，我们平常说一个类不是线程安全的，绝大多数指的都是这种情况。Java API中大部分的类都是线程兼容的，如与前面的Vector和HashTable相对应的集合类ArrayList和HashMap等。</p>
+<h4 id="5-线程对立"><a class="header-anchor" href="#5-线程对立">¶</a>5.线程对立</h4>
+<p>线程对立是指无论使用何种同步手段，代码都无法再多线程情况下并发使用的代码。由于Java语言的代码天生具有多线程性，所以这种情况极少出现。而且线程对立的代码是有害的，应该避免。</p>
+<p>一个线程对立的例子是Thread类的suspend()和resume()方法，如果有两个线程同时持有一个线程对象，一个尝试去中断线程，一个尝试去恢复线程，如果并发进行的话，无论调用时是否进行了同步，目标线程都是存在死锁风险的，如果suspend()中断的线程就是即将要执行resume()的那个线程，那就肯定要产生死锁了。也正是由于这个原因，这两个方法已经被JDK声明废弃(@Deprecated )了。常见的线程对立的操作还有System.setIn(). Sytem.setout()和System. runFinalizersOnExit()等。</p>
+<h3 id="实现线程安全的方法"><a class="header-anchor" href="#实现线程安全的方法">¶</a>实现线程安全的方法</h3>
+<p>在了解了什么是线程安全后，我们接下来了解一些实现线程安全的方法。</p>
+<h4 id="1-互斥同步"><a class="header-anchor" href="#1-互斥同步">¶</a>1.互斥同步</h4>
+<p>在Java里面，最基本的互斥同步手段就是synchronized关键字，synchronized关键字经过编译之后，会在同步块的前后分别形成monitorenter和monitorexit这两个字节码指令，这两个字节码都需要一个reference类型的参数来指明要锁定和解锁的对象。如果Java程序中的synchronized明确指定了对象参数，那就是这个对象的reference，如果没有明确指定，那就根据synchronised修饰的是实例方法还是类方法，去取对应的对象实例或Class对象来作为锁对象。</p>
+<p>根据Java虚拟机的规范，在执行monitorenter指令时，首先会去尝试获取对象的锁。如果这个对象没被锁定，或者当前程序已经获取了该对象的锁，则锁的计数器加1。相应的，在执行monitorexit指令时，如果计数器减1，当计数器为0，则代表锁被释放。</p>
+<p>在虚拟机规范对monitorenter和monitnrexit的行为描述中，有两点是需要特别注意的：</p>
+<ul>
+<li>首先，synchronized同步块对同一条线程来说是可重入的，不会出现自己把自己锁死的问题。</li>
+<li>其次，同步块在已进入的线程执行完之前。会阻塞后面其他线程的进入。我们讨论过，Java的线程是映射到操作系统的原生线程之上的，如果要阻塞或唤醒一条线程。都需要操作系统来帮忙完成，这就需要从用户态转换到核心态中，因此状态转换需要耗费很多的处理器时间。对于代码简单的同步块(如被synchronized修饰的gctter()或setter()方法)，状态转换消耗的时间可能比用户代码执行的时间还要长。所以synchronized语言中一个重量级(Heavyweight)的操作，有经验的程序员都会在确实必要的情况下才使用这种操作。而虚拟机本身也会进行一些优化，譬如在通知操作系统阻塞线程之前加人一段自旋等待过程，避免频繁地切人到核心态之中。</li>
+</ul>
+<h4 id="2-非阻塞同步"><a class="header-anchor" href="#2-非阻塞同步">¶</a>2.非阻塞同步</h4>
+<p>互斥同步最主要的问题就是进行线程阻塞和唤醒所带来的性能问题，因此这种同步也被称为阻塞同步（Blocking Synchronization）,另外，它属于一种悲观的并发策略。总是认为只要不去做正确的同步措施（加锁)，那就肯定会出现问题，无论共享数据是否真的会出现竞争，它都要进行加锁(这里说的是概念模型。实际上虚拟机会优化掉很大一部分不必要的加锁)、用户态核心态转换、维护锁计数器和检查是否有被阻塞的线程需要被唤醒等操作。随着硬件指令集的发展，我们有了另外一个选择。基于冲突检测的乐观并发策略，通俗地说就是先进行操作，如果没有其他线程争用共享数据，那操作就成功了;如果共享数据有争用，产生了冲突，那就再进行共他的补偿措施(最常见的补偿措施就是不断地重试，直到试成功为止〕，这种乐观的并发策略的许多实现都不需要把线程挂起，因此这种同步操作被称为非阻塞同步(Non-Blocking Synchronization）。</p>
+<p>能够帮助我们实现非阻塞同步的指令包括：</p>
+<ul>
+<li>测试并设置（Test-And-Set）</li>
+<li>获取并增加（Fetch-and-Increament）</li>
+<li>交换（Swap)</li>
+<li>比较并交换（Compare-and-Swap,CAS）</li>
+<li>加载链接/条件存储（Load-Linked/Store-Conditional,LL/SC）</li>
+</ul>
+<p>接下来我们重点讨论一下CAS指令。CAS指令需要有三个操作数，分别是内存位置(在Java中可以简单理解为变量的内存地址，用V表示)、旧的预期值(用A表示)和新值(用B表示)。CAS指令执<br>
+行时，当且仅当V符合旧预期值A时，处理器用新值S更新V的值，否则它就不执行更新，但是不管是否更新了V的值，都会返回V的旧值，上述的处理过程是一个原子操作。</p>
+<p>我们可以通过Java API来间接使用Unsafe类中提供的CAS操作，比如AtomicInteger类中的incrementAndGet()，getAndAdd()等方法，我们可以用volatile无法保证原子操作的示例来演示一下CAS用来避免阻塞同步：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AtomicTest</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> AtomicInteger race = <span class="keyword">new</span> AtomicInteger(<span class="number">0</span>);</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">increase</span><span class="params">()</span></span>&#123;</span><br><span class="line">        race.incrementAndGet();</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> THREAD_COUNT = <span class="number">20</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span></span>&#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>;i&lt;THREAD_COUNT;i++)&#123;</span><br><span class="line">            <span class="keyword">new</span> Thread(</span><br><span class="line">                    () -&gt; &#123;</span><br><span class="line">                        <span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">0</span>;j&lt;<span class="number">10000</span>;j++)&#123;</span><br><span class="line">                            increase();</span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125;</span><br><span class="line">            ).start();</span><br><span class="line">    </span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">while</span> (Thread.activeCount()&gt;<span class="number">1</span>)&#123;</span><br><span class="line">            Thread.yield();</span><br><span class="line">        &#125;</span><br><span class="line">    </span><br><span class="line">        System.out.println(race);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="3-无同步手段"><a class="header-anchor" href="#3-无同步手段">¶</a>3.无同步手段</h4>
+<p>要保证线程安全不一定需要同步，在Java中有些代码天生就是线程安全的，我们简单的来讨论一下常见的两类。</p>
+<h5 id="可重入性的代码"><a class="header-anchor" href="#可重入性的代码">¶</a>可重入性的代码</h5>
+<p>这种代码也叫纯代码( Pure Code ），可以在代码执行的任何时刻中断它，转而去执行另外一段代码(包括递归调用它本身)，而在控制权返回后，原来的程序不会出现任何错误。相对线程安全来说，可重入性是更基本的特性，它可以保证线程安全，即所有的可重人的代码都是线程安全的，但是并非所有的线程安全的代码都是可重入的。</p>
+<p>可重入代码有一些共同的特征:例如不依赖存储在堆上的数据和公用的系统资源、用到的状态量都由参数中传入、不调用非可重人的方法等。我们可以通过一个简单的原则来判断代码是否具备可重入性:如果一个方法，它的返回结果是可以预测的，只要输人了相同的数据，就都能返回相同的结果，那它就满足可重入性的要求，当然也就是线程安全的。</p>
+<h5 id="线程封闭"><a class="header-anchor" href="#线程封闭">¶</a>线程封闭</h5>
+<p>当访问共享的可变数据是，如果能限制在仅在单线程内访问数据，就不需要同步。这种技术被称为线程封闭。Java元语言没有强制规定某个变量必须由锁保护，同样也无法强制将对象封闭在某个线程中。Java语言及其核心库提供了一些机制帮助维持线程封闭性，比如局部变量和ThreadLocal类。</p>
+<h6 id="栈封闭"><a class="header-anchor" href="#栈封闭">¶</a>栈封闭</h6>
+<p>栈封闭上线程封闭的一种特例，在栈封闭中，只能通过局部变量才能访问对象。局部变量的固有属性之一就是封闭在执行线程中，它们位于执行线程的栈中，其他线程无法访问。</p>
+<p>对于基本类型的局部变量，例如下面代码中loadTheArk方法中的numPairs，由于任何方法都不能获得对基本类型的引用，因此Java语言的这种语义保证了基本类型的局部变量始终封闭在线程内。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">loadTheArk</span><span class="params">(Collection&lt;Animal&gt; candidates)</span></span>&#123;</span><br><span class="line"></span><br><span class="line">        SortedSet&lt;Animal&gt; animals;</span><br><span class="line">    </span><br><span class="line">        <span class="keyword">int</span> numPairs = <span class="number">0</span>;</span><br><span class="line">    </span><br><span class="line">        Animal candidate = <span class="keyword">null</span>;</span><br><span class="line">    </span><br><span class="line">        animals = <span class="keyword">new</span> TreeSet&lt;Animal&gt;();</span><br><span class="line">        animals.addAll(candidates);</span><br><span class="line">        <span class="keyword">for</span> (Animal a: animals)&#123;</span><br><span class="line">            <span class="comment">//do something</span></span><br><span class="line">            numPairs++;</span><br><span class="line">        &#125;</span><br><span class="line">    </span><br><span class="line">        <span class="keyword">return</span>  numPairs;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>而在维持对象引用的栈封闭性时，我们需要使用一些手段保证被引用的对象不会逸出。比如我们在上面代码中实例化了一TreeSet对象，并将指向它的一个引用保存在animals中。此时，只有一个引用指向animals，这个引用被封闭在局部变量中，因此也封闭在执行线程中。然而，如果我们发布了animals的引用或者改对象中的任何数据的引用，这都会导致封闭性被破坏。</p>
+<h6 id="threadlocal类"><a class="header-anchor" href="#threadlocal类">¶</a>ThreadLocal类</h6>
+<p>Java语言中，如果一个变量要被多线程访问，可以使用volatile关键字声明它为“易变的”:如果一个变量要被某个线程独享，就可以通过ThreadLocal类来实现线程本地存储的功能。每一个线程的Thread对象中都有一个ThreadLocalMap对象，这个对象存储了一组以ThreadLocal.threadLocalHashCode为键，以本地线程变量为值的K-V值对，ThreadLocal对象就是当前线程ThreadLocalMap的访问入口，每个ThreadLocal对象都包含一个独一无二的threadLocalHashCode值，使用这个值就可以在线程K-V值对中找回对应的本地线程变量。需要注意的是，ThreadLocal变量类似于全局变量，会降低代码的可重入性，因此使用时要格外小心。</p>
+<h2 id="参考资料"><a class="header-anchor" href="#参考资料">¶</a>参考资料</h2>
+<ul>
+<li>《深入理解Java虚拟机》第四版</li>
+<li>《Java并发编程实战》</li>
+<li>极客时间《Java并发编程实战》</li>
+</ul>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/java/" rel="tag"># java</a>
+          
+            <a href="/tags/java多线程/" rel="tag"># java多线程</a>
+          
+            <a href="/tags/线程安全/" rel="tag"># 线程安全</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/mutlithreading/thread-pool.html" rel="next" title="线程池详解">
+                <i class="fa fa-chevron-left"></i> 线程池详解
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/mutlithreading/thread-lock.html" rel="prev" title="多线程编程与锁优化">
+                多线程编程与锁优化 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+      </div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">fanzhongwei</p>
+              <div class="site-description motion-element" itemprop="description">个人经验总结：java、JavaScript、HTML、VUE等等</div>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">13</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  
+                    
+                      <a href="/categories/">
+                    
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">7</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  
+                    
+                      <a href="/tags/">
+                    
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">28</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL2Zhbnpob25nd2Vp" title="GitHub &rarr; https://github.com/fanzhongwei"><i class="fa fa-fw fa-github"></i>GitHub</span>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <span class="exturl" data-url="bWFpbHRvOmZ6d3Rpbmd5dUAxNjMuY29t" title="E-Mail &rarr; mailto:fzwtingyu@163.com"><i class="fa fa-fw fa-envelope"></i>E-Mail</span>
+                </span>
+              
+            </div>
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#多线程与线程安全"><span class="nav-number">1.</span> <span class="nav-text">¶多线程与线程安全</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#java内存模型"><span class="nav-number">1.1.</span> <span class="nav-text">¶Java内存模型</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#线程不安全的源头"><span class="nav-number">1.1.1.</span> <span class="nav-text">¶线程不安全的源头</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#cpu-内存-i-o的恩怨情仇"><span class="nav-number">1.1.1.1.</span> <span class="nav-text">¶CPU、内存、I/O的恩怨情仇</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#源头之一：缓存导致的可见性"><span class="nav-number">1.1.1.2.</span> <span class="nav-text">¶源头之一：缓存导致的可见性</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#源头之二：线程切换带来的原子性问题"><span class="nav-number">1.1.1.3.</span> <span class="nav-text">¶源头之二：线程切换带来的原子性问题</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#源头之三：编译优化带来的有序性问题"><span class="nav-number">1.1.1.4.</span> <span class="nav-text">¶源头之三：编译优化带来的有序性问题</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#java内存模型的概念"><span class="nav-number">1.1.2.</span> <span class="nav-text">¶Java内存模型的概念</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#happens-before"><span class="nav-number">1.1.2.1.</span> <span class="nav-text">¶Happens-Before</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#最轻量级的同步机制volatile"><span class="nav-number">1.1.2.2.</span> <span class="nav-text">¶最轻量级的同步机制volatile</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#java与线程"><span class="nav-number">1.1.3.</span> <span class="nav-text">¶Java与线程</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#线程的实现"><span class="nav-number">1.1.3.1.</span> <span class="nav-text">¶线程的实现</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-使用内核线程实现"><span class="nav-number">1.1.3.1.1.</span> <span class="nav-text">¶1.使用内核线程实现</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-使用用户线程实现"><span class="nav-number">1.1.3.1.2.</span> <span class="nav-text">¶2.使用用户线程实现</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-混合实现"><span class="nav-number">1.1.3.1.3.</span> <span class="nav-text">¶3.混合实现</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#4-java线程的实现"><span class="nav-number">1.1.3.1.4.</span> <span class="nav-text">¶4.Java线程的实现</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#线程的调度"><span class="nav-number">1.1.3.2.</span> <span class="nav-text">¶线程的调度</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#协程式线程调度"><span class="nav-number">1.1.3.2.1.</span> <span class="nav-text">¶协程式线程调度</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#抢占式线程调度"><span class="nav-number">1.1.3.2.2.</span> <span class="nav-text">¶抢占式线程调度</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#线程状态"><span class="nav-number">1.1.3.3.</span> <span class="nav-text">¶线程状态</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#从-new-到-runnable-状态"><span class="nav-number">1.1.3.3.1.</span> <span class="nav-text">¶从 NEW 到 RUNNABLE 状态</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#runnable-与-blocked-的状态转换"><span class="nav-number">1.1.3.3.2.</span> <span class="nav-text">¶RUNNABLE 与 BLOCKED 的状态转换</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#runnable-与-waiting-的状态转换"><span class="nav-number">1.1.3.3.3.</span> <span class="nav-text">¶RUNNABLE 与 WAITING 的状态转换</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#runnable-与-timed-waiting-的状态转换"><span class="nav-number">1.1.3.3.4.</span> <span class="nav-text">¶RUNNABLE 与 TIMED_WAITING 的状态转换</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#从-runnable-到-terminated-状态"><span class="nav-number">1.1.3.3.5.</span> <span class="nav-text">¶从 RUNNABLE 到 TERMINATED 状态</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#线程安全"><span class="nav-number">1.2.</span> <span class="nav-text">¶线程安全</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#java语言的线程安全"><span class="nav-number">1.2.1.</span> <span class="nav-text">¶Java语言的线程安全</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-不可变"><span class="nav-number">1.2.1.1.</span> <span class="nav-text">¶1.不可变</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-绝对线程安全"><span class="nav-number">1.2.1.2.</span> <span class="nav-text">¶2.绝对线程安全</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-相对线程安全"><span class="nav-number">1.2.1.3.</span> <span class="nav-text">¶3.相对线程安全</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-线程兼容"><span class="nav-number">1.2.1.4.</span> <span class="nav-text">¶4.线程兼容</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#5-线程对立"><span class="nav-number">1.2.1.5.</span> <span class="nav-text">¶5.线程对立</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#实现线程安全的方法"><span class="nav-number">1.2.2.</span> <span class="nav-text">¶实现线程安全的方法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-互斥同步"><span class="nav-number">1.2.2.1.</span> <span class="nav-text">¶1.互斥同步</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-非阻塞同步"><span class="nav-number">1.2.2.2.</span> <span class="nav-text">¶2.非阻塞同步</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-无同步手段"><span class="nav-number">1.2.2.3.</span> <span class="nav-text">¶3.无同步手段</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#可重入性的代码"><span class="nav-number">1.2.2.3.1.</span> <span class="nav-text">¶可重入性的代码</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#线程封闭"><span class="nav-number">1.2.2.3.2.</span> <span class="nav-text">¶线程封闭</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#栈封闭"><span class="nav-number">1.2.2.3.2.1.</span> <span class="nav-text">¶栈封闭</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#threadlocal类"><span class="nav-number">1.2.2.3.2.2.</span> <span class="nav-text">¶ThreadLocal类</span></a></li></ol></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考资料"><span class="nav-number">1.3.</span> <span class="nav-text">¶参考资料</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2019 – <span itemprop="copyrightYear">2020</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">fanzhongwei</span>
+
+  
+
+  
+</div>
+
+
+  <div class="powered-by">由 <span class="exturl theme-link" data-url="aHR0cHM6Ly9oZXhvLmlv">Hexo</span> 强力驱动 v3.8.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 – <span class="exturl theme-link" data-url="aHR0cHM6Ly90aGVtZS1uZXh0Lm9yZw==">NexT.Pisces</span> v7.1.0</div>
+
+	<div class="BbeiAn-info">
+		<a target="_blank" href="http://www.beian.miit.gov.cn/">蜀ICP备17004833号-1</a>
+	</div>
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+
+  
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+          <span id="scrollpercent"><span>0</span>%</span>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+      <div>
+        <div class="addthis_inline_share_toolbox">
+  <script src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-5caee68d1b93531b" async="async"></script>
+</div>
+
+      </div>
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+    
+    
+  
+  <script color="0,0,255" opacity="0.5" zindex="-1" count="99" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/utils.js?v=7.1.0"></script>
+
+  <script src="/js/motion.js?v=7.1.0"></script>
+
+  <script src="/js/pull-refresh.js?v=7.1.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/affix.js?v=7.1.0"></script>
+
+  <script src="/js/schemes/pisces.js?v=7.1.0"></script>
+
+
+
+  
+  <script src="/js/scrollspy.js?v=7.1.0"></script>
+<script src="/js/post-details.js?v=7.1.0"></script>
+
+
+
+  
+
+
+  <script src="/js/next-boot.js?v=7.1.0"></script>
+
+
+  
+
+  
+  <script src="/js/exturl.js?v=7.1.0"></script>
+
+
+  
+
+  
+  
+  <script id="dsq-count-scr" src="https://fanzhongwei.disqus.com/count.js" async></script>
+
+
+<script>
+  var disqus_config = function() {
+    this.page.url = "https://www.fanzhongwei.com/mutlithreading/mutlithreading.html";
+    this.page.identifier = "mutlithreading/mutlithreading.html";
+    this.page.title = '多线程与线程安全';
+    };
+  function loadComments() {
+    var d = document, s = d.createElement('script');
+    s.src = 'https://fanzhongwei.disqus.com/embed.js';
+    s.setAttribute('data-timestamp', '' + +new Date());
+    (d.head || d.body).appendChild(s);
+  }
+  
+    $(function() {
+      var offsetTop = $('#comments').offset().top - $(window).height();
+      if (offsetTop <= 0) {
+        // load directly when there's no a scrollbar
+        loadComments();
+      } else {
+        $(window).on('scroll.disqus_scroll', function() {
+          // offsetTop may changes because of manually resizing browser window or lazy loading images.
+          var offsetTop = $('#comments').offset().top - $(window).height();
+          var scrollTop = $(window).scrollTop();
+
+          // pre-load comments a bit? (margin or anything else)
+          if (offsetTop - scrollTop < 60) {
+            $(window).off('.disqus_scroll');
+            loadComments();
+          }
+        });
+      }
+    });
+  
+</script>
+
+
+
+
+
+  
+    
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/disqusjs@1/dist/disqusjs.css">
+
+
+
+<script src="//cdn.jsdelivr.net/npm/disqusjs@1/dist/disqus.js"></script>
+
+<script>
+  var dsqjs = new DisqusJS({
+    api: 'https://disqus.skk.moe/disqus/' || 'https://disqus.com/api/',
+    apikey: 'yeI3c68e36COmAnaJ0W8enNe62iyRL60APc1qYStSbMXCuXb1Hl57OKpqbA3AXjB',
+    shortname: 'fanzhongwei'
+  });
+</script>
+
+  
+
+
+  
+  <script>
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url).replace(/\/{2,}/g, '/');
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x"></i></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x"></i></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

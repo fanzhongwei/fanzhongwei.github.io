@@ -1,0 +1,1633 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+  <meta http-equiv="Cache-Control" content="no-transform">
+  <meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+  <meta name="google-site-verification" content="5LFoOb-y-oi59dy2QaWFWoDyyW34_mMWX5MMvqJmVYo">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
+
+<link rel="stylesheet" href="/css/main.css?v=7.1.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/imagesfavicon.ico?v=7.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico?v=7.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.ico?v=7.1.0">
+
+
+  <link rel="mask-icon" href="/images/favicon.ico?v=7.1.0" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '7.1.0',
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false,"dimmer":false},
+    back2top: true,
+    back2top_sidebar: false,
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+<link rel="stylesheet" href="/lib/mescroll/mescroll.min.css?v=1.4.1">
+<script src="/lib/mescroll/mescroll.min.js?v=1.4.1" charset="utf-8"></script>
+
+
+  <meta name="description" content="近几年来，面向对象几乎成为软件技术的代名词。而UML是面向对象方法的一面旗帜，谈到面向对象的分析和设计就不能不谈到UML。如今UML也成为面向对象分析和设计事实上的行业标准。然而什么是UML，如何利用UML将一份原始需求经过层层分析和推导，最终形成可执行的代码？">
+<meta name="keywords" content="软件开发,UML,统一建模语言">
+<meta property="og:type" content="article">
+<meta property="og:title" content="UML基础">
+<meta property="og:url" content="https://www.fanzhongwei.com/engineering/uml.html">
+<meta property="og:site_name" content="fanzhongwei">
+<meta property="og:description" content="近几年来，面向对象几乎成为软件技术的代名词。而UML是面向对象方法的一面旗帜，谈到面向对象的分析和设计就不能不谈到UML。如今UML也成为面向对象分析和设计事实上的行业标准。然而什么是UML，如何利用UML将一份原始需求经过层层分析和推导，最终形成可执行的代码？">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://s1.ax1x.com/2020/03/29/GVBGHf.png">
+<meta property="og:image" content="https://s1.ax1x.com/2020/03/29/GV35uQ.png">
+<meta property="og:image" content="https://s1.ax1x.com/2020/03/29/GV80P0.png">
+<meta property="og:image" content="https://s1.ax1x.com/2020/03/29/GV8RaR.png">
+<meta property="og:image" content="https://s1.ax1x.com/2020/03/29/GVYhin.png">
+<meta property="og:image" content="https://s1.ax1x.com/2020/03/29/GZb1df.png">
+<meta property="og:image" content="https://s1.ax1x.com/2020/03/29/GZWYuD.png">
+<meta property="og:image" content="https://s1.ax1x.com/2020/03/29/GZq9fg.png">
+<meta property="og:image" content="https://s1.ax1x.com/2020/03/29/GZLCE6.png">
+<meta property="og:image" content="https://s1.ax1x.com/2020/03/29/GZLnbt.png">
+<meta property="og:image" content="https://s1.ax1x.com/2020/03/29/GZL6M9.png">
+<meta property="og:image" content="https://s1.ax1x.com/2020/03/30/GeCCy8.png">
+<meta property="og:image" content="https://s1.ax1x.com/2020/03/29/GZLXIf.png">
+<meta property="og:image" content="https://s1.ax1x.com/2020/03/29/GZOAoV.png">
+<meta property="og:image" content="https://s1.ax1x.com/2020/03/29/GZO3o6.png">
+<meta property="og:image" content="https://s1.ax1x.com/2020/03/30/Ge9Xod.png">
+<meta property="og:image" content="https://s1.ax1x.com/2020/03/29/GZO0eI.png">
+<meta property="og:image" content="https://s1.ax1x.com/2020/03/29/GZO7fU.png">
+<meta property="og:image" content="https://s1.ax1x.com/2020/03/29/GZXi1e.png">
+<meta property="og:image" content="https://s1.ax1x.com/2020/03/29/GZXw3F.png">
+<meta property="og:image" content="https://s1.ax1x.com/2020/03/29/GZXOC8.png">
+<meta property="og:image" content="https://s1.ax1x.com/2020/03/30/Ge9gLF.png">
+<meta property="og:image" content="https://s1.ax1x.com/2020/03/29/GZjkCT.png">
+<meta property="og:image" content="https://s1.ax1x.com/2020/03/30/Ge9wIs.png">
+<meta property="og:image" content="https://s1.ax1x.com/2020/03/29/GZjYKH.png">
+<meta property="og:image" content="https://s1.ax1x.com/2020/03/29/GZjdat.png">
+<meta property="og:image" content="https://s1.ax1x.com/2020/03/29/GZjXIx.png">
+<meta property="og:image" content="https://s1.ax1x.com/2020/03/30/GepX80.png">
+<meta property="og:image" content="https://s1.ax1x.com/2020/03/29/GZvFeA.png">
+<meta property="og:image" content="https://s1.ax1x.com/2020/03/29/GZvnSS.png">
+<meta property="og:image" content="https://s1.ax1x.com/2020/03/29/GZvKyQ.png">
+<meta property="og:image" content="https://s1.ax1x.com/2020/03/30/Gep9ht.png">
+<meta property="og:updated_time" content="2020-03-30T15:34:02.371Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="UML基础">
+<meta name="twitter:description" content="近几年来，面向对象几乎成为软件技术的代名词。而UML是面向对象方法的一面旗帜，谈到面向对象的分析和设计就不能不谈到UML。如今UML也成为面向对象分析和设计事实上的行业标准。然而什么是UML，如何利用UML将一份原始需求经过层层分析和推导，最终形成可执行的代码？">
+<meta name="twitter:image" content="https://s1.ax1x.com/2020/03/29/GVBGHf.png">
+
+
+
+
+
+  
+  
+  <link rel="canonical" href="https://www.fanzhongwei.com/engineering/uml">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>UML基础 | fanzhongwei</title>
+  
+
+
+
+
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?c7a6634d526ddd253a5092f6656f4ef6";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">fanzhongwei</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <h1 class="site-subtitle" itemprop="description">blog</h1>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+
+      
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>搜索</a>
+        </li>
+      
+    </ul>
+  
+
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+  
+  
+
+  
+
+  <span class="exturl github-corner" data-url="aHR0cHM6Ly9naXRodWIuY29tL2Zhbnpob25nd2Vp" title="Follow me on GitHub" aria-label="Follow me on GitHub"><svg width="80" height="80" viewbox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"/><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"/><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"/></svg></span>
+
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://www.fanzhongwei.com/engineering/uml.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="fanzhongwei">
+      <meta itemprop="description" content="个人经验总结：java、JavaScript、HTML、VUE等等">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="fanzhongwei">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">UML基础
+
+              
+            
+          </h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2020-03-29 00:00:00" itemprop="dateCreated datePublished" datetime="2020-03-29T00:00:00+08:00">2020-03-29</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2020-03-30 23:34:02" itemprop="dateModified" datetime="2020-03-30T23:34:02+08:00">2020-03-30</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/软件工程/" itemprop="url" rel="index"><span itemprop="name">软件工程</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/软件工程/读书笔记/" itemprop="url" rel="index"><span itemprop="name">读书笔记</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+              
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+            
+                <span class="post-meta-item-text">评论数：</span>
+                <a href="/engineering/uml.html#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="engineering/uml.html" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="post-meta-item-icon">
+            <i class="fa fa-eye"></i>
+             阅读次数： 
+            <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>近几年来，面向对象几乎成为软件技术的代名词。而UML是面向对象方法的一面旗帜，谈到面向对象的分析和设计就不能不谈到UML。如今UML也成为面向对象分析和设计事实上的行业标准。然而什么是UML，如何利用UML将一份原始需求经过层层分析和推导，最终形成可执行的代码？</p>
+<p><img src="https://s1.ax1x.com/2020/03/29/GVBGHf.png" alt="什么是UML.png"></p>
+<a id="more"></a>
+<h1 id="为什么需要uml"><a class="header-anchor" href="#为什么需要uml">¶</a>为什么需要UML</h1>
+<p>面向过程还是面向对象？</p>
+<h2 id="面向过程方法"><a class="header-anchor" href="#面向过程方法">¶</a>面向过程方法</h2>
+<p>面向过程方法认为我们的世界是由一个个相互关联的小系统组成的，每个小系统都有着明确的开始和明确的结束，开始和结束之间有着严谨的因果关系。只要我们将这个小系统中的每一个步骤和影响这个小系统走向的所有因素都分析出来，我们就能完全定义这个系统的行为。</p>
+<h2 id="面向对象方法"><a class="header-anchor" href="#面向对象方法">¶</a>面向对象方法</h2>
+<p>​       面向对象（Object Oriented，简称OO）方法将世界看作一个个相互独立的对象，相互之间并无因果关系，它们平时是“鸡犬之声相闻，老死不相往来”的。只有在某个外部力量的驱动下，对象之间才会依据某种规律相互传递信息。这些交互构成了这个生动世界的一个“过程”。在没有外力的情况下，对象则保持着“静止”的状态。</p>
+<ul>
+<li>对象是怎么被抽象出来的？现实世界和对象世界看上去差别是那么大，为什么要这么抽象而不是那么抽象呢？（Why）
+<ul>
+<li><strong>一种把现实世界映射到对象世界的方法</strong></li>
+</ul>
+</li>
+<li>对象世界由于其灵活性，可以任意组合，可是我们怎么知道某个组合就正好满足了现实世界的需求呢？什么样的组合是好的，什么样的组合是差的呢？（How）</li>
+<li><strong>一种从对象世界描述现实世界的方法</strong></li>
+<li>抛开现实世界，对象世界是如此的难以理解。如果只给我一个对象组合，我怎么才能理解它表达了怎样的含义呢？（What）</li>
+<li><strong>一种验证对象世界行为是否正确反映了现实世界的方法</strong></li>
+</ul>
+<h1 id="什么是uml"><a class="header-anchor" href="#什么是uml">¶</a>什么是UML</h1>
+<p>统一建模语言（Unified Modeling Language）是一种建模用的语言，而所有的语言都是由基本词汇和语法两个部分构成的，UML也不例外。UML定义了一些建立模型所需要的、表达某种特定含义的基本元素，这些元素称为元模型，相当于语言中的基本词汇，例如用例、类等。另外，UML还定义了这些元模型互相之间关系的规则，以及如何用这些元素和规则绘制图形以建立模型来映射现实世界；这些规则和图形称为表示法或视图（View），相当于语言中的语法。</p>
+<ul>
+<li>
+<p>统一</p>
+<ul>
+<li>秦始皇历史上的一大功绩便是统一语言和度量衡</li>
+<li>统一的目标就是形成标准，任何一种组件化开发模式背后都有一个标准在规范和指导，可以说没有标准就没有工业现代化，没有标准就没有编程组件化，这就是标准的意义。</li>
+</ul>
+</li>
+</ul>
+<h2 id="从现实世界到业务模型"><a class="header-anchor" href="#从现实世界到业务模型">¶</a>从现实世界到业务模型</h2>
+<p>这是把现实世界映射到对象世界的第一步。UML采用用例这一关键元素捕获了现实世界的人要做的事，再通过用例场景、领域模型等视图将现实世界的人、事、物、规则这些构成现实世界的元素用UML这种语言描述出来。</p>
+<p><img src="https://s1.ax1x.com/2020/03/29/GV35uQ.png" alt="从现实世界到业务模型.png"></p>
+<h2 id="从业务模型到概念模型"><a class="header-anchor" href="#从业务模型到概念模型">¶</a>从业务模型到概念模型</h2>
+<p>这是从对象世界来描述现实世界的方法。用例所代表的现实的业务过程，被“边界”、“控制”、“实体”以及“包”、“组件”等概念替代。而这些概念是可以被计算机理解的，是抽象化了的对象。现实世界千差万别的业务，都用“边界”、“控制”、“实体”这几个固定的元素来描述，也就是说，现实具体的业务被“抽象”成几个固定的概念。同时，这些概念还可以用“包”、“组件”等这些与现实世界毫不相关的纯计算机逻辑术语包装。这说明概念模型是计算机视角，或者说是对象视角，而且这些对象视角的分析类所描述的信息是从映射了现实世界的业务模型转化而来的。</p>
+<p><img src="https://s1.ax1x.com/2020/03/29/GV80P0.png" alt="从业务模型到概念模型.png"></p>
+<h2 id="从概念模型到设计模型"><a class="header-anchor" href="#从概念模型到设计模型">¶</a>从概念模型到设计模型</h2>
+<p>这是验证对象世界是否正确反映了现实世界的方法。“边界”、“控制”、“实体”这些对象化的概念，虽然是计算机可以理解的，但它并不是真正的对象实例，即它们并不是可执行代码，概念模型只是纸上谈兵。真正的对象世界行为是由Java类、C++类、EJB、COM+等这些可执行代码构成的。设计模型是概念模型在特定环境和条件下的“实例”化，实例化后的对象行为“执行”了概念模型描述的那些信息，因此设计模型得以通过概念模型追溯到原始需求来验证对象世界是否正确反映了现实世界。</p>
+<p><img src="https://s1.ax1x.com/2020/03/29/GV8RaR.png" alt="从概念模型到设计模型.png"></p>
+<p>如果把三个模型的建立过程综合起来，如下图所示：</p>
+<p><img src="https://s1.ax1x.com/2020/03/29/GVYhin.png" alt="GVYhin.png"></p>
+<p>从中我们可以更清楚地看到面向对象的困难是如何在模型的转化过程中解决的。这一过程看来是有规律、可推导、可追溯的过程。</p>
+<h1 id="uml核心视图"><a class="header-anchor" href="#uml核心视图">¶</a>UML核心视图</h1>
+<h2 id="静态视图"><a class="header-anchor" href="#静态视图">¶</a>静态视图</h2>
+<p>故名思义，静态视图就是表达静态事物的。它只描述事物的静态结构，而不描述其动态行为。静态视图包括用例图、类图和包图。</p>
+<h3 id="用例图"><a class="header-anchor" href="#用例图">¶</a>用例图</h3>
+<p>用例视图采用参与者和用例作为基本元素，以不同的视角展现系统的功能性需求。</p>
+<h4 id="业务用例视图"><a class="header-anchor" href="#业务用例视图">¶</a>业务用例视图</h4>
+<p>业务用例视图使用业务主角和业务用例展现业务建模的结果。</p>
+<ul>
+<li>业务主角视图</li>
+</ul>
+<p>从业务主角视角来展示业务主角在业务中使用哪些业务用例来达成业务目标。如果业务主角认为其所有目标都已经齐全，则认为针对此主角的业务用例定义完成，以此来检查是否有遗漏的业务用例没有发现。</p>
+<p><img src="https://s1.ax1x.com/2020/03/29/GZb1df.png" alt="业务主角视图.png"></p>
+<ul>
+<li>业务模块视图</li>
+</ul>
+<p>从业务模块视角来展示业务领域的业务目标，将参与了达成这一业务目标的业务主角与业务用例展现在这个视图中。如果这项业务能够被这些业务主角和业务用例完整地说明，则认为针对此业务模块的业务用例定义完成，以此来检查是否有遗漏的业务用例没有发现。</p>
+<p><img src="https://s1.ax1x.com/2020/03/29/GZWYuD.png" alt="业务模块视图.png"></p>
+<h4 id="业务用例实现视图"><a class="header-anchor" href="#业务用例实现视图">¶</a>业务用例实现视图</h4>
+<p>​		业务用例实现视图展现业务用例有哪些实现途径。业务用例是业务需求，而业务用例实现则是业务的实现途径，从软件工程的角度说，这个视图展示了需求的可追溯特点。</p>
+<p><img src="https://s1.ax1x.com/2020/03/29/GZq9fg.png" alt="业务用例视图.png"></p>
+<h4 id="概念用例视图"><a class="header-anchor" href="#概念用例视图">¶</a>概念用例视图</h4>
+<p>​		概念用例视图用于展现从业务用例中经过分析分解出来的关键概念用例，并表示概念用例和业务用例之间的关系。一般来说这些关系有扩展、包含和精化。</p>
+<p><img src="https://s1.ax1x.com/2020/03/29/GZLCE6.png" alt="概念用例视图.png"></p>
+<h4 id="系统用例视图"><a class="header-anchor" href="#系统用例视图">¶</a>系统用例视图</h4>
+<p>​		系统用例视图展现系统范围，将对业务用例进行分析以后得到的系统用例展现出来。系统用例视图就是系统的开发范围。</p>
+<p><img src="https://s1.ax1x.com/2020/03/29/GZLnbt.png" alt="系统用例视图.png"></p>
+<h4 id="系统用例实现视图"><a class="header-anchor" href="#系统用例实现视图">¶</a>系统用例实现视图</h4>
+<p>​		如果一个系统用例有多种实现方式，也应当为其绘制实现视图。</p>
+<p><img src="https://s1.ax1x.com/2020/03/29/GZL6M9.png" alt="系统用例实现视图.png"></p>
+<blockquote>
+<p>​		在实际项目中，不是所有的用例视图都一定要采用。根据情况可进行适当裁减，例如只保留业务用例视图和系统用例视图。在许多项目中实际上只有系统用例视图，不论如何，我们应当知道用例图在不同的生命周期阶段还有不同的表达，从而选择适合自己项目的视图。</p>
+</blockquote>
+<h4 id="常用元素参考"><a class="header-anchor" href="#常用元素参考">¶</a>常用元素参考</h4>
+<p><img src="https://s1.ax1x.com/2020/03/30/GeCCy8.png" alt="用例图常用元素.png"></p>
+<h3 id="类图"><a class="header-anchor" href="#类图">¶</a>类图</h3>
+<p>类图用于展示系统中的类及其相互之间的关系。本质上说，类图是现实世界问题领域的抽象对象的结构化、概念化、逻辑化描述。</p>
+<h4 id="概念层类图"><a class="header-anchor" href="#概念层类图">¶</a>概念层类图</h4>
+<p>概念层的观点认为，在这个层次的类图描述的是现实世界中问题领域的概念理解，类图中表达的类与现实世界的问题领域有着明显的对应关系，类之间的关系也与问题领域中实际事物的关系有着明显的对应关系。</p>
+<p><img src="https://s1.ax1x.com/2020/03/29/GZLXIf.png" alt="概念层类图.png"></p>
+<h4 id="说明层类图"><a class="header-anchor" href="#说明层类图">¶</a>说明层类图</h4>
+<p>​		说明层的观点认为，在这个层次的类图考察的是类的接口而不是实现，类图中表达的类和类关系应当是对问题领域在接口层次抽象的描述。</p>
+<p><img src="https://s1.ax1x.com/2020/03/29/GZOAoV.png" alt="说明层类图.png"></p>
+<h4 id="实现层类图"><a class="header-anchor" href="#实现层类图">¶</a>实现层类图</h4>
+<p>​		实现层观点认为，类是实现代码的描述，类图中的类直接映射到可执行代码。</p>
+<p><img src="https://s1.ax1x.com/2020/03/29/GZO3o6.png" alt="实现层类图.png"></p>
+<h4 id="常用元素参考-v2"><a class="header-anchor" href="#常用元素参考-v2">¶</a>常用元素参考</h4>
+<p><img src="https://s1.ax1x.com/2020/03/30/Ge9Xod.png" alt="类图常用元素.png"></p>
+<h3 id="包图"><a class="header-anchor" href="#包图">¶</a>包图</h3>
+<p>​		在实际项目中，建模过程中获得的元素是非常多的，如果要将这些元素的关系都绘制出来，将如同蜘蛛网一样难以辨别。通过包这个容器来从大到小、从粗到细地建立关系是一种很好的办法。</p>
+<p><img src="https://s1.ax1x.com/2020/03/29/GZO0eI.png" alt="网上购物-领域包图.png"></p>
+<p>​		在UML所有视图中，包图或许是最自由，约束最小的一种。除了特定的版型之外，包几乎可以用在任何阶段。</p>
+<p><img src="https://s1.ax1x.com/2020/03/29/GZO7fU.png" alt="层次包图.png"></p>
+<h2 id="动态视图"><a class="header-anchor" href="#动态视图">¶</a>动态视图</h2>
+<p>故名思义，动态视图是描述事物动态行为的。需要注意的是，动态视图不能够独立存在，它必须特指一个静态视图或UML元素，说明在静态视图规定的事物结构下它们的动态行为。动态视图包括活动图、状态图、时序图和协作图。</p>
+<h3 id="活动图"><a class="header-anchor" href="#活动图">¶</a>活动图</h3>
+<p>活动图描述了为了完成某一个目标需要做的活动以及这些活动的执行顺序。UML中有两个层面的活动图，一种用于描述用例场景，另一种用于描述对象交互。</p>
+<h4 id="用例活动图"><a class="header-anchor" href="#用例活动图">¶</a>用例活动图</h4>
+<p>用例活动图是最经常使用的。用例表达了参与者的一个目标，用例场景则描述了如何来达到这个目标。活动图用来描述用例场景，也就是通常所说的业务流程。</p>
+<p><img src="https://s1.ax1x.com/2020/03/29/GZXi1e.png" alt="登机手续用例场景活动图示例.png"></p>
+<h4 id="对象活动图"><a class="header-anchor" href="#对象活动图">¶</a>对象活动图</h4>
+<p>​		对象活动图用于展示对象的交互。</p>
+<p><img src="https://s1.ax1x.com/2020/03/29/GZXw3F.png" alt="对象活动图.png"></p>
+<h4 id="泳道"><a class="header-anchor" href="#泳道">¶</a>泳道</h4>
+<p>​		上面的活动图描述了业务流程中活动的执行顺序，却没有描述出谁来执行这些活动，即执行业务流程的职责被遗漏了。泳道技术的引入多多少少解决了活动图不能描述对象职责的遗憾。</p>
+<p><img src="https://s1.ax1x.com/2020/03/29/GZXOC8.png" alt="对象交互泳道图.png"></p>
+<blockquote>
+<p>​		状态图是很有用的技术，尤其在描述单个复杂对象的行为时非常有助于我们理解一个对象的行为。但是在建模时并不需要对每个对象都绘制状态图。建议，仅对领域模型中最为关键的业务对象，尤其是当其在一个或多个用例场景中参与了多个活动时，才对其建模。</p>
+</blockquote>
+<h4 id="常用元素参考-v3"><a class="header-anchor" href="#常用元素参考-v3">¶</a>常用元素参考</h4>
+<p><span class="exturl" data-url="aHR0cHM6Ly9pbWdjaHIuY29tL2kvR2U5Z0xG" title="https://imgchr.com/i/Ge9gLF"><img src="https://s1.ax1x.com/2020/03/30/Ge9gLF.png" alt="活动图常用元素.png"><i class="fa fa-external-link"></i></span></p>
+<h3 id="状态图"><a class="header-anchor" href="#状态图">¶</a>状态图</h3>
+<p>​		状态图显示一个状态机，通常使用状态图来说明业务角色或业务实体可能的状态——导致状态转换的事件和状态转换引起的操作。状态机主要用于描述对象的状态变化以确定何种行为改变了对象状态，以及对象状态变化对系统的影响。</p>
+<p><img src="https://s1.ax1x.com/2020/03/29/GZjkCT.png" alt="图书生命周期状态图.png"></p>
+<h4 id="常用元素参考-v4"><a class="header-anchor" href="#常用元素参考-v4">¶</a>常用元素参考</h4>
+<p><img src="https://s1.ax1x.com/2020/03/30/Ge9wIs.png" alt="状态图常用元素.png"></p>
+<h3 id="时序图"><a class="header-anchor" href="#时序图">¶</a>时序图</h3>
+<p>​		时序图用于描述按时间顺序排列的对象之间的交互模式；它按照参与交互的对象所具有的“生命线”和它们相互发送的消息来显示这些对象。在时序图中包含对象和主角实例，以及说明它们如何交互的消息。</p>
+<h4 id="业务模型时序图"><a class="header-anchor" href="#业务模型时序图">¶</a>业务模型时序图</h4>
+<p>​		业务模型时序图用于为领域模型中的业务实体交互建模，其目标是实现业务用例。在绘制业务实体时序图之前，你应当已经绘制了业务用例实现过程的活动图。</p>
+<p><img src="https://s1.ax1x.com/2020/03/29/GZjYKH.png" alt="网上购买商品业务模型时序图.png"></p>
+<h4 id="概念模型时序图"><a class="header-anchor" href="#概念模型时序图">¶</a>概念模型时序图</h4>
+<p>​		概念用例时序图通常是依据业务模型场景图来绘制的，它将业务模型场景用分析类重新绘制一遍，这样，既保留了实际业务需求，又得到了计算机实现的基本理念。</p>
+<p><img src="https://s1.ax1x.com/2020/03/29/GZjdat.png" alt="购买商品概念模型时序图片断.png"></p>
+<h4 id="设计模型时序图"><a class="header-anchor" href="#设计模型时序图">¶</a>设计模型时序图</h4>
+<p>​		设计模型时序图使用设计类作为对象绘制。目标是实现概念模型中的某个事件流，一般以一个完整交互为单位，消息细致到方法级别。</p>
+<p><img src="https://s1.ax1x.com/2020/03/29/GZjXIx.png" alt="登录和查询事件流设计模型时序图片断.png"></p>
+<blockquote>
+<p>​		时序图的三种应用场合是在建模过程中经常使用的动态视图。除了这些场合，在任何时候需要表达对象间的交互时，或者想分析对象的职责和接口时都可以使用时序图。</p>
+</blockquote>
+<h4 id="常用元素参考-v5"><a class="header-anchor" href="#常用元素参考-v5">¶</a>常用元素参考</h4>
+<p><img src="https://s1.ax1x.com/2020/03/30/GepX80.png" alt="时序图常用元素.png"></p>
+<h3 id="协作图"><a class="header-anchor" href="#协作图">¶</a>协作图</h3>
+<h4 id="业务模型协作图"><a class="header-anchor" href="#业务模型协作图">¶</a>业务模型协作图</h4>
+<p>​		业务模型协作图同样采用业务实体来绘制，目标也是实现用例场景。不过有时候协作图并不要求实现完整的场景，只需要将影响对象的关键消息绘制出来即可。因为协作图更在意的是对象的结构及其相互的影响。</p>
+<p><img src="https://s1.ax1x.com/2020/03/29/GZvFeA.png" alt="业务模型协作图.png"></p>
+<blockquote>
+<p>某些建模工具（rose powerdesigner）可以直接把时序图转化为协作图</p>
+</blockquote>
+<h4 id="概念模型协作图"><a class="header-anchor" href="#概念模型协作图">¶</a>概念模型协作图</h4>
+<p>​		与时序图相同，概念阶段的协作图采用分析类来绘制，目标是实现业务用例。同样这个阶段的协作图已经带有计算机理解。</p>
+<p><img src="https://s1.ax1x.com/2020/03/29/GZvnSS.png" alt="购买商品概念模型协作图片断.png"></p>
+<h4 id="设计模型协作图"><a class="header-anchor" href="#设计模型协作图">¶</a>设计模型协作图</h4>
+<p>​		与时序图相同，设计模型协作图使用设计类为对象来绘制。目标是实现概念模型中的某个事件流，一般以一个完整交互为单位，消息细致到方法级别。</p>
+<p><img src="https://s1.ax1x.com/2020/03/29/GZvKyQ.png" alt="登录和查询事件流设计模型协作图片断.png"></p>
+<h4 id="常用元素参考-v6"><a class="header-anchor" href="#常用元素参考-v6">¶</a>常用元素参考</h4>
+<p><img src="https://s1.ax1x.com/2020/03/30/Gep9ht.png" alt="协作图常用元素.png"></p>
+<h2 id="参考文献"><a class="header-anchor" href="#参考文献">¶</a>参考文献</h2>
+<ul>
+<li>《大象：Thinking in UML（第二版）》</li>
+</ul>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/软件开发/" rel="tag"># 软件开发</a>
+          
+            <a href="/tags/UML/" rel="tag"># UML</a>
+          
+            <a href="/tags/统一建模语言/" rel="tag"># 统一建模语言</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/engineering/software-develop-model.html" rel="next" title="软件开发模型">
+                <i class="fa fa-chevron-left"></i> 软件开发模型
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+      </div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">fanzhongwei</p>
+              <div class="site-description motion-element" itemprop="description">个人经验总结：java、JavaScript、HTML、VUE等等</div>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">13</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  
+                    
+                      <a href="/categories/">
+                    
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">7</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  
+                    
+                      <a href="/tags/">
+                    
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">28</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL2Zhbnpob25nd2Vp" title="GitHub &rarr; https://github.com/fanzhongwei"><i class="fa fa-fw fa-github"></i>GitHub</span>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <span class="exturl" data-url="bWFpbHRvOmZ6d3Rpbmd5dUAxNjMuY29t" title="E-Mail &rarr; mailto:fzwtingyu@163.com"><i class="fa fa-fw fa-envelope"></i>E-Mail</span>
+                </span>
+              
+            </div>
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#为什么需要uml"><span class="nav-number">1.</span> <span class="nav-text">¶为什么需要UML</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#面向过程方法"><span class="nav-number">1.1.</span> <span class="nav-text">¶面向过程方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#面向对象方法"><span class="nav-number">1.2.</span> <span class="nav-text">¶面向对象方法</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#什么是uml"><span class="nav-number">2.</span> <span class="nav-text">¶什么是UML</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#从现实世界到业务模型"><span class="nav-number">2.1.</span> <span class="nav-text">¶从现实世界到业务模型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#从业务模型到概念模型"><span class="nav-number">2.2.</span> <span class="nav-text">¶从业务模型到概念模型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#从概念模型到设计模型"><span class="nav-number">2.3.</span> <span class="nav-text">¶从概念模型到设计模型</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#uml核心视图"><span class="nav-number">3.</span> <span class="nav-text">¶UML核心视图</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#静态视图"><span class="nav-number">3.1.</span> <span class="nav-text">¶静态视图</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#用例图"><span class="nav-number">3.1.1.</span> <span class="nav-text">¶用例图</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#业务用例视图"><span class="nav-number">3.1.1.1.</span> <span class="nav-text">¶业务用例视图</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#业务用例实现视图"><span class="nav-number">3.1.1.2.</span> <span class="nav-text">¶业务用例实现视图</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#概念用例视图"><span class="nav-number">3.1.1.3.</span> <span class="nav-text">¶概念用例视图</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#系统用例视图"><span class="nav-number">3.1.1.4.</span> <span class="nav-text">¶系统用例视图</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#系统用例实现视图"><span class="nav-number">3.1.1.5.</span> <span class="nav-text">¶系统用例实现视图</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#常用元素参考"><span class="nav-number">3.1.1.6.</span> <span class="nav-text">¶常用元素参考</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#类图"><span class="nav-number">3.1.2.</span> <span class="nav-text">¶类图</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#概念层类图"><span class="nav-number">3.1.2.1.</span> <span class="nav-text">¶概念层类图</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#说明层类图"><span class="nav-number">3.1.2.2.</span> <span class="nav-text">¶说明层类图</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#实现层类图"><span class="nav-number">3.1.2.3.</span> <span class="nav-text">¶实现层类图</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#常用元素参考-v2"><span class="nav-number">3.1.2.4.</span> <span class="nav-text">¶常用元素参考</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#包图"><span class="nav-number">3.1.3.</span> <span class="nav-text">¶包图</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#动态视图"><span class="nav-number">3.2.</span> <span class="nav-text">¶动态视图</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#活动图"><span class="nav-number">3.2.1.</span> <span class="nav-text">¶活动图</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#用例活动图"><span class="nav-number">3.2.1.1.</span> <span class="nav-text">¶用例活动图</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#对象活动图"><span class="nav-number">3.2.1.2.</span> <span class="nav-text">¶对象活动图</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#泳道"><span class="nav-number">3.2.1.3.</span> <span class="nav-text">¶泳道</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#常用元素参考-v3"><span class="nav-number">3.2.1.4.</span> <span class="nav-text">¶常用元素参考</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#状态图"><span class="nav-number">3.2.2.</span> <span class="nav-text">¶状态图</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#常用元素参考-v4"><span class="nav-number">3.2.2.1.</span> <span class="nav-text">¶常用元素参考</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#时序图"><span class="nav-number">3.2.3.</span> <span class="nav-text">¶时序图</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#业务模型时序图"><span class="nav-number">3.2.3.1.</span> <span class="nav-text">¶业务模型时序图</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#概念模型时序图"><span class="nav-number">3.2.3.2.</span> <span class="nav-text">¶概念模型时序图</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#设计模型时序图"><span class="nav-number">3.2.3.3.</span> <span class="nav-text">¶设计模型时序图</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#常用元素参考-v5"><span class="nav-number">3.2.3.4.</span> <span class="nav-text">¶常用元素参考</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#协作图"><span class="nav-number">3.2.4.</span> <span class="nav-text">¶协作图</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#业务模型协作图"><span class="nav-number">3.2.4.1.</span> <span class="nav-text">¶业务模型协作图</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#概念模型协作图"><span class="nav-number">3.2.4.2.</span> <span class="nav-text">¶概念模型协作图</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#设计模型协作图"><span class="nav-number">3.2.4.3.</span> <span class="nav-text">¶设计模型协作图</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#常用元素参考-v6"><span class="nav-number">3.2.4.4.</span> <span class="nav-text">¶常用元素参考</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考文献"><span class="nav-number">3.3.</span> <span class="nav-text">¶参考文献</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2019 – <span itemprop="copyrightYear">2020</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">fanzhongwei</span>
+
+  
+
+  
+</div>
+
+
+  <div class="powered-by">由 <span class="exturl theme-link" data-url="aHR0cHM6Ly9oZXhvLmlv">Hexo</span> 强力驱动 v3.8.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 – <span class="exturl theme-link" data-url="aHR0cHM6Ly90aGVtZS1uZXh0Lm9yZw==">NexT.Pisces</span> v7.1.0</div>
+
+	<div class="BbeiAn-info">
+		<a target="_blank" href="http://www.beian.miit.gov.cn/">蜀ICP备17004833号-1</a>
+	</div>
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+
+  
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+          <span id="scrollpercent"><span>0</span>%</span>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+      <div>
+        <div class="addthis_inline_share_toolbox">
+  <script src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-5caee68d1b93531b" async="async"></script>
+</div>
+
+      </div>
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+    
+    
+  
+  <script color="0,0,255" opacity="0.5" zindex="-1" count="99" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/utils.js?v=7.1.0"></script>
+
+  <script src="/js/motion.js?v=7.1.0"></script>
+
+  <script src="/js/pull-refresh.js?v=7.1.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/affix.js?v=7.1.0"></script>
+
+  <script src="/js/schemes/pisces.js?v=7.1.0"></script>
+
+
+
+  
+  <script src="/js/scrollspy.js?v=7.1.0"></script>
+<script src="/js/post-details.js?v=7.1.0"></script>
+
+
+
+  
+
+
+  <script src="/js/next-boot.js?v=7.1.0"></script>
+
+
+  
+
+  
+  <script src="/js/exturl.js?v=7.1.0"></script>
+
+
+  
+
+  
+  
+  <script id="dsq-count-scr" src="https://fanzhongwei.disqus.com/count.js" async></script>
+
+
+<script>
+  var disqus_config = function() {
+    this.page.url = "https://www.fanzhongwei.com/engineering/uml.html";
+    this.page.identifier = "engineering/uml.html";
+    this.page.title = 'UML基础';
+    };
+  function loadComments() {
+    var d = document, s = d.createElement('script');
+    s.src = 'https://fanzhongwei.disqus.com/embed.js';
+    s.setAttribute('data-timestamp', '' + +new Date());
+    (d.head || d.body).appendChild(s);
+  }
+  
+    $(function() {
+      var offsetTop = $('#comments').offset().top - $(window).height();
+      if (offsetTop <= 0) {
+        // load directly when there's no a scrollbar
+        loadComments();
+      } else {
+        $(window).on('scroll.disqus_scroll', function() {
+          // offsetTop may changes because of manually resizing browser window or lazy loading images.
+          var offsetTop = $('#comments').offset().top - $(window).height();
+          var scrollTop = $(window).scrollTop();
+
+          // pre-load comments a bit? (margin or anything else)
+          if (offsetTop - scrollTop < 60) {
+            $(window).off('.disqus_scroll');
+            loadComments();
+          }
+        });
+      }
+    });
+  
+</script>
+
+
+
+
+
+  
+    
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/disqusjs@1/dist/disqusjs.css">
+
+
+
+<script src="//cdn.jsdelivr.net/npm/disqusjs@1/dist/disqus.js"></script>
+
+<script>
+  var dsqjs = new DisqusJS({
+    api: 'https://disqus.skk.moe/disqus/' || 'https://disqus.com/api/',
+    apikey: 'yeI3c68e36COmAnaJ0W8enNe62iyRL60APc1qYStSbMXCuXb1Hl57OKpqbA3AXjB',
+    shortname: 'fanzhongwei'
+  });
+</script>
+
+  
+
+
+  
+  <script>
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url).replace(/\/{2,}/g, '/');
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x"></i></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x"></i></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

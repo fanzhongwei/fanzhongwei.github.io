@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>电子名片</title>
+
+    <!-- 最新版本的 Bootstrap 核心 CSS 文件 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+    <style type="text/css">
+        .main{
+            margin: 50px auto;
+            width: 500px;
+            height: 300px;
+            background-color: #fff;
+            position: relative;
+            overflow: hidden;
+            border-radius: 15px;
+        }
+        .top{
+            width: 500px;
+            height: 125px;
+            background-image: url(https://s2.ax1x.com/2019/08/26/mfv2kV.png);
+            background-repeat: no-repeat;
+            background-size: cover;
+            position: relative;
+            transition: ease-in all 0.5s;
+        }
+        .main:hover .top {
+            filter: grayscale(100%);
+            transition: ease-out all 0.5s;
+        }
+        .icon-outer{
+            width: 135px;
+            height: 135px;
+            position: absolute;
+            border-radius: 50%;
+            background-color: #FFFFFF;
+            margin: 0 auto;
+            left: 7%;
+            top: 12%;
+        }
+        .icon{
+            width: 120px;
+            height: 120px;
+            position: absolute;
+            top: 6%;
+            left: 6%;
+            z-index: 100;
+            border-radius: 50%;
+            background-image: url(https://s2.ax1x.com/2019/08/26/mh9MMF.png);
+            background-repeat: no-repeat;
+            background-size: cover;
+            transition: ease-in all 0.5s;
+        }
+        .main:hover .icon {
+            filter: grayscale(100%);
+            transition: ease-out all 0.5s;
+        }
+        .content{
+            background-color: #fefefe;
+            position: absolute;
+            bottom: 0;
+            width: 500px;
+            height: 110px;
+        }
+        .item{
+            margin: 10px 0;
+        }
+        .content-left{
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 190px;
+            bottom: 0;
+        }
+        .content-right{
+            position: absolute;
+            right: 0;
+            top: -45px;
+            bottom: 0;
+            width: 310px;
+        }
+        .name{
+            font-size: 18px;
+            letter-spacing: 10px;
+            color: #000;
+            font-family: 'Open Sans', sans-serif;
+            z-index: 100;
+            margin-top: -15px;
+        }
+        .right-inside-box{
+            border: 1px solid #c2d9eb;
+            height: 140px;
+            width: 295px;
+            border-radius: 10px;
+            top: -38px !important;
+            padding: 0 10px;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="main">
+        <div class="top"></div>
+        <div class="icon-outer">
+            <div class="icon"></div>
+        </div>
+        <div class="content">
+            <div class="content-left">
+                <div class="item text-center name">范中伟</div>
+                <div class="item text-center"><i class="glyphicon glyphicon-education"></i> 高级软件工程师</div>
+                <div class="item text-center"><i class="glyphicon glyphicon-earphone"></i> 173 5856 2295</div>
+            </div>
+            <div class="content-right">
+                <div class="right-inside-box">
+                    <div class="item">
+                        <div>
+                            <a href="http://www.thunisoft.com/">
+                                <i class="glyphicon glyphicon-home"></i> 北京华宇信息技术有限公司
+                                <div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;成都研发中心</div>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="item">
+                        <a target="_blank" href="https://map.baidu.com/search/%E6%88%90%E9%83%BD%E5%B8%82%E9%AB%98%E6%96%B0%E5%8C%BA%E5%90%89%E7%91%9E%E4%B8%89%E8%B7%AF99%E5%8F%B7%E7%9A%87%E5%BA%AD%E5%9B%BD%E9%99%85%E4%B8%AD%E5%BF%83a%E5%BA%A78%E5%B1%82/@11585373.17,3554002.64,19z?querytype=s&da_src=shareurl&wd=%E6%88%90%E9%83%BD%E5%B8%82%E9%AB%98%E6%96%B0%E5%8C%BA%E5%90%89%E7%91%9E%E4%B8%89%E8%B7%AF99%E5%8F%B7%E7%9A%87%E5%BA%AD%E5%9B%BD%E9%99%85%E4%B8%AD%E5%BF%83A%E5%BA%A78%E5%B1%82&c=75&src=0&pn=0&sug=0&l=13&b=(11562883,3544957;11614083,3569117)&from=webmap&biz_forward=%7B%22scaler%22:1,%22styles%22:%22pl%22%7D&device_ratio=1">
+                            <i class="glyphicon glyphicon-map-marker"></i> 成都市高新区吉瑞三路99号皇庭国际中心A座8层
+                        </a>
+                    </div>
+                    <div class="item">
+                        <a href="mailto:fanzhongwei@thunisoft.com">
+                            <i class="glyphicon glyphicon-envelope"></i> fanzhongwei@thunisoft.com
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

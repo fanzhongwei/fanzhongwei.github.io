@@ -1,0 +1,1690 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+  <meta http-equiv="Cache-Control" content="no-transform">
+  <meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+  <meta name="google-site-verification" content="5LFoOb-y-oi59dy2QaWFWoDyyW34_mMWX5MMvqJmVYo">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
+
+<link rel="stylesheet" href="/css/main.css?v=7.1.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/imagesfavicon.ico?v=7.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico?v=7.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.ico?v=7.1.0">
+
+
+  <link rel="mask-icon" href="/images/favicon.ico?v=7.1.0" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '7.1.0',
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false,"dimmer":false},
+    back2top: true,
+    back2top_sidebar: false,
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+<link rel="stylesheet" href="/lib/mescroll/mescroll.min.css?v=1.4.1">
+<script src="/lib/mescroll/mescroll.min.js?v=1.4.1" charset="utf-8"></script>
+
+
+  <meta name="description" content="第一次接触软件工程还是在学校的课本上，初识软件开发模型（或软件生命周期模型），工作几年之后对其终于有了一些了解。 趁着这次读《系统架构设计师教程》，做个读书笔记。">
+<meta name="keywords" content="软件开发模型,software develop model,软件生命周期模型 - 敏捷开发">
+<meta property="og:type" content="article">
+<meta property="og:title" content="软件开发模型">
+<meta property="og:url" content="https://www.fanzhongwei.com/engineering/software-develop-model.html">
+<meta property="og:site_name" content="fanzhongwei">
+<meta property="og:description" content="第一次接触软件工程还是在学校的课本上，初识软件开发模型（或软件生命周期模型），工作几年之后对其终于有了一些了解。 趁着这次读《系统架构设计师教程》，做个读书笔记。">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1578237412825&di=0c0043ac5c95f6b861a856d0658b3f5c&imgtype=0&src=http%3A%2F%2Fwww.3deepspace.com%2Fwp-content%2Fuploads%2F2017%2F01%2Fsoftware-1024x410.png">
+<meta property="og:image" content="https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=243514752,3051001484&fm=26&gp=0.jpg">
+<meta property="og:image" content="http://31.toocle.com/Upload/zk/glbk/20089208594231277801.jpg">
+<meta property="og:image" content="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1578241562076&di=db491622b4faa6fcd83ed170ce9e13b6&imgtype=jpg&src=http%3A%2F%2Fimg4.imgtn.bdimg.com%2Fit%2Fu%3D920587864%2C3768004844%26fm%3D214%26gp%3D0.jpg">
+<meta property="og:image" content="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1578284082568&di=a665e58c158964f839fc739660580cce&imgtype=jpg&src=http%3A%2F%2Fimg3.imgtn.bdimg.com%2Fit%2Fu%3D2873046283%2C4198849095%26fm%3D214%26gp%3D0.jpg">
+<meta property="og:image" content="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1578285715275&di=fd8ff6300c55f97f912b110aef1d5ff9&imgtype=0&src=http%3A%2F%2Fwww.cnitpm.com%2Fupload%2F2013-04%2F201304091646335151.jpg">
+<meta property="og:image" content="http://www.uml.org.cn/SoftWareProcess/images/2018081544.png">
+<meta property="og:image" content="http://www.uml.org.cn/SoftWareProcess/images/2018081545.png">
+<meta property="og:updated_time" content="2020-03-30T15:34:02.371Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="软件开发模型">
+<meta name="twitter:description" content="第一次接触软件工程还是在学校的课本上，初识软件开发模型（或软件生命周期模型），工作几年之后对其终于有了一些了解。 趁着这次读《系统架构设计师教程》，做个读书笔记。">
+<meta name="twitter:image" content="https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1578237412825&di=0c0043ac5c95f6b861a856d0658b3f5c&imgtype=0&src=http%3A%2F%2Fwww.3deepspace.com%2Fwp-content%2Fuploads%2F2017%2F01%2Fsoftware-1024x410.png">
+
+
+
+
+
+  
+  
+  <link rel="canonical" href="https://www.fanzhongwei.com/engineering/software-develop-model">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>软件开发模型 | fanzhongwei</title>
+  
+
+
+
+
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?c7a6634d526ddd253a5092f6656f4ef6";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">fanzhongwei</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <h1 class="site-subtitle" itemprop="description">blog</h1>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+
+      
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>搜索</a>
+        </li>
+      
+    </ul>
+  
+
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+  
+  
+
+  
+
+  <span class="exturl github-corner" data-url="aHR0cHM6Ly9naXRodWIuY29tL2Zhbnpob25nd2Vp" title="Follow me on GitHub" aria-label="Follow me on GitHub"><svg width="80" height="80" viewbox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"/><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"/><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"/></svg></span>
+
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://www.fanzhongwei.com/engineering/software-develop-model.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="fanzhongwei">
+      <meta itemprop="description" content="个人经验总结：java、JavaScript、HTML、VUE等等">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="fanzhongwei">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">软件开发模型
+
+              
+            
+          </h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2020-01-05 00:00:00" itemprop="dateCreated datePublished" datetime="2020-01-05T00:00:00+08:00">2020-01-05</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2020-03-30 23:34:02" itemprop="dateModified" datetime="2020-03-30T23:34:02+08:00">2020-03-30</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/软件工程/" itemprop="url" rel="index"><span itemprop="name">软件工程</span></a></span>
+
+                
+                
+                  ，
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/软件工程/读书笔记/" itemprop="url" rel="index"><span itemprop="name">读书笔记</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+              
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+            
+                <span class="post-meta-item-text">评论数：</span>
+                <a href="/engineering/software-develop-model.html#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="engineering/software-develop-model.html" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="post-meta-item-icon">
+            <i class="fa fa-eye"></i>
+             阅读次数： 
+            <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>第一次接触软件工程还是在学校的课本上，初识软件开发模型（或软件生命周期模型），工作几年之后对其终于有了一些了解。<br>
+趁着这次读《系统架构设计师教程》，做个读书笔记。</p>
+<p><img src="https://timgsa.baidu.com/timg?image&amp;quality=80&amp;size=b9999_10000&amp;sec=1578237412825&amp;di=0c0043ac5c95f6b861a856d0658b3f5c&amp;imgtype=0&amp;src=http%3A%2F%2Fwww.3deepspace.com%2Fwp-content%2Fuploads%2F2017%2F01%2Fsoftware-1024x410.png" alt="ZSUqoT.png"></p>
+<a id="more"></a>
+<h1 id="软件开发生命周期"><a class="header-anchor" href="#软件开发生命周期">¶</a>软件开发生命周期</h1>
+<p>​		传统的软件生命周期是指<strong>软件产品从形成概念开始，经过定义、开发、使用和维护，直到最后被废弃（不能再使用）为止的全过程。</strong></p>
+<h1 id="软件开发模型"><a class="header-anchor" href="#软件开发模型">¶</a>软件开发模型</h1>
+<p>​		软件生存周期模型又称软件开发模型（software develop model）或软件过程模型（software process model），它是<strong>从某一个特定角度提出的软件过程的简化描述</strong>。</p>
+<p>​		软件过程模型的基本概念：软件过程是制作软件产品的一组活动以及结果，这些活动主要由软件人员来完成，软件活动主要如下：</p>
+<ul>
+<li>
+<p>软件描述</p>
+</li>
+<li>
+<p>软件开发</p>
+</li>
+<li>
+<p>软件有效性验证</p>
+</li>
+<li>
+<p>软件进化</p>
+</li>
+</ul>
+<p>软件过程模型是软件工程的重要内容，它为软件工程管理提供<strong>里程碑</strong>，为软件开发过程提供<strong>原则和方法</strong>。</p>
+<h2 id="瀑布模型"><a class="header-anchor" href="#瀑布模型">¶</a>瀑布模型</h2>
+<p>瀑布模型（waterfall model）可以说是最早使用的软件生命周期模型之一。该模型描述的活动从一个阶段到另一个阶段逐次下降，它的工作流程形式上又很想瀑布，该模型如下图所示：</p>
+<p><img src="https://ss2.bdstatic.com/70cFvnSh_Q1YnxGkpoWK1HF6hhy/it/u=243514752,3051001484&amp;fm=26&amp;gp=0.jpg" alt="瀑布模型.png"></p>
+<p><strong>特点:</strong></p>
+<ul>
+<li>阶段间具有顺序性和依赖性:
+<ul>
+<li>因果关系紧密相连：前一阶段完成后，才能开始后一阶段。</li>
+<li>前一个阶段工作的结果是后一个阶段工作的输入</li>
+</ul>
+</li>
+<li>质量保证:
+<ul>
+<li>每个阶段必须交付出合格的文档</li>
+<li>对文档进行审核</li>
+</ul>
+</li>
+</ul>
+<p><strong>缺点：</strong></p>
+<ul>
+<li>软件需求分析的准确性很难确定</li>
+<li>初始版本周期长</li>
+<li>如果改变需求，代价巨大</li>
+</ul>
+<h2 id="原型模型"><a class="header-anchor" href="#原型模型">¶</a>原型模型</h2>
+<p>​		原型模型（prototype model）又称快速原型。由于瀑布模型的缺点，人们借助建筑师、工程师建造原型的经验，提出了原型模型。原型模型主要有两个阶段，如下图所示：</p>
+<p><img src="http://31.toocle.com/Upload/zk/glbk/20089208594231277801.jpg" alt="原型模型.png"></p>
+<ul>
+<li><strong>原型开发阶段</strong>：根据用户提出的软件系统定义，快速地开发一个原型。
+<ul>
+<li>利用模拟软件系统的人机界面和人机交互方式。</li>
+<li>真正开发一个原型。</li>
+<li>找一个或多个正在运行的类似软件进行比较。</li>
+</ul>
+</li>
+<li>目标软件开发阶段。</li>
+</ul>
+<p>使用原型模型应该注意：</p>
+<ul>
+<li>
+<p>要有一定的开发环境和工具支持。</p>
+</li>
+<li>
+<p>经过对原型的若干次修改，应<strong>收敛到目标范围内</strong>，否则可能会失败。</p>
+</li>
+<li>
+<p>用户对系统模糊不清，无法准确回答目标系统的需求。</p>
+</li>
+<li>
+<p>对于大型软件来说，原型可能非常复杂而难以快速形成，如果没有现成的，就不应该考虑原型法。</p>
+</li>
+</ul>
+<h2 id="螺旋模型"><a class="header-anchor" href="#螺旋模型">¶</a>螺旋模型</h2>
+<p>​		螺旋模型（Spiral Model）是在快速原型的基础上扩展而成，实际上，它是<strong>软件生命周期模型与原型模型的一个结合</strong>，如下图所示：</p>
+<p><img src="https://timgsa.baidu.com/timg?image&amp;quality=80&amp;size=b9999_10000&amp;sec=1578241562076&amp;di=db491622b4faa6fcd83ed170ce9e13b6&amp;imgtype=jpg&amp;src=http%3A%2F%2Fimg4.imgtn.bdimg.com%2Fit%2Fu%3D920587864%2C3768004844%26fm%3D214%26gp%3D0.jpg" alt="螺旋模型.png"></p>
+<p>该模型将整个软件开发流程分为多个阶段，每个阶段都由4部分组成：</p>
+<ul>
+<li>目标设定</li>
+<li>风险分析</li>
+<li>开发和有效性验证</li>
+<li>评审</li>
+</ul>
+<p>螺旋模型的软件开发过程实际上是上述4个部分的迭代过程，每迭代一次，螺旋线就增加一周，代表软件的一个新版本。<strong>经过若干次迭代后，系统应尽快收敛到用户允许或可以接受的目标范围。</strong></p>
+<p><strong>优点:</strong></p>
+<ul>
+<li>设计上的灵活性,可以在项目的各个阶段进行变更。</li>
+<li>以小的分段来构建大型系统，使成本计算变得简单容易。</li>
+<li>客户始终参为保证了项目不偏离正确方向以及项目的可控性。</li>
+<li>客户始终掌握项目的最新信息，从而他或她能够和管理层有效地交互。</li>
+<li>客户认可这种公司内部的开发方式带来的良好的沟通和高质量的产品。</li>
+</ul>
+<p><strong>缺点:</strong></p>
+<p>​		很难让用户确信这种演化方法的结果是可以控制的。建设周期长，而软件技术发展比较快，所以经常出现软件开发完毕后，和当前的技术水平有了较大的差距，无法满足当前用户需求。</p>
+<h2 id="增量模型"><a class="header-anchor" href="#增量模型">¶</a>增量模型</h2>
+<p>增量模型（Incremental Model）把待开发的软件系统模块化，将每个模块作为一个增量组件，从而分批次地分析、设计、编码和测试这些增量组件，如下图所示：</p>
+<p><img src="https://timgsa.baidu.com/timg?image&amp;quality=80&amp;size=b9999_10000&amp;sec=1578284082568&amp;di=a665e58c158964f839fc739660580cce&amp;imgtype=jpg&amp;src=http%3A%2F%2Fimg3.imgtn.bdimg.com%2Fit%2Fu%3D2873046283%2C4198849095%26fm%3D214%26gp%3D0.jpg" alt="增量模型.png"></p>
+<p><strong>困难</strong>:</p>
+<p>每个新的构件集成到现有的软件结构中必须破坏原来以开发的产品，所以必须定义很好的接口。</p>
+<p><strong>优点</strong>:</p>
+<ul>
+<li>短时间内向用户提供可完成部分工作的产品。</li>
+<li>逐步增加产品功能可以使用户有时间了解和适应新产品。</li>
+<li>开放结构的软件拥有的维护性明显好于封闭结构的软件。</li>
+</ul>
+<p><strong>缺点</strong>：</p>
+<ul>
+<li>容易退化为边做边改模型，从而使软件过程的控制失去整体性。</li>
+<li>如果增量包之间存在相交的情况且未很好处理，则必须做全盘系统分析。</li>
+</ul>
+<h2 id="喷泉模型"><a class="header-anchor" href="#喷泉模型">¶</a>喷泉模型</h2>
+<p>​		喷泉模型（fountain model）是一种<strong>以用户需求为动力，以对象为驱动</strong>的模型，主要用于描述面向对象的软件开发过程。该模型认为软件开发过程自下而上周期的各阶段是相互迭代和无间隙的特性，该模型如下图所示：</p>
+<p><img src="https://timgsa.baidu.com/timg?image&amp;quality=80&amp;size=b9999_10000&amp;sec=1578285715275&amp;di=fd8ff6300c55f97f912b110aef1d5ff9&amp;imgtype=0&amp;src=http%3A%2F%2Fwww.cnitpm.com%2Fupload%2F2013-04%2F201304091646335151.jpg" alt="喷泉模型.png"></p>
+<p><strong>优点</strong>:</p>
+<ul>
+<li>喷泉模型不像瀑布模型那样，需要分析活动结束后才开始设计活动，设计活动结束后才开始编码活动。</li>
+<li>该模型的各个阶段没有明显的界限，开发人员可以同步进行开发。</li>
+<li>可以提高软件项目开发效率，节省开发时间，适应于面向对象的软件开发过程。</li>
+</ul>
+<p><strong>缺点</strong>:</p>
+<ul>
+<li>由于喷泉模型在各个开发阶段是重叠的，因此在开发过程中需要大量的开发人员，因此不利于项目的管理。</li>
+<li>这种模型要求严格管理文档，使得审核的难度加大，尤其是面对可能随时加入各种信息、需求与资料的情况。</li>
+</ul>
+<h1 id="敏捷开发"><a class="header-anchor" href="#敏捷开发">¶</a>敏捷开发</h1>
+<p>敏捷开发以用户的需求进化为核心，采用迭代、循序渐进的方法进行软件开发，其核心思想主要有以下三点：</p>
+<ul>
+<li><strong>适应型</strong>，而非可预测型。</li>
+<li><strong>以人为本</strong>，而非已过程为本。</li>
+<li>迭代增量式的开发过程。</li>
+</ul>
+<p>敏捷开发知识体系整体框架</p>
+<p><img src="http://www.uml.org.cn/SoftWareProcess/images/2018081544.png" alt="img"></p>
+<p><img src="http://www.uml.org.cn/SoftWareProcess/images/2018081545.png" alt></p>
+<h2 id="敏捷软件开发宣言"><a class="header-anchor" href="#敏捷软件开发宣言">¶</a>敏捷软件开发宣言</h2>
+<ul>
+<li>
+<p>个体和交互胜过过程和工具。</p>
+<p>以人为本，强调个体及个体间的沟通与协作在软件开发过程中的重要性。</p>
+</li>
+<li>
+<p>可以工作的软件胜过面面俱到的文档。</p>
+<p>目标导向，自解释的友好的代码和架构。</p>
+</li>
+<li>
+<p>客户合作胜过合同谈判。</p>
+<p>客户为先，理解客户的需求，懂得如何与客户合作。</p>
+</li>
+<li>
+<p>响应变化胜过遵循计划。</p>
+<p>拥抱变化，在客户断变化的需求中了解其真正的需要。</p>
+</li>
+</ul>
+<h2 id="敏捷宣言遵循的原则"><a class="header-anchor" href="#敏捷宣言遵循的原则">¶</a>敏捷宣言遵循的原则</h2>
+<ul>
+<li>
+<p>我们最优先要做的是通过尽早的、持续的交付有价值的软件来使客户满意。</p>
+</li>
+<li>
+<p>即使到了开发的后期，也欢迎改变需求。敏捷过程利用变化来为客户创造竞争优势。</p>
+</li>
+<li>
+<p>经常性地交付可以工作的软件，交付的间隔可以从几个星期到几个月，交付的时间间隔越短越好。</p>
+</li>
+<li>
+<p>在整个项目开发期间，业务人员和开发人员必须天天都在一起工作。</p>
+</li>
+<li>
+<p>围绕被激励起来的个体来构建项目。给他们提供所需的环境和支持，并且信任他们能够完成工作。</p>
+</li>
+<li>
+<p>在团队内部，最具有效果并且富有效率的传递信息的方法，就是面对面的交谈。</p>
+</li>
+<li>
+<p>工作的软件是首要的进度度量标准。</p>
+</li>
+<li>
+<p>敏捷过程提倡可持续的开发速度。责任人、开发者和用户应该能够保持一个长期的、恒定的开发速度。</p>
+</li>
+<li>
+<p>不断地关注优秀的技能和好的设计会增强敏捷能力。</p>
+</li>
+<li>
+<p>简单——使未完成的工作最大化的艺术——是根本的。</p>
+</li>
+<li>
+<p>最好的构架、需求和设计是出自于自组织的团队。</p>
+</li>
+<li>
+<p>每隔一定时间，团队会在如何才能更有效地工作方面进行反省，然后相应地对自己的行为进行调整。</p>
+</li>
+</ul>
+<h2 id="敏捷设计"><a class="header-anchor" href="#敏捷设计">¶</a>敏捷设计</h2>
+<h3 id="拙劣设计的症状"><a class="header-anchor" href="#拙劣设计的症状">¶</a>拙劣设计的症状</h3>
+<p>僵化性：设计难以改变。</p>
+<p>脆弱性：设计易于遭到破坏。</p>
+<p>牢固性：设计难以重用。</p>
+<p>粘滞性：难以做正确的事情。</p>
+<p>不必要的复杂性：过分设计。</p>
+<p>不必要的重复：复制黏贴。</p>
+<p>晦涩性：混乱的表达。</p>
+<p>这些症状在本质上和代码的臭味相似，但是它们所处的层次稍高一些。它们是遍及整个软件结构的臭味，而不仅仅是一小段代码。</p>
+<h3 id="面向对象的设计原则"><a class="header-anchor" href="#面向对象的设计原则">¶</a>面向对象的设计原则</h3>
+<ul>
+<li>
+<p>SRP 单一职责原则：就一个类而言，应该仅有一个引起它变化的原因。</p>
+</li>
+<li>
+<p>OCP 开放-封闭原则：软件实体（类、模块、函数等）应该是可以扩展的，但是不可修改。</p>
+</li>
+<li>
+<p>LSP Liskov替换原则：子类型必须能够替换掉它们的及类型。</p>
+</li>
+<li>
+<p>DIP 依赖倒置原则：抽象不应该依赖于细节，细节应该依赖于抽象。</p>
+</li>
+<li>
+<p>ISP 接口隔离原则：不应该强迫客户依赖于它们不用的方法。接口属于客户，不属于它所在的类层次结构。</p>
+</li>
+</ul>
+<p>23种设计模式：<span class="exturl" data-url="aHR0cDovL3d3dy5ydW5vb2IuY29tL2Rlc2lnbi1wYXR0ZXJuL2Rlc2lnbi1wYXR0ZXJuLWludHJvLmh0bWw=" title="http://www.runoob.com/design-pattern/design-pattern-intro.html">http://www.runoob.com/design-pattern/design-pattern-intro.html<i class="fa fa-external-link"></i></span></p>
+<p>我们最常用的spring框架就使用了很多种设计模式，例如BeanFactory中的工厂模式，AOP中的代理模式。</p>
+<p>参考文献：</p>
+<ul>
+<li>《系统架构设计师教程》</li>
+<li>《敏捷软件开发(原则模式与实践)》</li>
+</ul>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/软件开发模型/" rel="tag"># 软件开发模型</a>
+          
+            <a href="/tags/software-develop-model/" rel="tag"># software develop model</a>
+          
+            <a href="/tags/软件生命周期模型-敏捷开发/" rel="tag"># 软件生命周期模型 - 敏捷开发</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/linux/typora.html" rel="next" title="Deepin install Typora">
+                <i class="fa fa-chevron-left"></i> Deepin install Typora
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/engineering/uml.html" rel="prev" title="UML基础">
+                UML基础 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+      </div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">fanzhongwei</p>
+              <div class="site-description motion-element" itemprop="description">个人经验总结：java、JavaScript、HTML、VUE等等</div>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">13</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  
+                    
+                      <a href="/categories/">
+                    
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">7</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  
+                    
+                      <a href="/tags/">
+                    
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">28</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL2Zhbnpob25nd2Vp" title="GitHub &rarr; https://github.com/fanzhongwei"><i class="fa fa-fw fa-github"></i>GitHub</span>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <span class="exturl" data-url="bWFpbHRvOmZ6d3Rpbmd5dUAxNjMuY29t" title="E-Mail &rarr; mailto:fzwtingyu@163.com"><i class="fa fa-fw fa-envelope"></i>E-Mail</span>
+                </span>
+              
+            </div>
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#软件开发生命周期"><span class="nav-number">1.</span> <span class="nav-text">¶软件开发生命周期</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#软件开发模型"><span class="nav-number">2.</span> <span class="nav-text">¶软件开发模型</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#瀑布模型"><span class="nav-number">2.1.</span> <span class="nav-text">¶瀑布模型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#原型模型"><span class="nav-number">2.2.</span> <span class="nav-text">¶原型模型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#螺旋模型"><span class="nav-number">2.3.</span> <span class="nav-text">¶螺旋模型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#增量模型"><span class="nav-number">2.4.</span> <span class="nav-text">¶增量模型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#喷泉模型"><span class="nav-number">2.5.</span> <span class="nav-text">¶喷泉模型</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#敏捷开发"><span class="nav-number">3.</span> <span class="nav-text">¶敏捷开发</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#敏捷软件开发宣言"><span class="nav-number">3.1.</span> <span class="nav-text">¶敏捷软件开发宣言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#敏捷宣言遵循的原则"><span class="nav-number">3.2.</span> <span class="nav-text">¶敏捷宣言遵循的原则</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#敏捷设计"><span class="nav-number">3.3.</span> <span class="nav-text">¶敏捷设计</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#拙劣设计的症状"><span class="nav-number">3.3.1.</span> <span class="nav-text">¶拙劣设计的症状</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#面向对象的设计原则"><span class="nav-number">3.3.2.</span> <span class="nav-text">¶面向对象的设计原则</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2019 – <span itemprop="copyrightYear">2020</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">fanzhongwei</span>
+
+  
+
+  
+</div>
+
+
+  <div class="powered-by">由 <span class="exturl theme-link" data-url="aHR0cHM6Ly9oZXhvLmlv">Hexo</span> 强力驱动 v3.8.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 – <span class="exturl theme-link" data-url="aHR0cHM6Ly90aGVtZS1uZXh0Lm9yZw==">NexT.Pisces</span> v7.1.0</div>
+
+	<div class="BbeiAn-info">
+		<a target="_blank" href="http://www.beian.miit.gov.cn/">蜀ICP备17004833号-1</a>
+	</div>
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+
+  
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+          <span id="scrollpercent"><span>0</span>%</span>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+      <div>
+        <div class="addthis_inline_share_toolbox">
+  <script src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-5caee68d1b93531b" async="async"></script>
+</div>
+
+      </div>
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+    
+    
+  
+  <script color="0,0,255" opacity="0.5" zindex="-1" count="99" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/utils.js?v=7.1.0"></script>
+
+  <script src="/js/motion.js?v=7.1.0"></script>
+
+  <script src="/js/pull-refresh.js?v=7.1.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/affix.js?v=7.1.0"></script>
+
+  <script src="/js/schemes/pisces.js?v=7.1.0"></script>
+
+
+
+  
+  <script src="/js/scrollspy.js?v=7.1.0"></script>
+<script src="/js/post-details.js?v=7.1.0"></script>
+
+
+
+  
+
+
+  <script src="/js/next-boot.js?v=7.1.0"></script>
+
+
+  
+
+  
+  <script src="/js/exturl.js?v=7.1.0"></script>
+
+
+  
+
+  
+  
+  <script id="dsq-count-scr" src="https://fanzhongwei.disqus.com/count.js" async></script>
+
+
+<script>
+  var disqus_config = function() {
+    this.page.url = "https://www.fanzhongwei.com/engineering/software-develop-model.html";
+    this.page.identifier = "engineering/software-develop-model.html";
+    this.page.title = '软件开发模型';
+    };
+  function loadComments() {
+    var d = document, s = d.createElement('script');
+    s.src = 'https://fanzhongwei.disqus.com/embed.js';
+    s.setAttribute('data-timestamp', '' + +new Date());
+    (d.head || d.body).appendChild(s);
+  }
+  
+    $(function() {
+      var offsetTop = $('#comments').offset().top - $(window).height();
+      if (offsetTop <= 0) {
+        // load directly when there's no a scrollbar
+        loadComments();
+      } else {
+        $(window).on('scroll.disqus_scroll', function() {
+          // offsetTop may changes because of manually resizing browser window or lazy loading images.
+          var offsetTop = $('#comments').offset().top - $(window).height();
+          var scrollTop = $(window).scrollTop();
+
+          // pre-load comments a bit? (margin or anything else)
+          if (offsetTop - scrollTop < 60) {
+            $(window).off('.disqus_scroll');
+            loadComments();
+          }
+        });
+      }
+    });
+  
+</script>
+
+
+
+
+
+  
+    
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/disqusjs@1/dist/disqusjs.css">
+
+
+
+<script src="//cdn.jsdelivr.net/npm/disqusjs@1/dist/disqus.js"></script>
+
+<script>
+  var dsqjs = new DisqusJS({
+    api: 'https://disqus.skk.moe/disqus/' || 'https://disqus.com/api/',
+    apikey: 'yeI3c68e36COmAnaJ0W8enNe62iyRL60APc1qYStSbMXCuXb1Hl57OKpqbA3AXjB',
+    shortname: 'fanzhongwei'
+  });
+</script>
+
+  
+
+
+  
+  <script>
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url).replace(/\/{2,}/g, '/');
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x"></i></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x"></i></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
