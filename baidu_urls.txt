@@ -1,6 +1,4 @@
 https://www.fanzhongwei.com/mutlithreading/multithreading-base.html
-https://www.fanzhongwei.com/mutlithreading/multithreading-juc.html
-https://www.fanzhongwei.com/mutlithreading/multithreading-models.html
 https://www.fanzhongwei.com/engineering/uml.html
 https://www.fanzhongwei.com/engineering/software-develop-model.html
 https://www.fanzhongwei.com/linux/typora.html

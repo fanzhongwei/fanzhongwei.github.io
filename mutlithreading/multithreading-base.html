@@ -104,13 +104,13 @@
 <script src="/lib/mescroll/mescroll.min.js?v=1.4.1" charset="utf-8"></script>
 
 
-  <meta name="description" content="线程（Thread）是操作系统能够进行运算调度的最小单位，java线程中创建的、引用的对象在jvm内存中是如何存放的，线程间是如何进行通信的呢，线程发生异常了jvm又是如何处理的呢，接下来让我们从线程的基础知识开始一步一步地了解。  ¶线程基础知识 ¶什么是线程 线程（Thread）是操作系统能够进行运算调度的最小单位。它被包含在进程之中，是进程中的实际运作单位。一条线程指的是进程中一个单一顺序的">
+  <meta name="description" content="线程（Thread）是操作系统能够进行运算调度的最小单位，java线程中创建的、引用的对象在jvm内存中是如何存放的，线程间是如何进行通信的呢，线程发生异常了jvm又是如何处理的呢，接下来让我们从线程的基础知识开始一步一步地了解。">
 <meta name="keywords" content="java,java多线程,多线程编程">
 <meta property="og:type" content="article">
 <meta property="og:title" content="多线程编程--基础知识">
 <meta property="og:url" content="https://www.fanzhongwei.com/mutlithreading/multithreading-base.html">
 <meta property="og:site_name" content="fanzhongwei">
-<meta property="og:description" content="线程（Thread）是操作系统能够进行运算调度的最小单位，java线程中创建的、引用的对象在jvm内存中是如何存放的，线程间是如何进行通信的呢，线程发生异常了jvm又是如何处理的呢，接下来让我们从线程的基础知识开始一步一步地了解。  ¶线程基础知识 ¶什么是线程 线程（Thread）是操作系统能够进行运算调度的最小单位。它被包含在进程之中，是进程中的实际运作单位。一条线程指的是进程中一个单一顺序的">
+<meta property="og:description" content="线程（Thread）是操作系统能够进行运算调度的最小单位，java线程中创建的、引用的对象在jvm内存中是如何存放的，线程间是如何进行通信的呢，线程发生异常了jvm又是如何处理的呢，接下来让我们从线程的基础知识开始一步一步地了解。">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="https://s2.ax1x.com/2019/04/13/AL3oVS.png">
 <meta property="og:image" content="https://s1.ax1x.com/2020/05/23/YvfvDg.jpg">
@@ -120,10 +120,10 @@
 <meta property="og:image" content="https://s1.ax1x.com/2020/05/23/YxNxXV.png">
 <meta property="og:image" content="https://img2018.cnblogs.com/blog/1680783/201905/1680783-20190521124754180-1985908967.png">
 <meta property="og:image" content="https://img2018.cnblogs.com/blog/1680783/201905/1680783-20190521125411515-1327485285.png">
-<meta property="og:updated_time" content="2020-05-24T14:00:08.715Z">
+<meta property="og:updated_time" content="2020-05-24T14:07:19.901Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="多线程编程--基础知识">
-<meta name="twitter:description" content="线程（Thread）是操作系统能够进行运算调度的最小单位，java线程中创建的、引用的对象在jvm内存中是如何存放的，线程间是如何进行通信的呢，线程发生异常了jvm又是如何处理的呢，接下来让我们从线程的基础知识开始一步一步地了解。  ¶线程基础知识 ¶什么是线程 线程（Thread）是操作系统能够进行运算调度的最小单位。它被包含在进程之中，是进程中的实际运作单位。一条线程指的是进程中一个单一顺序的">
+<meta name="twitter:description" content="线程（Thread）是操作系统能够进行运算调度的最小单位，java线程中创建的、引用的对象在jvm内存中是如何存放的，线程间是如何进行通信的呢，线程发生异常了jvm又是如何处理的呢，接下来让我们从线程的基础知识开始一步一步地了解。">
 <meta name="twitter:image" content="https://s2.ax1x.com/2019/04/13/AL3oVS.png">
 
 
@@ -451,24 +451,12 @@
                 
               
 
-              <time title="创建时间：2020-05-11 00:00:00" itemprop="dateCreated datePublished" datetime="2020-05-11T00:00:00+08:00">2020-05-11</time>
+              <time title="创建时间：2020-05-24 00:00:00 / 修改时间：22:07:19" itemprop="dateCreated datePublished" datetime="2020-05-24T00:00:00+08:00">2020-05-24</time>
             
 
             
               
 
-              
-                
-                <span class="post-meta-divider">|</span>
-                
-
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">更新于</span>
-                
-                <time title="修改时间：2020-05-24 22:00:08" itemprop="dateModified" datetime="2020-05-24T22:00:08+08:00">2020-05-24</time>
               
             
           </span>
@@ -542,6 +530,7 @@
       
         <p><strong>线程</strong>（Thread）是操作系统能够进行运算调度的最小单位，java线程中创建的、引用的对象在jvm内存中是如何存放的，线程间是如何进行通信的呢，线程发生异常了jvm又是如何处理的呢，接下来让我们从线程的基础知识开始一步一步地了解。</p>
 <p><img src="https://s2.ax1x.com/2019/04/13/AL3oVS.png" alt="多线程编程"></p>
+<a id="more"></a>
 <h1 id="线程基础知识"><a class="header-anchor" href="#线程基础知识">¶</a>线程基础知识</h1>
 <h2 id="什么是线程"><a class="header-anchor" href="#什么是线程">¶</a>什么是线程</h2>
 <p><strong>线程</strong>（Thread）是操作系统能够进行运算调度的最小单位。它被包含在进程之中，是进程中的实际运作单位。一条线程指的是进程中一个单一顺序的控制流，一个进程中可以并发多个线程，每条线程并行执行不同的任务。</p>
@@ -687,8 +676,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/mutlithreading/multithreading-juc.html" rel="next" title="多线程编程--基础知识">
-                <i class="fa fa-chevron-left"></i> 多线程编程--基础知识
+              <a href="/engineering/uml.html" rel="next" title="UML基础">
+                <i class="fa fa-chevron-left"></i> UML基础
               </a>
             
           </div>
@@ -771,7 +760,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">16</span>
+                    <span class="site-state-item-count">14</span>
                     <span class="site-state-item-name">日志</span>
                   </a>
                 </div>
@@ -875,11 +864,7 @@
                     
                       
                     
-                      
-                    
-                      
-                    
-                    <span class="site-state-item-count">30</span>
+                    <span class="site-state-item-count">28</span>
                     <span class="site-state-item-name">标签</span>
                   </a>
                 </div>
