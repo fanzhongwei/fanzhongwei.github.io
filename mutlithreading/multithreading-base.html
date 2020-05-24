@@ -1,0 +1,1560 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+  <meta http-equiv="Cache-Control" content="no-transform">
+  <meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+  <meta name="google-site-verification" content="5LFoOb-y-oi59dy2QaWFWoDyyW34_mMWX5MMvqJmVYo">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
+
+<link rel="stylesheet" href="/css/main.css?v=7.1.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/imagesfavicon.ico?v=7.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico?v=7.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.ico?v=7.1.0">
+
+
+  <link rel="mask-icon" href="/images/favicon.ico?v=7.1.0" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '7.1.0',
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false,"dimmer":false},
+    back2top: true,
+    back2top_sidebar: false,
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+<link rel="stylesheet" href="/lib/mescroll/mescroll.min.css?v=1.4.1">
+<script src="/lib/mescroll/mescroll.min.js?v=1.4.1" charset="utf-8"></script>
+
+
+  <meta name="description" content="线程（Thread）是操作系统能够进行运算调度的最小单位，java线程中创建的、引用的对象在jvm内存中是如何存放的，线程间是如何进行通信的呢，线程发生异常了jvm又是如何处理的呢，接下来让我们从线程的基础知识开始一步一步地了解。  ¶线程基础知识 ¶什么是线程 线程（Thread）是操作系统能够进行运算调度的最小单位。它被包含在进程之中，是进程中的实际运作单位。一条线程指的是进程中一个单一顺序的">
+<meta name="keywords" content="java,java多线程,多线程编程">
+<meta property="og:type" content="article">
+<meta property="og:title" content="多线程编程--基础知识">
+<meta property="og:url" content="https://www.fanzhongwei.com/mutlithreading/multithreading-base.html">
+<meta property="og:site_name" content="fanzhongwei">
+<meta property="og:description" content="线程（Thread）是操作系统能够进行运算调度的最小单位，java线程中创建的、引用的对象在jvm内存中是如何存放的，线程间是如何进行通信的呢，线程发生异常了jvm又是如何处理的呢，接下来让我们从线程的基础知识开始一步一步地了解。  ¶线程基础知识 ¶什么是线程 线程（Thread）是操作系统能够进行运算调度的最小单位。它被包含在进程之中，是进程中的实际运作单位。一条线程指的是进程中一个单一顺序的">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://s2.ax1x.com/2019/04/13/AL3oVS.png">
+<meta property="og:image" content="https://s1.ax1x.com/2020/05/23/YvfvDg.jpg">
+<meta property="og:image" content="https://s1.ax1x.com/2020/05/23/YxN3LT.png">
+<meta property="og:image" content="https://s1.ax1x.com/2020/05/24/tS30OS.png">
+<meta property="og:image" content="https://s1.ax1x.com/2020/05/23/YxN0Qx.png">
+<meta property="og:image" content="https://s1.ax1x.com/2020/05/23/YxNxXV.png">
+<meta property="og:image" content="https://img2018.cnblogs.com/blog/1680783/201905/1680783-20190521124754180-1985908967.png">
+<meta property="og:image" content="https://img2018.cnblogs.com/blog/1680783/201905/1680783-20190521125411515-1327485285.png">
+<meta property="og:updated_time" content="2020-05-24T14:00:08.715Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="多线程编程--基础知识">
+<meta name="twitter:description" content="线程（Thread）是操作系统能够进行运算调度的最小单位，java线程中创建的、引用的对象在jvm内存中是如何存放的，线程间是如何进行通信的呢，线程发生异常了jvm又是如何处理的呢，接下来让我们从线程的基础知识开始一步一步地了解。  ¶线程基础知识 ¶什么是线程 线程（Thread）是操作系统能够进行运算调度的最小单位。它被包含在进程之中，是进程中的实际运作单位。一条线程指的是进程中一个单一顺序的">
+<meta name="twitter:image" content="https://s2.ax1x.com/2019/04/13/AL3oVS.png">
+
+
+
+
+
+  
+  
+  <link rel="canonical" href="https://www.fanzhongwei.com/mutlithreading/multithreading-base">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>多线程编程--基础知识 | fanzhongwei</title>
+  
+
+
+
+
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?c7a6634d526ddd253a5092f6656f4ef6";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">fanzhongwei</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <h1 class="site-subtitle" itemprop="description">blog</h1>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+
+      
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>搜索</a>
+        </li>
+      
+    </ul>
+  
+
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+  
+  
+
+  
+
+  <span class="exturl github-corner" data-url="aHR0cHM6Ly9naXRodWIuY29tL2Zhbnpob25nd2Vp" title="Follow me on GitHub" aria-label="Follow me on GitHub"><svg width="80" height="80" viewbox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"/><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"/><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"/></svg></span>
+
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://www.fanzhongwei.com/mutlithreading/multithreading-base.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="fanzhongwei">
+      <meta itemprop="description" content="个人经验总结：java、JavaScript、HTML、VUE等等">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="fanzhongwei">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">多线程编程--基础知识
+
+              
+            
+          </h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2020-05-11 00:00:00" itemprop="dateCreated datePublished" datetime="2020-05-11T00:00:00+08:00">2020-05-11</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2020-05-24 22:00:08" itemprop="dateModified" datetime="2020-05-24T22:00:08+08:00">2020-05-24</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/java多线程/" itemprop="url" rel="index"><span itemprop="name">java多线程</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+              
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+            
+                <span class="post-meta-item-text">评论数：</span>
+                <a href="/mutlithreading/multithreading-base.html#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="mutlithreading/multithreading-base.html" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="post-meta-item-icon">
+            <i class="fa fa-eye"></i>
+             阅读次数： 
+            <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p><strong>线程</strong>（Thread）是操作系统能够进行运算调度的最小单位，java线程中创建的、引用的对象在jvm内存中是如何存放的，线程间是如何进行通信的呢，线程发生异常了jvm又是如何处理的呢，接下来让我们从线程的基础知识开始一步一步地了解。</p>
+<p><img src="https://s2.ax1x.com/2019/04/13/AL3oVS.png" alt="多线程编程"></p>
+<h1 id="线程基础知识"><a class="header-anchor" href="#线程基础知识">¶</a>线程基础知识</h1>
+<h2 id="什么是线程"><a class="header-anchor" href="#什么是线程">¶</a>什么是线程</h2>
+<p><strong>线程</strong>（Thread）是操作系统能够进行运算调度的最小单位。它被包含在进程之中，是进程中的实际运作单位。一条线程指的是进程中一个单一顺序的控制流，一个进程中可以并发多个线程，每条线程并行执行不同的任务。</p>
+<h2 id="如何创建线程"><a class="header-anchor" href="#如何创建线程">¶</a>如何创建线程</h2>
+<ul>
+<li>继承Thread类</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 继承Thread类</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">ThreadTest</span> <span class="keyword">extends</span> <span class="title">Thread</span></span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">super</span>.run();</span><br><span class="line">        System.out.println(<span class="string">"Hello World! This is my first Thread."</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Test</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">extendsThreadTest</span><span class="params">()</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</span><br><span class="line">    ThreadTest threadTest = <span class="keyword">new</span> ThreadTest();</span><br><span class="line">    threadTest.start();</span><br><span class="line">    System.out.println(<span class="string">"运行结束。"</span>);</span><br><span class="line">    Thread.sleep(<span class="number">10</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>实现Runnable接口</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 实现Runnable接口</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">RunnableTest</span> <span class="keyword">implements</span> <span class="title">Runnable</span></span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"Hello World! This is my first Thread."</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">implementsRunnableTest</span><span class="params">()</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</span><br><span class="line">    RunnableTest runnableTest = <span class="keyword">new</span> RunnableTest();</span><br><span class="line">    Thread thread = <span class="keyword">new</span> Thread(runnableTest);</span><br><span class="line">    thread.start();</span><br><span class="line"></span><br><span class="line">    Thread.sleep(<span class="number">1000</span>);</span><br><span class="line">    System.out.println(<span class="string">"运行结束。"</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="线程的状态"><a class="header-anchor" href="#线程的状态">¶</a>线程的状态</h2>
+<p>Java中的线程一共有六种状态：</p>
+<ul>
+<li>NEW（初始化状态）</li>
+<li>RUNNABLE（可运行 / 运行状态）</li>
+<li>BLOCKED（阻塞状态）</li>
+<li>WAITING（无时限等待）</li>
+<li>TIMED_WAITING（有时限等待）</li>
+<li>TERMINATED（终止状态）</li>
+</ul>
+<p>线程可以在这六种状态之间相互转换，如图所示：</p>
+<p><img src="https://s1.ax1x.com/2020/05/23/YvfvDg.jpg" alt="线程状态切换.jpg"></p>
+<h1 id="内存模型"><a class="header-anchor" href="#内存模型">¶</a>内存模型</h1>
+<h2 id="java内存模型"><a class="header-anchor" href="#java内存模型">¶</a>java内存模型</h2>
+<ul>
+<li>每一个运行在Java虚拟机里的线程都拥有自己的线程栈，存放当前线程运行的信息。</li>
+<li>所有原始类型的本地变量都存放在线程栈上，因此对其它线程不可见。</li>
+<li>所有引用类型的本地变量都存放在堆中，线程栈保存该对象的引用，因此其他线程只要有该对象的引用都可以访问。</li>
+<li>Java程序中无论由哪个对象创建的对象，不管是原始类型对象，还是引用类型对象，都是存放在堆里面。</li>
+</ul>
+<p>接下来让我们先看看一段具体代码，这些变量都存放在JVM的什么位置。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MemoryModel</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">MemorySharedObject</span> </span>&#123;</span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">static</span> MemorySharedObject sharedObject = <span class="keyword">new</span> MemorySharedObject();</span><br><span class="line">        <span class="keyword">public</span> Integer object2 = <span class="keyword">new</span> Integer(<span class="number">222</span>);</span><br><span class="line">        <span class="keyword">public</span> Integer object4 = <span class="keyword">new</span> Integer(<span class="number">444</span>);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">long</span> member1 = <span class="number">12345L</span>;</span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">long</span> member2 = <span class="number">67890L</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> List&lt;Object&gt; list = Collections.synchronizedList(<span class="keyword">new</span> ArrayList&lt;&gt;());</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">test</span><span class="params">()</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</span><br><span class="line">        <span class="keyword">new</span> Thread(<span class="keyword">this</span>::methodOne).start();</span><br><span class="line">        <span class="keyword">new</span> Thread(<span class="keyword">this</span>::methodOne).start();</span><br><span class="line"></span><br><span class="line">        Thread.sleep(<span class="number">100000</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">methodOne</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> localVariable1 = <span class="number">999</span>;</span><br><span class="line">        MemorySharedObject localVariable2 = MemorySharedObject.sharedObject;</span><br><span class="line"></span><br><span class="line">        list.add(localVariable2);</span><br><span class="line">        methodTwo();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">methodTwo</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        Integer localVariable1 = <span class="keyword">new</span> Integer(<span class="number">4321</span>);</span><br><span class="line">        list.add(localVariable1);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>当test用例执行的时候，各个变量在jvm内存中存放位置如下图所示：</p>
+<p><img src="https://s1.ax1x.com/2020/05/23/YxN3LT.png" alt="YxN3LT.png"></p>
+<p>上图中每个线程执行<code>methodOne()</code>都会在它们对应的线程栈上创建<code>localVariable1</code>和<code>localVariable2</code>的私有拷贝。<code>localVariable1</code>为基础类型对象只存在于线程栈上，<code>localVariable2</code>为堆内存中Object3的引用。methodTwo方法中的localVariable1都会各自在堆上创建一个对象<code>object1</code>和<code>object5</code>，线程栈中存放这两个对象的引用。</p>
+<p>执行test用例的时候，我们执行如下两个步骤：</p>
+<ul>
+<li>jmap -dump:format=b,file=./heap_dump.txt 12792</li>
+<li>dump出jvm内存后，使用mat进行分析，可以找到本例中对象的情况</li>
+</ul>
+<p>分析结果如下如所示：</p>
+<p><img src="https://s1.ax1x.com/2020/05/24/tS30OS.png" alt="mat内存分析.png"></p>
+<h2 id="硬件内存模型"><a class="header-anchor" href="#硬件内存模型">¶</a>硬件内存模型</h2>
+<p><img src="https://s1.ax1x.com/2020/05/23/YxN0Qx.png" alt="YxN0Qx.png"></p>
+<h2 id="java内存模型与硬件内存模型的关系"><a class="header-anchor" href="#java内存模型与硬件内存模型的关系">¶</a>java内存模型与硬件内存模型的关系</h2>
+<p><img src="https://s1.ax1x.com/2020/05/23/YxNxXV.png" alt="YxNxXV.png"></p>
+<h1 id="同步异步"><a class="header-anchor" href="#同步异步">¶</a>同步异步</h1>
+<p><strong>同步和异步关注的是：消息通信机制(synchronous communication/ asynchronous communication)。</strong></p>
+<h2 id="同步-synchronous"><a class="header-anchor" href="#同步-synchronous">¶</a>同步（Synchronous）</h2>
+<p><strong>同步方法</strong>调用一旦开始，调用者必须等到方法调用返回后，才能继续后续的行为，如下图所示：</p>
+<p><img src="https://img2018.cnblogs.com/blog/1680783/201905/1680783-20190521124754180-1985908967.png" alt="同步.png"></p>
+<blockquote>
+<ul>
+<li>打电话</li>
+<li>B/S模式</li>
+</ul>
+</blockquote>
+<h2 id="异步-asynchronous"><a class="header-anchor" href="#异步-asynchronous">¶</a>异步（Asynchronous）</h2>
+<p><strong>异步方法</strong>调用更像一个消息传递，一旦开始，方法调用就会立即返回，调用者就可以继续后续的操作。而，异步方法通常会在另外一个线程中，“真实”地执行着。整个过程，不会阻碍调用者的工作，如下图所示：</p>
+<p><img src="https://img2018.cnblogs.com/blog/1680783/201905/1680783-20190521125411515-1327485285.png" alt="同步.png"></p>
+<blockquote>
+<ul>
+<li>发短信</li>
+<li>ajax</li>
+<li>消息队列</li>
+</ul>
+</blockquote>
+<h2 id="阻塞和非阻塞"><a class="header-anchor" href="#阻塞和非阻塞">¶</a>阻塞和非阻塞</h2>
+<p><strong>阻塞和非阻塞</strong>：强调的是程序在等待调用结果（消息，返回值）时的状态。</p>
+<p>阻塞调用是指调用结果返回之前，当前线程会被挂起，调用线程只有在得到结果之后才会返回。</p>
+<p>非阻塞调用指在不能立刻得到结果之前，该调用不会阻塞当前线程。</p>
+<h1 id="线程间通信"><a class="header-anchor" href="#线程间通信">¶</a>线程间通信</h1>
+<h2 id="共享对象"><a class="header-anchor" href="#共享对象">¶</a>共享对象</h2>
+<p>线程间发送信号的一个简单方式是在共享对象的变量里设置信号值，如下面代码所示：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">MySignal</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">boolean</span> hasDataToProcess = <span class="keyword">false</span>;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">boolean</span> <span class="title">hasDataToProcess</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">this</span>.hasDataToProcess;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">setHasDataToProcess</span><span class="params">(<span class="keyword">boolean</span> process)</span></span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.hasDataToProcess = process;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>线程A在一个同步块里设置boolean型成员变量hasDataToProcess为true，线程B也在同步块里读取hasDataToProcess这个成员变量。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Test</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">test_share_signal</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    MySignal signal = <span class="keyword">new</span> MySignal();</span><br><span class="line">    <span class="keyword">new</span> Thread(() -&gt; &#123;</span><br><span class="line">        <span class="keyword">while</span>(!signal.hasDataToProcess()) &#123;</span><br><span class="line">            System.out.println(<span class="string">"线程A未接收到信号，sleep 1000ms"</span>);</span><br><span class="line">            sleep(<span class="number">1000</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        System.out.println(<span class="string">"线程A接收到信号了，开始处理："</span> + data.remove(<span class="number">0</span>));</span><br><span class="line">    &#125;).start();</span><br><span class="line"></span><br><span class="line">    sleep(<span class="number">10000</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">new</span> Thread(() -&gt; &#123;</span><br><span class="line">        System.out.println(<span class="string">"线程B设置信号"</span>);</span><br><span class="line">        data.add(<span class="string">"线程B设置的数据"</span>);</span><br><span class="line">        signal.setHasDataToProcess(<span class="keyword">true</span>);</span><br><span class="line">    &#125;).start();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>注意：<strong>线程A和B必须获得指向一个MySignal共享实例的引用，否则线程A将收不到信号。</strong></p>
+<h2 id="wait-notify-和notifyall"><a class="header-anchor" href="#wait-notify-和notifyall">¶</a>wait(),notify()和notifyAll()</h2>
+<p>通过共享对象，循环检测信号是否被设置，如果没有被设置则进入等待，等待的间隔时间设置过短则对cpu消耗过大，等待的间隔时间设置过长则消息接收不及时。</p>
+<p>Java有一个内建的等待机制来允许线程在等待信号的时候变为非运行状态。java.lang.Object 类定义了三个方法，wait()、notify()和notifyAll()来实现这个等待机制。</p>
+<p>一个线程一旦调用了任意对象的wait()方法，就会变为非运行状态，直到另一个线程调用了同一个对象的notify()方法。为了调用wait()或者notify()，线程必须先获得那个对象的锁，也就是说，线程必须在同步块里调用wait()或者notify()，否则将抛出<code>java.lang.IllegalMonitorStateException</code>异常。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">@Test</span><br><span class="line">   public void test_wait_notify() &#123;</span><br><span class="line">       Object monitor = new Object();</span><br><span class="line">       List&lt;String&gt; data = new ArrayList&lt;&gt;();</span><br><span class="line">       Thread thread = new Thread(() -&gt; &#123;</span><br><span class="line">           try &#123;</span><br><span class="line">               synchronized (monitor) &#123;</span><br><span class="line">                   System.out.println(&quot;子线程开始等待notify信号&quot;);</span><br><span class="line">                   monitor.wait();</span><br><span class="line">               &#125;</span><br><span class="line">               System.out.println(&quot;子线程接收到notify信号了，开始处理：&quot; + data.remove(0));</span><br><span class="line">           &#125; catch (InterruptedException e) &#123;</span><br><span class="line">               e.printStackTrace();</span><br><span class="line">           &#125;</span><br><span class="line">       &#125;);</span><br><span class="line">       thread.start();</span><br><span class="line"></span><br><span class="line">       sleep(3000);</span><br><span class="line">       data.add(&quot;主线程调用notify方法&quot;);</span><br><span class="line">       synchronized (monitor) &#123;</span><br><span class="line">           monitor.notify();</span><br><span class="line">       &#125;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+<p>一旦线程调用了wait()方法，它就释放了所持有的监视器对象上的锁。这将允许其他线程也可以调用wait()或者notify()。一旦一个线程被唤醒，不能立刻就退出wait()的方法调用，直到调用notify()的线程退出了它自己的同步块。换句话说：**被唤醒的线程必须重新获得监视器对象的锁，才可以退出wait()的方法调用，因为wait方法调用运行在同步块里面。**如果多个线程被notifyAll()唤醒，那么在同一时刻将只有一个线程可以退出wait()方法，因为每个线程在退出wait()前必须获得监视器对象的锁。</p>
+<h1 id="异常处理"><a class="header-anchor" href="#异常处理">¶</a>异常处理</h1>
+<h2 id="thread默认的异常处理"><a class="header-anchor" href="#thread默认的异常处理">¶</a>Thread默认的异常处理</h2>
+<p>线程都不允许抛出未捕获的checked exception（比如sleep时的<code>InterruptedException</code>）<strong>，也就是说各个线程需要自己把自己的checked exception处理掉</strong>。我们可以查看一下Thread类的run()方法声明，方法声明上没有对抛出异常进行约束。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//Thread类中</span></span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (target != <span class="keyword">null</span>) &#123;</span><br><span class="line">        target.run();<span class="comment">//实际上直接调用Runnable实例的run方法</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//Runnable接口中</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span></span>;</span><br></pre></td></tr></table></figure>
+<p><strong>线程是独立执行的代码片断，线程的问题应该由线程自己来解决，而不要委托到外部。</strong></p>
+<h2 id="未捕获的异常去哪儿了"><a class="header-anchor" href="#未捕获的异常去哪儿了">¶</a>未捕获的异常去哪儿了</h2>
+<p>一个异常被抛出后，如果没有被捕获处理，则会一直向上抛。<font color="red"><strong>异常一旦被Thread.run() 抛出后，就不能在程序中对异常进行捕获，最终只能由JVM捕获。</strong></font></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">test_thread_exception</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">new</span> Thread(() -&gt; &#123;<span class="keyword">int</span> a = <span class="number">1</span>/<span class="number">0</span>;&#125;).start();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 执行结果</span></span><br><span class="line">Exception in thread <span class="string">"Thread-0"</span> java.lang.ArithmeticException: / by zero</span><br><span class="line">	at com.teddy.thread.basic.ThreadExceptionTest.lambda$thread_exception$<span class="number">0</span>(ThreadExceptionTest.java:<span class="number">9</span>)</span><br><span class="line">	at java.lang.Thread.run(Thread.java:<span class="number">748</span>)</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">test_catch_thread_exception</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="keyword">new</span> Thread(() -&gt; &#123;<span class="keyword">int</span> a = <span class="number">1</span>/<span class="number">0</span>;&#125;).start();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            System.out.println(<span class="string">"捕获到线程抛出的异常！"</span>);</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"><span class="comment">// 执行结果</span></span><br><span class="line">Exception in thread <span class="string">"Thread-0"</span> java.lang.ArithmeticException: / by zero</span><br><span class="line">	at com.teddy.thread.basic.ThreadExceptionTest.lambda$test_catch_thread_exception$<span class="number">1</span>(ThreadExceptionTest.java:<span class="number">18</span>)</span><br><span class="line">	at java.lang.Thread.run(Thread.java:<span class="number">748</span>)</span><br></pre></td></tr></table></figure>
+<h2 id="jvm如何处理线程中抛出的异常"><a class="header-anchor" href="#jvm如何处理线程中抛出的异常">¶</a>JVM如何处理线程中抛出的异常</h2>
+<p>查看Thread类的源码，我们可以看到有个dispatchUncaughtException方法，此方法就是用来处理线程中抛出的异常的。JVM会调用dispatchUncaughtException方法来寻找异常处理器(UncaughtExceptionHandler)，处理异常。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 向handler分派未捕获的异常。该方法仅由JVM调用。</span></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">dispatchUncaughtException</span><span class="params">(Throwable e)</span> </span>&#123;</span><br><span class="line">    getUncaughtExceptionHandler().uncaughtException(<span class="keyword">this</span>, e);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 获取用来处理未捕获异常的handler，如果没有设置则返回当前线程所属的ThreadGroup</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> UncaughtExceptionHandler <span class="title">getUncaughtExceptionHandler</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> uncaughtExceptionHandler != <span class="keyword">null</span> ?</span><br><span class="line">        uncaughtExceptionHandler : group;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>UncaughtExceptionHandler必须显示的设置，否则默认为null。若为null，则使用线程默认的handler，即该线程所属的ThreadGroup。ThreadGroup自身就是一个handler，查看ThreadGroup的源码就可以发现，ThreadGroup实现了Thread.UncaughtExceptionHandler接口，并实现了默认的处理方法。默认的未捕获异常处理器处理时，会调用 System.err 进行输出，也就是直接打印到控制台了。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">uncaughtException</span><span class="params">(Thread t, Throwable e)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (parent != <span class="keyword">null</span>) &#123; <span class="comment">// 父级优先处理</span></span><br><span class="line">        parent.uncaughtException(t, e);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        Thread.UncaughtExceptionHandler ueh = Thread.getDefaultUncaughtExceptionHandler();</span><br><span class="line">        <span class="keyword">if</span> (ueh != <span class="keyword">null</span>) &#123;</span><br><span class="line">            ueh.uncaughtException(t, e);</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (!(e <span class="keyword">instanceof</span> ThreadDeath)) &#123; </span><br><span class="line">            <span class="comment">// 没有配置handler时，默认直接打印到控制台</span></span><br><span class="line">            System.err.print(<span class="string">"Exception in thread \""</span></span><br><span class="line">                             + t.getName() + <span class="string">"\" "</span>);</span><br><span class="line">            e.printStackTrace(System.err);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="产考文献"><a class="header-anchor" href="#产考文献">¶</a>产考文献</h1>
+<ul>
+<li><span class="exturl" data-url="aHR0cDovL2lmZXZlLmNvbS9qYXZhLWNvbmN1cnJlbmN5LXRocmVhZC1kaXJlY3Rvcnkv" title="http://ifeve.com/java-concurrency-thread-directory/">http://ifeve.com/java-concurrency-thread-directory/<i class="fa fa-external-link"></i></span></li>
+<li><span class="exturl" data-url="aHR0cDovL3R1dG9yaWFscy5qZW5rb3YuY29tL2phdmEtY29uY3VycmVuY3kvaW5kZXguaHRtbA==" title="http://tutorials.jenkov.com/java-concurrency/index.html">http://tutorials.jenkov.com/java-concurrency/index.html<i class="fa fa-external-link"></i></span></li>
+<li>《深入Java虚拟机：JVM高级特性与最佳实践（第2版）》</li>
+</ul>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/java/" rel="tag"># java</a>
+          
+            <a href="/tags/java多线程/" rel="tag"># java多线程</a>
+          
+            <a href="/tags/多线程编程/" rel="tag"># 多线程编程</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/mutlithreading/multithreading-juc.html" rel="next" title="多线程编程--基础知识">
+                <i class="fa fa-chevron-left"></i> 多线程编程--基础知识
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+      </div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">fanzhongwei</p>
+              <div class="site-description motion-element" itemprop="description">个人经验总结：java、JavaScript、HTML、VUE等等</div>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">16</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  
+                    
+                      <a href="/categories/">
+                    
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">7</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  
+                    
+                      <a href="/tags/">
+                    
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">30</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL2Zhbnpob25nd2Vp" title="GitHub &rarr; https://github.com/fanzhongwei"><i class="fa fa-fw fa-github"></i>GitHub</span>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <span class="exturl" data-url="bWFpbHRvOmZ6d3Rpbmd5dUAxNjMuY29t" title="E-Mail &rarr; mailto:fzwtingyu@163.com"><i class="fa fa-fw fa-envelope"></i>E-Mail</span>
+                </span>
+              
+            </div>
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#线程基础知识"><span class="nav-number">1.</span> <span class="nav-text">¶线程基础知识</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#什么是线程"><span class="nav-number">1.1.</span> <span class="nav-text">¶什么是线程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#如何创建线程"><span class="nav-number">1.2.</span> <span class="nav-text">¶如何创建线程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#线程的状态"><span class="nav-number">1.3.</span> <span class="nav-text">¶线程的状态</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#内存模型"><span class="nav-number">2.</span> <span class="nav-text">¶内存模型</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#java内存模型"><span class="nav-number">2.1.</span> <span class="nav-text">¶java内存模型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#硬件内存模型"><span class="nav-number">2.2.</span> <span class="nav-text">¶硬件内存模型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#java内存模型与硬件内存模型的关系"><span class="nav-number">2.3.</span> <span class="nav-text">¶java内存模型与硬件内存模型的关系</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#同步异步"><span class="nav-number">3.</span> <span class="nav-text">¶同步异步</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#同步-synchronous"><span class="nav-number">3.1.</span> <span class="nav-text">¶同步（Synchronous）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#异步-asynchronous"><span class="nav-number">3.2.</span> <span class="nav-text">¶异步（Asynchronous）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#阻塞和非阻塞"><span class="nav-number">3.3.</span> <span class="nav-text">¶阻塞和非阻塞</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#线程间通信"><span class="nav-number">4.</span> <span class="nav-text">¶线程间通信</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#共享对象"><span class="nav-number">4.1.</span> <span class="nav-text">¶共享对象</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#wait-notify-和notifyall"><span class="nav-number">4.2.</span> <span class="nav-text">¶wait(),notify()和notifyAll()</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#异常处理"><span class="nav-number">5.</span> <span class="nav-text">¶异常处理</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#thread默认的异常处理"><span class="nav-number">5.1.</span> <span class="nav-text">¶Thread默认的异常处理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#未捕获的异常去哪儿了"><span class="nav-number">5.2.</span> <span class="nav-text">¶未捕获的异常去哪儿了</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#jvm如何处理线程中抛出的异常"><span class="nav-number">5.3.</span> <span class="nav-text">¶JVM如何处理线程中抛出的异常</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#产考文献"><span class="nav-number">6.</span> <span class="nav-text">¶产考文献</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2019 – <span itemprop="copyrightYear">2020</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">fanzhongwei</span>
+
+  
+
+  
+</div>
+
+
+  <div class="powered-by">由 <span class="exturl theme-link" data-url="aHR0cHM6Ly9oZXhvLmlv">Hexo</span> 强力驱动 v3.8.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 – <span class="exturl theme-link" data-url="aHR0cHM6Ly90aGVtZS1uZXh0Lm9yZw==">NexT.Pisces</span> v7.1.0</div>
+
+	<div class="BbeiAn-info">
+		<a target="_blank" href="http://www.beian.miit.gov.cn/">蜀ICP备17004833号-1</a>
+	</div>
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+
+  
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+          <span id="scrollpercent"><span>0</span>%</span>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+      <div>
+        <div class="addthis_inline_share_toolbox">
+  <script src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-5caee68d1b93531b" async="async"></script>
+</div>
+
+      </div>
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+    
+    
+  
+  <script color="0,0,255" opacity="0.5" zindex="-1" count="99" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/utils.js?v=7.1.0"></script>
+
+  <script src="/js/motion.js?v=7.1.0"></script>
+
+  <script src="/js/pull-refresh.js?v=7.1.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/affix.js?v=7.1.0"></script>
+
+  <script src="/js/schemes/pisces.js?v=7.1.0"></script>
+
+
+
+  
+  <script src="/js/scrollspy.js?v=7.1.0"></script>
+<script src="/js/post-details.js?v=7.1.0"></script>
+
+
+
+  
+
+
+  <script src="/js/next-boot.js?v=7.1.0"></script>
+
+
+  
+
+  
+  <script src="/js/exturl.js?v=7.1.0"></script>
+
+
+  
+
+  
+  
+  <script id="dsq-count-scr" src="https://fanzhongwei.disqus.com/count.js" async></script>
+
+
+<script>
+  var disqus_config = function() {
+    this.page.url = "https://www.fanzhongwei.com/mutlithreading/multithreading-base.html";
+    this.page.identifier = "mutlithreading/multithreading-base.html";
+    this.page.title = '多线程编程--基础知识';
+    };
+  function loadComments() {
+    var d = document, s = d.createElement('script');
+    s.src = 'https://fanzhongwei.disqus.com/embed.js';
+    s.setAttribute('data-timestamp', '' + +new Date());
+    (d.head || d.body).appendChild(s);
+  }
+  
+    $(function() {
+      var offsetTop = $('#comments').offset().top - $(window).height();
+      if (offsetTop <= 0) {
+        // load directly when there's no a scrollbar
+        loadComments();
+      } else {
+        $(window).on('scroll.disqus_scroll', function() {
+          // offsetTop may changes because of manually resizing browser window or lazy loading images.
+          var offsetTop = $('#comments').offset().top - $(window).height();
+          var scrollTop = $(window).scrollTop();
+
+          // pre-load comments a bit? (margin or anything else)
+          if (offsetTop - scrollTop < 60) {
+            $(window).off('.disqus_scroll');
+            loadComments();
+          }
+        });
+      }
+    });
+  
+</script>
+
+
+
+
+
+  
+    
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/disqusjs@1/dist/disqusjs.css">
+
+
+
+<script src="//cdn.jsdelivr.net/npm/disqusjs@1/dist/disqus.js"></script>
+
+<script>
+  var dsqjs = new DisqusJS({
+    api: 'https://disqus.skk.moe/disqus/' || 'https://disqus.com/api/',
+    apikey: 'yeI3c68e36COmAnaJ0W8enNe62iyRL60APc1qYStSbMXCuXb1Hl57OKpqbA3AXjB',
+    shortname: 'fanzhongwei'
+  });
+</script>
+
+  
+
+
+  
+  <script>
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url).replace(/\/{2,}/g, '/');
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x"></i></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x"></i></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

@@ -2,7 +2,42 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://www.fanzhongwei.com/mutlithreading/multithreading-base.html</loc>
+    
+    <lastmod>2020-05-24T14:00:08.715Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://www.fanzhongwei.com/mutlithreading/multithreading-juc.html</loc>
+    
+    <lastmod>2020-05-11T14:03:48.870Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://www.fanzhongwei.com/mutlithreading/multithreading-models.html</loc>
+    
+    <lastmod>2020-05-11T14:03:22.006Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://www.fanzhongwei.com/engineering/uml.html</loc>
+    
+    <lastmod>2020-05-06T11:05:09.307Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://www.fanzhongwei.com/hexo/pull-refresh.html</loc>
+    
+    <lastmod>2020-03-30T15:34:02.371Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://www.fanzhongwei.com/mutlithreading/blocking-productor-threadpool.html</loc>
     
     <lastmod>2020-03-30T15:34:02.371Z</lastmod>
     
@@ -23,13 +58,6 @@
   </url>
   
   <url>
-    <loc>https://www.fanzhongwei.com/linux/typora.html</loc>
-    
-    <lastmod>2020-03-30T15:34:02.371Z</lastmod>
-    
-  </url>
-  
-  <url>
     <loc>https://www.fanzhongwei.com/unit-test/db-test.html</loc>
     
     <lastmod>2020-03-30T15:34:02.371Z</lastmod>
@@ -44,21 +72,7 @@
   </url>
   
   <url>
-    <loc>https://www.fanzhongwei.com/mutlithreading/blocking-productor-threadpool.html</loc>
-    
-    <lastmod>2020-03-30T15:34:02.371Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://www.fanzhongwei.com/hexo/pull-refresh.html</loc>
-    
-    <lastmod>2020-03-30T15:34:02.371Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://www.fanzhongwei.com/design-patterns/singleton-pattern.html</loc>
+    <loc>https://www.fanzhongwei.com/linux/typora.html</loc>
     
     <lastmod>2020-03-30T15:34:02.371Z</lastmod>
     
@@ -72,7 +86,7 @@
   </url>
   
   <url>
-    <loc>https://www.fanzhongwei.com/mutlithreading/mutlithreading.html</loc>
+    <loc>https://www.fanzhongwei.com/design-patterns/singleton-pattern.html</loc>
     
     <lastmod>2020-03-30T15:34:02.371Z</lastmod>
     
@@ -80,6 +94,13 @@
   
   <url>
     <loc>https://www.fanzhongwei.com/mutlithreading/thread-lock.html</loc>
+    
+    <lastmod>2020-03-30T15:34:02.371Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://www.fanzhongwei.com/mutlithreading/mutlithreading.html</loc>
     
     <lastmod>2020-03-30T15:34:02.371Z</lastmod>
     

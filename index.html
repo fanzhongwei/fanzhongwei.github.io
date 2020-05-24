@@ -399,6 +399,662 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://www.fanzhongwei.com/mutlithreading/multithreading-base.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="fanzhongwei">
+      <meta itemprop="description" content="个人经验总结：java、JavaScript、HTML、VUE等等">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="fanzhongwei">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/mutlithreading/multithreading-base.html" class="post-title-link" itemprop="url">多线程编程--基础知识</a>
+              
+            
+          </h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2020-05-11 00:00:00" itemprop="dateCreated datePublished" datetime="2020-05-11T00:00:00+08:00">2020-05-11</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2020-05-24 22:00:08" itemprop="dateModified" datetime="2020-05-24T22:00:08+08:00">2020-05-24</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/java多线程/" itemprop="url" rel="index"><span itemprop="name">java多线程</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+              
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+            
+                <span class="post-meta-item-text">评论数：</span>
+                <a href="/mutlithreading/multithreading-base.html#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="mutlithreading/multithreading-base.html" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p><strong>线程</strong>（Thread）是操作系统能够进行运算调度的最小单位，java线程中创建的、引用的对象在jvm内存中是如何存放的，线程间是如何进行通信的呢，线程发生异常了jvm又是如何处理的呢，接下来让我们从线程的基础知识开始一步一步地了解。</p>
+<p><img src="https://s2.ax1x.com/2019/04/13/AL3oVS.png" alt="多线程编程"></p>
+<h1 id="线程基础知识"><a class="header-anchor" href="#线程基础知识">¶</a>线程基础知识</h1>
+<h2 id="什么是线程"><a class="header-anchor" href="#什么是线程">¶</a>什么是线程</h2>
+<p><strong>线程</strong>（Thread）是操作系统能够进行运算调度的最小单位。它被包含在进程之中，是进程中的实际运作单位。一条线程指的是进程中一个单一顺序的控制流，一个进程中可以并发多个线程，每条线程并行执行不同的任务。</p>
+<h2 id="如何创建线程"><a class="header-anchor" href="#如何创建线程">¶</a>如何创建线程</h2>
+<ul>
+<li>继承Thread类</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 继承Thread类</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">ThreadTest</span> <span class="keyword">extends</span> <span class="title">Thread</span></span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span></span>&#123;</span><br><span class="line">        <span class="keyword">super</span>.run();</span><br><span class="line">        System.out.println(<span class="string">"Hello World! This is my first Thread."</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Test</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">extendsThreadTest</span><span class="params">()</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</span><br><span class="line">    ThreadTest threadTest = <span class="keyword">new</span> ThreadTest();</span><br><span class="line">    threadTest.start();</span><br><span class="line">    System.out.println(<span class="string">"运行结束。"</span>);</span><br><span class="line">    Thread.sleep(<span class="number">10</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>实现Runnable接口</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 实现Runnable接口</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">RunnableTest</span> <span class="keyword">implements</span> <span class="title">Runnable</span></span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">"Hello World! This is my first Thread."</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">implementsRunnableTest</span><span class="params">()</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</span><br><span class="line">    RunnableTest runnableTest = <span class="keyword">new</span> RunnableTest();</span><br><span class="line">    Thread thread = <span class="keyword">new</span> Thread(runnableTest);</span><br><span class="line">    thread.start();</span><br><span class="line"></span><br><span class="line">    Thread.sleep(<span class="number">1000</span>);</span><br><span class="line">    System.out.println(<span class="string">"运行结束。"</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="线程的状态"><a class="header-anchor" href="#线程的状态">¶</a>线程的状态</h2>
+<p>Java中的线程一共有六种状态：</p>
+<ul>
+<li>NEW（初始化状态）</li>
+<li>RUNNABLE（可运行 / 运行状态）</li>
+<li>BLOCKED（阻塞状态）</li>
+<li>WAITING（无时限等待）</li>
+<li>TIMED_WAITING（有时限等待）</li>
+<li>TERMINATED（终止状态）</li>
+</ul>
+<p>线程可以在这六种状态之间相互转换，如图所示：</p>
+<p><img src="https://s1.ax1x.com/2020/05/23/YvfvDg.jpg" alt="线程状态切换.jpg"></p>
+<h1 id="内存模型"><a class="header-anchor" href="#内存模型">¶</a>内存模型</h1>
+<h2 id="java内存模型"><a class="header-anchor" href="#java内存模型">¶</a>java内存模型</h2>
+<ul>
+<li>每一个运行在Java虚拟机里的线程都拥有自己的线程栈，存放当前线程运行的信息。</li>
+<li>所有原始类型的本地变量都存放在线程栈上，因此对其它线程不可见。</li>
+<li>所有引用类型的本地变量都存放在堆中，线程栈保存该对象的引用，因此其他线程只要有该对象的引用都可以访问。</li>
+<li>Java程序中无论由哪个对象创建的对象，不管是原始类型对象，还是引用类型对象，都是存放在堆里面。</li>
+</ul>
+<p>接下来让我们先看看一段具体代码，这些变量都存放在JVM的什么位置。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MemoryModel</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">MemorySharedObject</span> </span>&#123;</span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">static</span> MemorySharedObject sharedObject = <span class="keyword">new</span> MemorySharedObject();</span><br><span class="line">        <span class="keyword">public</span> Integer object2 = <span class="keyword">new</span> Integer(<span class="number">222</span>);</span><br><span class="line">        <span class="keyword">public</span> Integer object4 = <span class="keyword">new</span> Integer(<span class="number">444</span>);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">long</span> member1 = <span class="number">12345L</span>;</span><br><span class="line">        <span class="keyword">public</span> <span class="keyword">long</span> member2 = <span class="number">67890L</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> List&lt;Object&gt; list = Collections.synchronizedList(<span class="keyword">new</span> ArrayList&lt;&gt;());</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">test</span><span class="params">()</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</span><br><span class="line">        <span class="keyword">new</span> Thread(<span class="keyword">this</span>::methodOne).start();</span><br><span class="line">        <span class="keyword">new</span> Thread(<span class="keyword">this</span>::methodOne).start();</span><br><span class="line"></span><br><span class="line">        Thread.sleep(<span class="number">100000</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">methodOne</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> localVariable1 = <span class="number">999</span>;</span><br><span class="line">        MemorySharedObject localVariable2 = MemorySharedObject.sharedObject;</span><br><span class="line"></span><br><span class="line">        list.add(localVariable2);</span><br><span class="line">        methodTwo();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">methodTwo</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        Integer localVariable1 = <span class="keyword">new</span> Integer(<span class="number">4321</span>);</span><br><span class="line">        list.add(localVariable1);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>当test用例执行的时候，各个变量在jvm内存中存放位置如下图所示：</p>
+<p><img src="https://s1.ax1x.com/2020/05/23/YxN3LT.png" alt="YxN3LT.png"></p>
+<p>上图中每个线程执行<code>methodOne()</code>都会在它们对应的线程栈上创建<code>localVariable1</code>和<code>localVariable2</code>的私有拷贝。<code>localVariable1</code>为基础类型对象只存在于线程栈上，<code>localVariable2</code>为堆内存中Object3的引用。methodTwo方法中的localVariable1都会各自在堆上创建一个对象<code>object1</code>和<code>object5</code>，线程栈中存放这两个对象的引用。</p>
+<p>执行test用例的时候，我们执行如下两个步骤：</p>
+<ul>
+<li>jmap -dump:format=b,file=./heap_dump.txt 12792</li>
+<li>dump出jvm内存后，使用mat进行分析，可以找到本例中对象的情况</li>
+</ul>
+<p>分析结果如下如所示：</p>
+<p><img src="https://s1.ax1x.com/2020/05/24/tS30OS.png" alt="mat内存分析.png"></p>
+<h2 id="硬件内存模型"><a class="header-anchor" href="#硬件内存模型">¶</a>硬件内存模型</h2>
+<p><img src="https://s1.ax1x.com/2020/05/23/YxN0Qx.png" alt="YxN0Qx.png"></p>
+<h2 id="java内存模型与硬件内存模型的关系"><a class="header-anchor" href="#java内存模型与硬件内存模型的关系">¶</a>java内存模型与硬件内存模型的关系</h2>
+<p><img src="https://s1.ax1x.com/2020/05/23/YxNxXV.png" alt="YxNxXV.png"></p>
+<h1 id="同步异步"><a class="header-anchor" href="#同步异步">¶</a>同步异步</h1>
+<p><strong>同步和异步关注的是：消息通信机制(synchronous communication/ asynchronous communication)。</strong></p>
+<h2 id="同步-synchronous"><a class="header-anchor" href="#同步-synchronous">¶</a>同步（Synchronous）</h2>
+<p><strong>同步方法</strong>调用一旦开始，调用者必须等到方法调用返回后，才能继续后续的行为，如下图所示：</p>
+<p><img src="https://img2018.cnblogs.com/blog/1680783/201905/1680783-20190521124754180-1985908967.png" alt="同步.png"></p>
+<blockquote>
+<ul>
+<li>打电话</li>
+<li>B/S模式</li>
+</ul>
+</blockquote>
+<h2 id="异步-asynchronous"><a class="header-anchor" href="#异步-asynchronous">¶</a>异步（Asynchronous）</h2>
+<p><strong>异步方法</strong>调用更像一个消息传递，一旦开始，方法调用就会立即返回，调用者就可以继续后续的操作。而，异步方法通常会在另外一个线程中，“真实”地执行着。整个过程，不会阻碍调用者的工作，如下图所示：</p>
+<p><img src="https://img2018.cnblogs.com/blog/1680783/201905/1680783-20190521125411515-1327485285.png" alt="同步.png"></p>
+<blockquote>
+<ul>
+<li>发短信</li>
+<li>ajax</li>
+<li>消息队列</li>
+</ul>
+</blockquote>
+<h2 id="阻塞和非阻塞"><a class="header-anchor" href="#阻塞和非阻塞">¶</a>阻塞和非阻塞</h2>
+<p><strong>阻塞和非阻塞</strong>：强调的是程序在等待调用结果（消息，返回值）时的状态。</p>
+<p>阻塞调用是指调用结果返回之前，当前线程会被挂起，调用线程只有在得到结果之后才会返回。</p>
+<p>非阻塞调用指在不能立刻得到结果之前，该调用不会阻塞当前线程。</p>
+<h1 id="线程间通信"><a class="header-anchor" href="#线程间通信">¶</a>线程间通信</h1>
+<h2 id="共享对象"><a class="header-anchor" href="#共享对象">¶</a>共享对象</h2>
+<p>线程间发送信号的一个简单方式是在共享对象的变量里设置信号值，如下面代码所示：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">MySignal</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">boolean</span> hasDataToProcess = <span class="keyword">false</span>;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">boolean</span> <span class="title">hasDataToProcess</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">this</span>.hasDataToProcess;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">setHasDataToProcess</span><span class="params">(<span class="keyword">boolean</span> process)</span></span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.hasDataToProcess = process;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>线程A在一个同步块里设置boolean型成员变量hasDataToProcess为true，线程B也在同步块里读取hasDataToProcess这个成员变量。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Test</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">test_share_signal</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    MySignal signal = <span class="keyword">new</span> MySignal();</span><br><span class="line">    <span class="keyword">new</span> Thread(() -&gt; &#123;</span><br><span class="line">        <span class="keyword">while</span>(!signal.hasDataToProcess()) &#123;</span><br><span class="line">            System.out.println(<span class="string">"线程A未接收到信号，sleep 1000ms"</span>);</span><br><span class="line">            sleep(<span class="number">1000</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        System.out.println(<span class="string">"线程A接收到信号了，开始处理："</span> + data.remove(<span class="number">0</span>));</span><br><span class="line">    &#125;).start();</span><br><span class="line"></span><br><span class="line">    sleep(<span class="number">10000</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">new</span> Thread(() -&gt; &#123;</span><br><span class="line">        System.out.println(<span class="string">"线程B设置信号"</span>);</span><br><span class="line">        data.add(<span class="string">"线程B设置的数据"</span>);</span><br><span class="line">        signal.setHasDataToProcess(<span class="keyword">true</span>);</span><br><span class="line">    &#125;).start();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>注意：<strong>线程A和B必须获得指向一个MySignal共享实例的引用，否则线程A将收不到信号。</strong></p>
+<h2 id="wait-notify-和notifyall"><a class="header-anchor" href="#wait-notify-和notifyall">¶</a>wait(),notify()和notifyAll()</h2>
+<p>通过共享对象，循环检测信号是否被设置，如果没有被设置则进入等待，等待的间隔时间设置过短则对cpu消耗过大，等待的间隔时间设置过长则消息接收不及时。</p>
+<p>Java有一个内建的等待机制来允许线程在等待信号的时候变为非运行状态。java.lang.Object 类定义了三个方法，wait()、notify()和notifyAll()来实现这个等待机制。</p>
+<p>一个线程一旦调用了任意对象的wait()方法，就会变为非运行状态，直到另一个线程调用了同一个对象的notify()方法。为了调用wait()或者notify()，线程必须先获得那个对象的锁，也就是说，线程必须在同步块里调用wait()或者notify()，否则将抛出<code>java.lang.IllegalMonitorStateException</code>异常。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">@Test</span><br><span class="line">   public void test_wait_notify() &#123;</span><br><span class="line">       Object monitor = new Object();</span><br><span class="line">       List&lt;String&gt; data = new ArrayList&lt;&gt;();</span><br><span class="line">       Thread thread = new Thread(() -&gt; &#123;</span><br><span class="line">           try &#123;</span><br><span class="line">               synchronized (monitor) &#123;</span><br><span class="line">                   System.out.println(&quot;子线程开始等待notify信号&quot;);</span><br><span class="line">                   monitor.wait();</span><br><span class="line">               &#125;</span><br><span class="line">               System.out.println(&quot;子线程接收到notify信号了，开始处理：&quot; + data.remove(0));</span><br><span class="line">           &#125; catch (InterruptedException e) &#123;</span><br><span class="line">               e.printStackTrace();</span><br><span class="line">           &#125;</span><br><span class="line">       &#125;);</span><br><span class="line">       thread.start();</span><br><span class="line"></span><br><span class="line">       sleep(3000);</span><br><span class="line">       data.add(&quot;主线程调用notify方法&quot;);</span><br><span class="line">       synchronized (monitor) &#123;</span><br><span class="line">           monitor.notify();</span><br><span class="line">       &#125;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+<p>一旦线程调用了wait()方法，它就释放了所持有的监视器对象上的锁。这将允许其他线程也可以调用wait()或者notify()。一旦一个线程被唤醒，不能立刻就退出wait()的方法调用，直到调用notify()的线程退出了它自己的同步块。换句话说：**被唤醒的线程必须重新获得监视器对象的锁，才可以退出wait()的方法调用，因为wait方法调用运行在同步块里面。**如果多个线程被notifyAll()唤醒，那么在同一时刻将只有一个线程可以退出wait()方法，因为每个线程在退出wait()前必须获得监视器对象的锁。</p>
+<h1 id="异常处理"><a class="header-anchor" href="#异常处理">¶</a>异常处理</h1>
+<h2 id="thread默认的异常处理"><a class="header-anchor" href="#thread默认的异常处理">¶</a>Thread默认的异常处理</h2>
+<p>线程都不允许抛出未捕获的checked exception（比如sleep时的<code>InterruptedException</code>）<strong>，也就是说各个线程需要自己把自己的checked exception处理掉</strong>。我们可以查看一下Thread类的run()方法声明，方法声明上没有对抛出异常进行约束。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//Thread类中</span></span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (target != <span class="keyword">null</span>) &#123;</span><br><span class="line">        target.run();<span class="comment">//实际上直接调用Runnable实例的run方法</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//Runnable接口中</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span></span>;</span><br></pre></td></tr></table></figure>
+<p><strong>线程是独立执行的代码片断，线程的问题应该由线程自己来解决，而不要委托到外部。</strong></p>
+<h2 id="未捕获的异常去哪儿了"><a class="header-anchor" href="#未捕获的异常去哪儿了">¶</a>未捕获的异常去哪儿了</h2>
+<p>一个异常被抛出后，如果没有被捕获处理，则会一直向上抛。<font color="red"><strong>异常一旦被Thread.run() 抛出后，就不能在程序中对异常进行捕获，最终只能由JVM捕获。</strong></font></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">test_thread_exception</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">new</span> Thread(() -&gt; &#123;<span class="keyword">int</span> a = <span class="number">1</span>/<span class="number">0</span>;&#125;).start();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 执行结果</span></span><br><span class="line">Exception in thread <span class="string">"Thread-0"</span> java.lang.ArithmeticException: / by zero</span><br><span class="line">	at com.teddy.thread.basic.ThreadExceptionTest.lambda$thread_exception$<span class="number">0</span>(ThreadExceptionTest.java:<span class="number">9</span>)</span><br><span class="line">	at java.lang.Thread.run(Thread.java:<span class="number">748</span>)</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Test</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">test_catch_thread_exception</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="keyword">new</span> Thread(() -&gt; &#123;<span class="keyword">int</span> a = <span class="number">1</span>/<span class="number">0</span>;&#125;).start();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            System.out.println(<span class="string">"捕获到线程抛出的异常！"</span>);</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"><span class="comment">// 执行结果</span></span><br><span class="line">Exception in thread <span class="string">"Thread-0"</span> java.lang.ArithmeticException: / by zero</span><br><span class="line">	at com.teddy.thread.basic.ThreadExceptionTest.lambda$test_catch_thread_exception$<span class="number">1</span>(ThreadExceptionTest.java:<span class="number">18</span>)</span><br><span class="line">	at java.lang.Thread.run(Thread.java:<span class="number">748</span>)</span><br></pre></td></tr></table></figure>
+<h2 id="jvm如何处理线程中抛出的异常"><a class="header-anchor" href="#jvm如何处理线程中抛出的异常">¶</a>JVM如何处理线程中抛出的异常</h2>
+<p>查看Thread类的源码，我们可以看到有个dispatchUncaughtException方法，此方法就是用来处理线程中抛出的异常的。JVM会调用dispatchUncaughtException方法来寻找异常处理器(UncaughtExceptionHandler)，处理异常。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 向handler分派未捕获的异常。该方法仅由JVM调用。</span></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">dispatchUncaughtException</span><span class="params">(Throwable e)</span> </span>&#123;</span><br><span class="line">    getUncaughtExceptionHandler().uncaughtException(<span class="keyword">this</span>, e);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 获取用来处理未捕获异常的handler，如果没有设置则返回当前线程所属的ThreadGroup</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> UncaughtExceptionHandler <span class="title">getUncaughtExceptionHandler</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> uncaughtExceptionHandler != <span class="keyword">null</span> ?</span><br><span class="line">        uncaughtExceptionHandler : group;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>UncaughtExceptionHandler必须显示的设置，否则默认为null。若为null，则使用线程默认的handler，即该线程所属的ThreadGroup。ThreadGroup自身就是一个handler，查看ThreadGroup的源码就可以发现，ThreadGroup实现了Thread.UncaughtExceptionHandler接口，并实现了默认的处理方法。默认的未捕获异常处理器处理时，会调用 System.err 进行输出，也就是直接打印到控制台了。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">uncaughtException</span><span class="params">(Thread t, Throwable e)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (parent != <span class="keyword">null</span>) &#123; <span class="comment">// 父级优先处理</span></span><br><span class="line">        parent.uncaughtException(t, e);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        Thread.UncaughtExceptionHandler ueh = Thread.getDefaultUncaughtExceptionHandler();</span><br><span class="line">        <span class="keyword">if</span> (ueh != <span class="keyword">null</span>) &#123;</span><br><span class="line">            ueh.uncaughtException(t, e);</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (!(e <span class="keyword">instanceof</span> ThreadDeath)) &#123; </span><br><span class="line">            <span class="comment">// 没有配置handler时，默认直接打印到控制台</span></span><br><span class="line">            System.err.print(<span class="string">"Exception in thread \""</span></span><br><span class="line">                             + t.getName() + <span class="string">"\" "</span>);</span><br><span class="line">            e.printStackTrace(System.err);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="产考文献"><a class="header-anchor" href="#产考文献">¶</a>产考文献</h1>
+<ul>
+<li><span class="exturl" data-url="aHR0cDovL2lmZXZlLmNvbS9qYXZhLWNvbmN1cnJlbmN5LXRocmVhZC1kaXJlY3Rvcnkv" title="http://ifeve.com/java-concurrency-thread-directory/">http://ifeve.com/java-concurrency-thread-directory/<i class="fa fa-external-link"></i></span></li>
+<li><span class="exturl" data-url="aHR0cDovL3R1dG9yaWFscy5qZW5rb3YuY29tL2phdmEtY29uY3VycmVuY3kvaW5kZXguaHRtbA==" title="http://tutorials.jenkov.com/java-concurrency/index.html">http://tutorials.jenkov.com/java-concurrency/index.html<i class="fa fa-external-link"></i></span></li>
+<li>《深入Java虚拟机：JVM高级特性与最佳实践（第2版）》</li>
+</ul>
+
+          
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://www.fanzhongwei.com/mutlithreading/multithreading-juc.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="fanzhongwei">
+      <meta itemprop="description" content="个人经验总结：java、JavaScript、HTML、VUE等等">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="fanzhongwei">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/mutlithreading/multithreading-juc.html" class="post-title-link" itemprop="url">多线程编程--基础知识</a>
+              
+            
+          </h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2020-05-11 00:00:00 / 修改时间：22:03:48" itemprop="dateCreated datePublished" datetime="2020-05-11T00:00:00+08:00">2020-05-11</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/java多线程/" itemprop="url" rel="index"><span itemprop="name">java多线程</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+              
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+            
+                <span class="post-meta-item-text">评论数：</span>
+                <a href="/mutlithreading/multithreading-juc.html#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="mutlithreading/multithreading-juc.html" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p><img src="https://10.url.cn/qqcourse_logo_ng/ajNVdqHZLLDpfiageJ021AspmrAdS6FlCPC7JgO4Zgjp5ozCFiaZRJguDIEWicUBnfG9f5bxFdbQcY/" alt="java并发包"></p>
+<h1 id="内存模型"><a class="header-anchor" href="#内存模型">¶</a>内存模型</h1>
+<h1 id="同步异步"><a class="header-anchor" href="#同步异步">¶</a>同步异步</h1>
+<h1 id="线程间通信"><a class="header-anchor" href="#线程间通信">¶</a>线程间通信</h1>
+<h1 id="异常处理"><a class="header-anchor" href="#异常处理">¶</a>异常处理</h1>
+<h1 id="产考文献"><a class="header-anchor" href="#产考文献">¶</a>产考文献</h1>
+<ul>
+<li><span class="exturl" data-url="aHR0cDovL3R1dG9yaWFscy5qZW5rb3YuY29tL2phdmEtY29uY3VycmVuY3kvamF2YS1tZW1vcnktbW9kZWwuaHRtbA==" title="http://tutorials.jenkov.com/java-concurrency/java-memory-model.html">http://tutorials.jenkov.com/java-concurrency/java-memory-model.html<i class="fa fa-external-link"></i></span></li>
+</ul>
+
+          
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://www.fanzhongwei.com/mutlithreading/multithreading-models.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="fanzhongwei">
+      <meta itemprop="description" content="个人经验总结：java、JavaScript、HTML、VUE等等">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="fanzhongwei">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/mutlithreading/multithreading-models.html" class="post-title-link" itemprop="url">多线程编程--基础知识</a>
+              
+            
+          </h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2020-05-11 00:00:00 / 修改时间：22:03:22" itemprop="dateCreated datePublished" datetime="2020-05-11T00:00:00+08:00">2020-05-11</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/java多线程/" itemprop="url" rel="index"><span itemprop="name">java多线程</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+              
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+            
+                <span class="post-meta-item-text">评论数：</span>
+                <a href="/mutlithreading/multithreading-models.html#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="mutlithreading/multithreading-models.html" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p><img src="https://pic4.zhimg.com/v2-6886a471843d6982483ee682b724f31c_b.jpg" alt="多线程编程"></p>
+<h1 id="内存模型"><a class="header-anchor" href="#内存模型">¶</a>内存模型</h1>
+<h1 id="同步异步"><a class="header-anchor" href="#同步异步">¶</a>同步异步</h1>
+<h1 id="线程间通信"><a class="header-anchor" href="#线程间通信">¶</a>线程间通信</h1>
+<h1 id="异常处理"><a class="header-anchor" href="#异常处理">¶</a>异常处理</h1>
+<h1 id="产考文献"><a class="header-anchor" href="#产考文献">¶</a>产考文献</h1>
+<ul>
+<li><span class="exturl" data-url="aHR0cDovL3R1dG9yaWFscy5qZW5rb3YuY29tL2phdmEtY29uY3VycmVuY3kvamF2YS1tZW1vcnktbW9kZWwuaHRtbA==" title="http://tutorials.jenkov.com/java-concurrency/java-memory-model.html">http://tutorials.jenkov.com/java-concurrency/java-memory-model.html<i class="fa fa-external-link"></i></span></li>
+</ul>
+
+          
+        
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="https://www.fanzhongwei.com/engineering/uml.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -461,7 +1117,7 @@
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2020-03-30 23:34:02" itemprop="dateModified" datetime="2020-03-30T23:34:02+08:00">2020-03-30</time>
+                <time title="修改时间：2020-05-06 19:05:09" itemprop="dateModified" datetime="2020-05-06T19:05:09+08:00">2020-05-06</time>
               
             
           </span>
@@ -535,7 +1191,7 @@
       
         
           <p>近几年来，面向对象几乎成为软件技术的代名词。而UML是面向对象方法的一面旗帜，谈到面向对象的分析和设计就不能不谈到UML。如今UML也成为面向对象分析和设计事实上的行业标准。然而什么是UML，如何利用UML将一份原始需求经过层层分析和推导，最终形成可执行的代码？</p>
-<p><img src="https://s1.ax1x.com/2020/03/29/GVBGHf.png" alt="什么是UML.png"></p>
+<p><img src="https://s1.ax1x.com/2020/03/29/GVBGHf.png" alt></p>
           <!--noindex-->
           
             <div class="post-button text-center">
@@ -1752,586 +2408,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://www.fanzhongwei.com/linux/Windows_to_Linux.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="fanzhongwei">
-      <meta itemprop="description" content="个人经验总结：java、JavaScript、HTML、VUE等等">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="fanzhongwei">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h2 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/linux/Windows_to_Linux.html" class="post-title-link" itemprop="url">Windows换Linux之旅</a>
-              
-            
-          </h2>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-
-              
-                
-              
-
-              <time title="创建时间：2019-06-19 00:00:00" itemprop="dateCreated datePublished" datetime="2019-06-19T00:00:00+08:00">2019-06-19</time>
-            
-
-            
-              
-
-              
-                
-                <span class="post-meta-divider">|</span>
-                
-
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">更新于</span>
-                
-                <time title="修改时间：2020-03-30 23:34:02" itemprop="dateModified" datetime="2020-03-30T23:34:02+08:00">2020-03-30</time>
-              
-            
-          </span>
-
-          
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Linux/" itemprop="url" rel="index"><span itemprop="name">Linux</span></a></span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-            
-              
-              <span class="post-comments-count">
-                <span class="post-meta-divider">|</span>
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-comment-o"></i>
-                </span>
-            
-                <span class="post-meta-item-text">评论数：</span>
-                <a href="/linux/Windows_to_Linux.html#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="linux/Windows_to_Linux.html" itemprop="commentCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <p>随着时代的发展，各种硬件软件急速发展，Windows都出到10了，越来越觉得七八年前的笔记本安装Windows10实在是太卡了。最近闲来无事，打算将其换成Linux，换完之后确实觉得比Windows流畅多了**<sup>_</sup>**</p>
-<p><img src="https://www.deepin.org/wp-content/uploads/2016/12/desktop-zh.png" alt="Ubuntu"></p>
-          <!--noindex-->
-          
-            <div class="post-button text-center">
-              <a class="btn" href="/linux/Windows_to_Linux.html#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-
-    
-    
-    
-
-    
-
-    
-      
-    
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://www.fanzhongwei.com/mutlithreading/blocking-productor-threadpool.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="fanzhongwei">
-      <meta itemprop="description" content="个人经验总结：java、JavaScript、HTML、VUE等等">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="fanzhongwei">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h2 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/mutlithreading/blocking-productor-threadpool.html" class="post-title-link" itemprop="url">支持生产阻塞的线程池</a>
-              
-            
-          </h2>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-
-              
-                
-              
-
-              <time title="创建时间：2019-04-19 00:00:00" itemprop="dateCreated datePublished" datetime="2019-04-19T00:00:00+08:00">2019-04-19</time>
-            
-
-            
-              
-
-              
-                
-                <span class="post-meta-divider">|</span>
-                
-
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">更新于</span>
-                
-                <time title="修改时间：2020-03-30 23:34:02" itemprop="dateModified" datetime="2020-03-30T23:34:02+08:00">2020-03-30</time>
-              
-            
-          </span>
-
-          
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/java多线程/" itemprop="url" rel="index"><span itemprop="name">java多线程</span></a></span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-            
-              
-              <span class="post-comments-count">
-                <span class="post-meta-divider">|</span>
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-comment-o"></i>
-                </span>
-            
-                <span class="post-meta-item-text">评论数：</span>
-                <a href="/mutlithreading/blocking-productor-threadpool.html#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="mutlithreading/blocking-productor-threadpool.html" itemprop="commentCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <p>在各种并发编程模型中，生产者-消费者模式大概是最常用的了。在实际工作中，对于生产消费的速度，通常需要做一下权衡。通常来说，生产任务的速度要大于消费的速度。一个细节问题是，队列长度，以及如何匹配生产和消费的速度。</p>
-<p>一个典型的生产者-消费者模型如下：</p>
-<p><img src="http://ifeve.com/wp-content/uploads/2013/04/producer-consumer.png" alt="image"></p>
-          <!--noindex-->
-          
-            <div class="post-button text-center">
-              <a class="btn" href="/mutlithreading/blocking-productor-threadpool.html#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-
-    
-    
-    
-
-    
-
-    
-      
-    
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://www.fanzhongwei.com/mutlithreading/thread-lock.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="fanzhongwei">
-      <meta itemprop="description" content="个人经验总结：java、JavaScript、HTML、VUE等等">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="fanzhongwei">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h2 class="post-title" itemprop="name headline">
-                
-                
-                <a href="/mutlithreading/thread-lock.html" class="post-title-link" itemprop="url">多线程编程与锁优化</a>
-              
-            
-          </h2>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-
-            
-            
-            
-
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-
-              
-                
-              
-
-              <time title="创建时间：2019-04-15 00:00:00" itemprop="dateCreated datePublished" datetime="2019-04-15T00:00:00+08:00">2019-04-15</time>
-            
-
-            
-              
-
-              
-                
-                <span class="post-meta-divider">|</span>
-                
-
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">更新于</span>
-                
-                <time title="修改时间：2020-03-30 23:34:02" itemprop="dateModified" datetime="2020-03-30T23:34:02+08:00">2020-03-30</time>
-              
-            
-          </span>
-
-          
-            <span class="post-category">
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/java多线程/" itemprop="url" rel="index"><span itemprop="name">java多线程</span></a></span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-            
-              
-              <span class="post-comments-count">
-                <span class="post-meta-divider">|</span>
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-comment-o"></i>
-                </span>
-            
-                <span class="post-meta-item-text">评论数：</span>
-                <a href="/mutlithreading/thread-lock.html#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="mutlithreading/thread-lock.html" itemprop="commentCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <p>多线程是在同一个程序内部并行执行，因此会对相同的内存空间进行并发读写操作。如果一个线程在读一个内存时，另一个线程正向该内存进行写操作，那进行读操作的那个线程将获得什么结果呢？是写操作之前旧的值？还是写操作成功之后的新值？或是一半新一半旧的值？或者，如果是两个线程同时写同一个内存，在操作完成后将会是什么结果呢？是第一个线程写入的值？还是第二个线程写入的值？还是两个线程写入的一个混合值？从下面的图我们可以窥知一二。</p>
-<p><img src="https://s2.ax1x.com/2019/04/14/AO9UHK.png" alt="Java memory model"></p>
-          <!--noindex-->
-          
-            <div class="post-button text-center">
-              <a class="btn" href="/mutlithreading/thread-lock.html#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-
-    
-    
-    
-
-    
-
-    
-      
-    
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2378,7 +2454,7 @@
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">13</span>
+                    <span class="site-state-item-count">16</span>
                     <span class="site-state-item-name">日志</span>
                   </a>
                 </div>
@@ -2482,7 +2558,11 @@
                     
                       
                     
-                    <span class="site-state-item-count">28</span>
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">30</span>
                     <span class="site-state-item-name">标签</span>
                   </a>
                 </div>

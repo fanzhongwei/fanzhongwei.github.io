@@ -1,7 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>https://www.fanzhongwei.com/mutlithreading/multithreading-base.html</loc>
+    <lastmod>2020-05-24</lastmod>
+  </url>  <url>
+    <loc>https://www.fanzhongwei.com/mutlithreading/multithreading-juc.html</loc>
+    <lastmod>2020-05-11</lastmod>
+  </url>  <url>
+    <loc>https://www.fanzhongwei.com/mutlithreading/multithreading-models.html</loc>
+    <lastmod>2020-05-11</lastmod>
+  </url>  <url>
     <loc>https://www.fanzhongwei.com/engineering/uml.html</loc>
+    <lastmod>2020-05-06</lastmod>
+  </url>  <url>
+    <loc>https://www.fanzhongwei.com/hexo/pull-refresh.html</loc>
+    <lastmod>2020-03-30</lastmod>
+  </url>  <url>
+    <loc>https://www.fanzhongwei.com/mutlithreading/blocking-productor-threadpool.html</loc>
     <lastmod>2020-03-30</lastmod>
   </url>  <url>
     <loc>https://www.fanzhongwei.com/hexo/init.html</loc>
@@ -10,31 +25,25 @@
     <loc>https://www.fanzhongwei.com/linux/shadowsocks.html</loc>
     <lastmod>2020-03-30</lastmod>
   </url>  <url>
-    <loc>https://www.fanzhongwei.com/linux/typora.html</loc>
-    <lastmod>2020-03-30</lastmod>
-  </url>  <url>
     <loc>https://www.fanzhongwei.com/unit-test/db-test.html</loc>
     <lastmod>2020-03-30</lastmod>
   </url>  <url>
     <loc>https://www.fanzhongwei.com/linux/Windows_to_Linux.html</loc>
     <lastmod>2020-03-30</lastmod>
   </url>  <url>
-    <loc>https://www.fanzhongwei.com/mutlithreading/blocking-productor-threadpool.html</loc>
-    <lastmod>2020-03-30</lastmod>
-  </url>  <url>
-    <loc>https://www.fanzhongwei.com/hexo/pull-refresh.html</loc>
-    <lastmod>2020-03-30</lastmod>
-  </url>  <url>
-    <loc>https://www.fanzhongwei.com/design-patterns/singleton-pattern.html</loc>
+    <loc>https://www.fanzhongwei.com/linux/typora.html</loc>
     <lastmod>2020-03-30</lastmod>
   </url>  <url>
     <loc>https://www.fanzhongwei.com/engineering/software-develop-model.html</loc>
     <lastmod>2020-03-30</lastmod>
   </url>  <url>
-    <loc>https://www.fanzhongwei.com/mutlithreading/mutlithreading.html</loc>
+    <loc>https://www.fanzhongwei.com/design-patterns/singleton-pattern.html</loc>
     <lastmod>2020-03-30</lastmod>
   </url>  <url>
     <loc>https://www.fanzhongwei.com/mutlithreading/thread-lock.html</loc>
+    <lastmod>2020-03-30</lastmod>
+  </url>  <url>
+    <loc>https://www.fanzhongwei.com/mutlithreading/mutlithreading.html</loc>
     <lastmod>2020-03-30</lastmod>
   </url>  <url>
     <loc>https://www.fanzhongwei.com/mutlithreading/thread-pool.html</loc>

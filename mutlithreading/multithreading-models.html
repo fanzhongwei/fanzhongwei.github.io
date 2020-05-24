@@ -104,17 +104,20 @@
 <script src="/lib/mescroll/mescroll.min.js?v=1.4.1" charset="utf-8"></script>
 
 
-  <meta name="description" content="个人经验总结：java、JavaScript、HTML、VUE等等">
-<meta name="keywords" content="java、JavaScript、HTML、VUE">
-<meta property="og:type" content="website">
-<meta property="og:title" content="fanzhongwei">
-<meta property="og:url" content="https://www.fanzhongwei.com/archives/2019/index.html">
+  <meta name="description" content="¶内存模型 ¶同步异步 ¶线程间通信 ¶异常处理 ¶产考文献  http://tutorials.jenkov.com/java-concurrency/java-memory-model.html">
+<meta name="keywords" content="java,java多线程,多线程编程,并发模型">
+<meta property="og:type" content="article">
+<meta property="og:title" content="多线程编程--基础知识">
+<meta property="og:url" content="https://www.fanzhongwei.com/mutlithreading/multithreading-models.html">
 <meta property="og:site_name" content="fanzhongwei">
-<meta property="og:description" content="个人经验总结：java、JavaScript、HTML、VUE等等">
+<meta property="og:description" content="¶内存模型 ¶同步异步 ¶线程间通信 ¶异常处理 ¶产考文献  http://tutorials.jenkov.com/java-concurrency/java-memory-model.html">
 <meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://pic4.zhimg.com/v2-6886a471843d6982483ee682b724f31c_b.jpg">
+<meta property="og:updated_time" content="2020-05-11T14:03:22.006Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="fanzhongwei">
-<meta name="twitter:description" content="个人经验总结：java、JavaScript、HTML、VUE等等">
+<meta name="twitter:title" content="多线程编程--基础知识">
+<meta name="twitter:description" content="¶内存模型 ¶同步异步 ¶线程间通信 ¶异常处理 ¶产考文献  http://tutorials.jenkov.com/java-concurrency/java-memory-model.html">
+<meta name="twitter:image" content="https://pic4.zhimg.com/v2-6886a471843d6982483ee682b724f31c_b.jpg">
 
 
 
@@ -122,7 +125,7 @@
 
   
   
-  <link rel="canonical" href="https://www.fanzhongwei.com/archives/2019/">
+  <link rel="canonical" href="https://www.fanzhongwei.com/mutlithreading/multithreading-models">
 
 
 
@@ -132,7 +135,7 @@
   };
 </script>
 
-  <title>归档 | fanzhongwei</title>
+  <title>多线程编程--基础知识 | fanzhongwei</title>
   
 
 
@@ -190,7 +193,7 @@
     
   
 
-  <div class="container sidebar-position-left page-archive">
+  <div class="container sidebar-position-left page-post-detail">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -300,7 +303,7 @@
         
         
           
-          <li class="menu-item menu-item-archives menu-item-active">
+          <li class="menu-item menu-item-archives">
 
     
     
@@ -378,423 +381,241 @@
           
             
 
-    
-    
-      
-      
-    
-      
-      
-    
-      
-      
-    
-      
-      
-    
-      
-      
-    
-    
-
-  
-
-
           
           <div id="content" class="content">
             
 
-  
-  
-  
-  <div class="post-block archive">
-    <div id="posts" class="posts-collapse">
-      <span class="archive-move-on"></span>
+  <div id="posts" class="posts-expand">
+    
 
-      
-      <span class="archive-page-counter">
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://www.fanzhongwei.com/mutlithreading/multithreading-models.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="fanzhongwei">
+      <meta itemprop="description" content="个人经验总结：java、JavaScript、HTML、VUE等等">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="fanzhongwei">
+    </span>
+
+    
+      <header class="post-header">
+
         
         
+          <h2 class="post-title" itemprop="name headline">多线程编程--基础知识
+
+              
+            
+          </h2>
         
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2020-05-11 00:00:00 / 修改时间：22:03:22" itemprop="dateCreated datePublished" datetime="2020-05-11T00:00:00+08:00">2020-05-11</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+
           
-        
-        嗯..! 目前共计 16 篇日志。 继续努力。
-      </span>
-      
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/java多线程/" itemprop="url" rel="index"><span itemprop="name">java多线程</span></a></span>
 
-      
-
-        
-        
-        
-
-        
+                
+                
+              
+            </span>
           
-          <div class="collection-title">
-            <h2 class="archive-year" id="archive-year-2019">2019</h2>
-          </div>
-        
-        
 
-        
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h3 class="post-title">
-        
-          <a class="post-title-link" href="/linux/typora.html" itemprop="url">
+          
             
-              <span itemprop="name">Deepin install Typora</span>
             
-          </a>
-        
-      </h3>
+              
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+            
+                <span class="post-meta-item-text">评论数：</span>
+                <a href="/mutlithreading/multithreading-models.html#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="mutlithreading/multithreading-models.html" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
 
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated" datetime="2019-10-22T00:00:00+08:00" content="2019-10-22">
-          10-22
-        </time>
-      </div>
+          
+          
 
-    </header>
-  </article>
+          
+            <span class="post-meta-divider">|</span>
+            <span class="post-meta-item-icon">
+            <i class="fa fa-eye"></i>
+             阅读次数： 
+            <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>
+            </span>
+          
 
+          
 
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
 
       
-
-        
-        
-        
-
-        
-        
-
-        
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h3 class="post-title">
-        
-          <a class="post-title-link" href="/unit-test/db-test.html" itemprop="url">
-            
-              <span itemprop="name">springboot + jpa + h2 单元测试实战</span>
-            
-          </a>
-        
-      </h3>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated" datetime="2019-07-03T00:00:00+08:00" content="2019-07-03">
-          07-03
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-
       
 
-        
-        
-        
-
-        
-        
-
-        
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h3 class="post-title">
-        
-          <a class="post-title-link" href="/hexo/init.html" itemprop="url">
-            
-              <span itemprop="name">Hexo搭建个人博客</span>
-            
-          </a>
-        
-      </h3>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated" datetime="2019-06-22T00:00:00+08:00" content="2019-06-22">
-          06-22
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
+      
+        <p><img src="https://pic4.zhimg.com/v2-6886a471843d6982483ee682b724f31c_b.jpg" alt="多线程编程"></p>
+<h1 id="内存模型"><a class="header-anchor" href="#内存模型">¶</a>内存模型</h1>
+<h1 id="同步异步"><a class="header-anchor" href="#同步异步">¶</a>同步异步</h1>
+<h1 id="线程间通信"><a class="header-anchor" href="#线程间通信">¶</a>线程间通信</h1>
+<h1 id="异常处理"><a class="header-anchor" href="#异常处理">¶</a>异常处理</h1>
+<h1 id="产考文献"><a class="header-anchor" href="#产考文献">¶</a>产考文献</h1>
+<ul>
+<li><span class="exturl" data-url="aHR0cDovL3R1dG9yaWFscy5qZW5rb3YuY29tL2phdmEtY29uY3VycmVuY3kvamF2YS1tZW1vcnktbW9kZWwuaHRtbA==" title="http://tutorials.jenkov.com/java-concurrency/java-memory-model.html">http://tutorials.jenkov.com/java-concurrency/java-memory-model.html<i class="fa fa-external-link"></i></span></li>
+</ul>
 
       
-
-        
-        
-        
-
-        
-        
-
-        
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h3 class="post-title">
-        
-          <a class="post-title-link" href="/hexo/pull-refresh.html" itemprop="url">
-            
-              <span itemprop="name">Hexo 下拉刷新</span>
-            
-          </a>
-        
-      </h3>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated" datetime="2019-06-21T00:00:00+08:00" content="2019-06-21">
-          06-21
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-
-      
-
-        
-        
-        
-
-        
-        
-
-        
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h3 class="post-title">
-        
-          <a class="post-title-link" href="/linux/shadowsocks.html" itemprop="url">
-            
-              <span itemprop="name">Linux 科学上网</span>
-            
-          </a>
-        
-      </h3>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated" datetime="2019-06-20T00:00:00+08:00" content="2019-06-20">
-          06-20
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-
-      
-
-        
-        
-        
-
-        
-        
-
-        
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h3 class="post-title">
-        
-          <a class="post-title-link" href="/linux/Windows_to_Linux.html" itemprop="url">
-            
-              <span itemprop="name">Windows换Linux之旅</span>
-            
-          </a>
-        
-      </h3>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated" datetime="2019-06-19T00:00:00+08:00" content="2019-06-19">
-          06-19
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-
-      
-
-        
-        
-        
-
-        
-        
-
-        
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h3 class="post-title">
-        
-          <a class="post-title-link" href="/mutlithreading/blocking-productor-threadpool.html" itemprop="url">
-            
-              <span itemprop="name">支持生产阻塞的线程池</span>
-            
-          </a>
-        
-      </h3>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated" datetime="2019-04-19T00:00:00+08:00" content="2019-04-19">
-          04-19
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-
-      
-
-        
-        
-        
-
-        
-        
-
-        
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h3 class="post-title">
-        
-          <a class="post-title-link" href="/mutlithreading/thread-lock.html" itemprop="url">
-            
-              <span itemprop="name">多线程编程与锁优化</span>
-            
-          </a>
-        
-      </h3>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated" datetime="2019-04-15T00:00:00+08:00" content="2019-04-15">
-          04-15
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-
-      
-
-        
-        
-        
-
-        
-        
-
-        
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h3 class="post-title">
-        
-          <a class="post-title-link" href="/mutlithreading/mutlithreading.html" itemprop="url">
-            
-              <span itemprop="name">多线程与线程安全</span>
-            
-          </a>
-        
-      </h3>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated" datetime="2019-04-14T00:00:00+08:00" content="2019-04-14">
-          04-14
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-
-      
-
-        
-        
-        
-
-        
-        
-
-        
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <h3 class="post-title">
-        
-          <a class="post-title-link" href="/mutlithreading/thread-pool.html" itemprop="url">
-            
-              <span itemprop="name">线程池详解</span>
-            
-          </a>
-        
-      </h3>
-
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated" datetime="2019-04-08T00:00:00+08:00" content="2019-04-08">
-          04-08
-        </time>
-      </div>
-
-    </header>
-  </article>
-
-
-
-      
-
     </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/java/" rel="tag"># java</a>
+          
+            <a href="/tags/java多线程/" rel="tag"># java多线程</a>
+          
+            <a href="/tags/多线程编程/" rel="tag"># 多线程编程</a>
+          
+            <a href="/tags/并发模型/" rel="tag"># 并发模型</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/engineering/uml.html" rel="next" title="UML基础">
+                <i class="fa fa-chevron-left"></i> UML基础
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/mutlithreading/multithreading-juc.html" rel="prev" title="多线程编程--基础知识">
+                多线程编程--基础知识 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
   </div>
   
   
   
-
-  
-  <nav class="pagination">
-    <span class="page-number current">1</span><a class="page-number" href="/archives/2019/page/2/">2</a><a class="extend next" rel="next" href="/archives/2019/page/2/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
-  </nav>
+  </article>
 
 
+  </div>
 
 
           </div>
           
+
+  
+    <div class="comments" id="comments">
+      <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+      </div>
+    </div>
+
+  
+
+
 
         </div>
         
@@ -814,8 +635,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <div class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <div class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -992,6 +822,23 @@
       </div>
 
       
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#内存模型"><span class="nav-number">1.</span> <span class="nav-text">¶内存模型</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#同步异步"><span class="nav-number">2.</span> <span class="nav-text">¶同步异步</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#线程间通信"><span class="nav-number">3.</span> <span class="nav-text">¶线程间通信</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#异常处理"><span class="nav-number">4.</span> <span class="nav-text">¶异常处理</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#产考文献"><span class="nav-number">5.</span> <span class="nav-text">¶产考文献</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
 
       
 
@@ -1152,6 +999,10 @@
 
 
   
+  <script src="/js/scrollspy.js?v=7.1.0"></script>
+<script src="/js/post-details.js?v=7.1.0"></script>
+
+
 
   
 
@@ -1172,9 +1023,63 @@
   <script id="dsq-count-scr" src="https://fanzhongwei.disqus.com/count.js" async></script>
 
 
+<script>
+  var disqus_config = function() {
+    this.page.url = "https://www.fanzhongwei.com/mutlithreading/multithreading-models.html";
+    this.page.identifier = "mutlithreading/multithreading-models.html";
+    this.page.title = '多线程编程--基础知识';
+    };
+  function loadComments() {
+    var d = document, s = d.createElement('script');
+    s.src = 'https://fanzhongwei.disqus.com/embed.js';
+    s.setAttribute('data-timestamp', '' + +new Date());
+    (d.head || d.body).appendChild(s);
+  }
+  
+    $(function() {
+      var offsetTop = $('#comments').offset().top - $(window).height();
+      if (offsetTop <= 0) {
+        // load directly when there's no a scrollbar
+        loadComments();
+      } else {
+        $(window).on('scroll.disqus_scroll', function() {
+          // offsetTop may changes because of manually resizing browser window or lazy loading images.
+          var offsetTop = $('#comments').offset().top - $(window).height();
+          var scrollTop = $(window).scrollTop();
+
+          // pre-load comments a bit? (margin or anything else)
+          if (offsetTop - scrollTop < 60) {
+            $(window).off('.disqus_scroll');
+            loadComments();
+          }
+        });
+      }
+    });
+  
+</script>
 
 
 
+
+
+  
+    
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/disqusjs@1/dist/disqusjs.css">
+
+
+
+<script src="//cdn.jsdelivr.net/npm/disqusjs@1/dist/disqus.js"></script>
+
+<script>
+  var dsqjs = new DisqusJS({
+    api: 'https://disqus.skk.moe/disqus/' || 'https://disqus.com/api/',
+    apikey: 'yeI3c68e36COmAnaJ0W8enNe62iyRL60APc1qYStSbMXCuXb1Hl57OKpqbA3AXjB',
+    shortname: 'fanzhongwei'
+  });
+</script>
+
+  
 
 
   
