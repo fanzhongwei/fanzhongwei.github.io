@@ -2,8 +2,6 @@
 
 echo 'Update remote code!'
 
-git fetch --all  
-git reset --hard origin/develop 
 git pull
 
 hexo g
