@@ -360,5 +360,6 @@ UncaughtExceptionHandler必须显示的设置，否则默认为null。若为null
 
 - http://ifeve.com/java-concurrency-thread-directory/
 - http://tutorials.jenkov.com/java-concurrency/index.html
+- https://fanzhongwei.com/thread/h5/thread.html
 - 《深入Java虚拟机：JVM高级特性与最佳实践（第2版）》
 

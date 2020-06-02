@@ -232,4 +232,6 @@ b num = 200
 
 # 产考文献
 
-- http://tutorials.jenkov.com/java-concurrency/java-memory-model.html
+- http://ifeve.com/java-concurrency-thread-directory/
+- http://tutorials.jenkov.com/java-concurrency/index.html
+- https://fanzhongwei.com/thread/h5/thread.html
