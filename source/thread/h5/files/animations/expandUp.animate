@@ -1,0 +1,22 @@
+/* 
+  Name:			Expand Up
+  Type:			Entrance
+  Description:	Expand Up Effect
+  Version:		2.0	
+  locale:		{"zh-Hans":"向上展开", "en-US":"Expand Up"}
+ */
+ 
+@keyframes expandUp {
+	0% {
+		transform: translateY(100%) scale(0.6) scaleY(0.5);
+	}
+	60%{
+		transform: translateY(-7%) scaleY(1.12);
+	}
+	75%{
+		transform: translateY(3%);
+	}	
+	100% {
+		transform: translateY(0%) scale(1) scaleY(1);
+	}	
+}

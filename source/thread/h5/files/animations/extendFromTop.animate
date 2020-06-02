@@ -1,0 +1,16 @@
+/* 
+  Name:			ExtendFromTop
+  Type:			Entrance
+  Description:	ExtendFromTop Effect
+  Version:		2.0	
+  locale:		{"zh-Hans":"从顶部伸展", "en-US":"Extend From Top"}
+  Class:        ExtendFromTop
+ */
+ 
+@keyframes extendFromTop{
+	
+}
+
+.extendFromTop{
+	animation-duration: 2s;
+}
