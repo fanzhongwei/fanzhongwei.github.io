@@ -217,7 +217,9 @@ b num = 200
 
 ## ReadWriteLock
 
+如果我们对资源的读取比较频繁，而修改相对较少，使用前面提到的锁有什么弊端呢，两个线程同时读取资源需要加锁吗？
 
+ReadWriteLock内部有两个锁：`ReentrantReadWriteLock.ReadLock`和`ReentrantReadWriteLock.WriteLock`对对对
 
 
 # 线程池（ThreadPool）
