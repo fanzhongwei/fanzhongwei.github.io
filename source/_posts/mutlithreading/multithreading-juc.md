@@ -156,8 +156,8 @@ jdk中提供的原子类如下：
     private int instanceNum;
     private Lock lock = new ReentrantLock();
     private void addInstanceNum(String username) {
+        lock.lock();
         try {
-            lock.lock();
             if ("b".equals(username)) {
                 instanceNum = 200;
                 System.out.println("b set over!");
@@ -219,7 +219,11 @@ b num = 200
 
 如果我们对资源的读取比较频繁，而修改相对较少，使用前面提到的锁有什么弊端呢，两个线程同时读取资源需要加锁吗？
 
-ReadWriteLock内部有两个锁：`ReentrantReadWriteLock.ReadLock`和`ReentrantReadWriteLock.WriteLock`对对对
+ReadWriteLock内部有两个锁：`ReentrantReadWriteLock.ReadLock`和`ReentrantReadWriteLock.WriteLock`
+
+## AQS
+
+AbstractQueuedSynchronizer
 
 
 # 线程池（ThreadPool）
