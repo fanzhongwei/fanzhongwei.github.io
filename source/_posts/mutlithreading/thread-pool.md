@@ -283,6 +283,8 @@ SynchronousQueue 是一个特殊的队列，它的内部同时只能够容纳单
 ### Executors
 Executors利用工厂模式向我们提供了4种线程池实现方式：
 
+![Executors.png](https://s1.ax1x.com/2020/06/14/txXRp9.png)
+
 - newSingleThreadExecutor
 
 创建一个单线程的线程池。这个线程池只有一个线程在工作，也就是相当于单线程串行执行所有任务。如果这个唯一的线程因为异常结束，那么会有一个新的线程来替代它。
@@ -321,7 +323,7 @@ Executors利用工厂模式向我们提供了4种线程池实现方式：
 
  先来看一下ThreadPoolExecutor的构造函数吧。
 
-![AZHzp4.png](https://s2.ax1x.com/2019/03/17/AZHzp4.png)
+![AZHzp4.png](https://s1.ax1x.com/2020/06/14/txO6xI.png)
 
 在这里着重介绍几个参数
 
