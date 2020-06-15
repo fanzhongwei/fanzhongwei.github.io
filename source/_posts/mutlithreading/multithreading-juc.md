@@ -518,29 +518,6 @@ public class ExchangerTest {
 }
 ```
 
-# 线程池（ThreadPool）
-
-在面向对象编程中，创建和销毁对象是很费时间的，因为创建一个对象要获取内存资源或者其它更多资源。
-在Java中虚拟机将试图跟踪每一个对象，以便能够在对象销毁后进行垃圾回收。所以提高服务程序效率的一个
-手段就是尽可能减少创建和销毁对象的次数，特别是一些很耗资源的对象创建和销毁。
-如何利用已有对象来服务就是一个解决的关键问题，这也就是"池化资源"技术产生的原因。
-
-
-线程池是一种多线程处理形式，处理过程中将任务添加到队列，然后在创建线程后自动启动这些任务。
-
->线程是稀缺资源，使用线程池可以减少创建和销毁线程的次数，每个工作线程都可以重复使用。 
->
->可以根据系统的承受能力，调整线程池中工作线程的数量，防止因为消耗过多内存导致服务器崩溃。
-
-一个线程池包括以下四个基本组成部分：
-
-- 线程池管理器（ThreadPool）：用于创建并管理线程池，包括创建线程池、销毁线程池，添加新任务；
-- 工作线程（PoolWorker）：线程池中线程，在没有任务时处于等待状态，可以循环的执行任务；
-- 任务接口（Task）：每个任务必须实现的接口，以供工作线程调度任务的执行，它主要规定了任务的入口，任务执行完后的收尾工作，任务的执行状态等；
-- 任务队列（taskQueue）：用于存放没有处理的任务。提供一种缓冲机制。
-
-详细内容请点：[线程池详解](https://fanzhongwei.com/mutlithreading/thread-pool.html)
-
 # 并发容器
 
 一起来回想下，java中的容器有哪几种，List、Set、Queue、Map？
@@ -556,6 +533,8 @@ public class ExchangerTest {
 目标：代替Hashtable、synchronizedMap，支持复合操作
 
 原理：JDK6中采用一种更加细粒度的加锁机制Segment“分段锁”，JDK8中采用CAS无锁算法。
+
+![ConcurrentHashMap.png](https://s1.ax1x.com/2020/06/15/NPKvTI.png)
 
 ## CopyOnWriteArrayList
 
@@ -581,6 +560,11 @@ public class ExchangerTest {
 
 原理：Skip list（跳表）是一种可以代替平衡树的数据结构，默认是按照Key值升序的。
 
+![SkipList.png](https://s1.ax1x.com/2020/06/15/NPM7En.png)
+
+> 跳表分为许多层(level)，每一层都可以看作是数据的索引，这些索引的意义就是加快跳表查找数据速度。每一层的数据都是有序的，上一层数据是下一层数据的子集，并且第一层(level 1)包含了全部的数据；层次越高，跳跃性越大，包含的数据越少。
+> 跳表包含一个表头，它查找数据时，是从上往下，从左往右进行查找。
+
 ## ConcurrentSkipListSet
 
 对应的非并发容器：TreeSet
@@ -595,11 +579,9 @@ public class ExchangerTest {
 
 对应的非并发容器：Queue
 
-原理：基于链表实现的FIFO队列（LinkedList的并发版本）
+原理：基于链表实现的FIFO队列，CAS实现线程安全
 
-## LinkedBlockingQueue
-
-对应的非并发容器：BlockingQueue
+## BlockingQueue
 
 特点：拓展了Queue，增加了可阻塞的插入和获取等操作
 
@@ -608,11 +590,36 @@ public class ExchangerTest {
 **实现类：**
 
 - LinkedBlockingQueue：基于链表实现的可阻塞的FIFO队列
+- LinkedBlockingDeque：基于链表实现的可阻塞的双端队列
 - ArrayBlockingQueue：基于数组实现的可阻塞的FIFO队列
 - PriorityBlockingQueue：按优先级排序的队列
+- SynchronousQueue：只有一个元素的队列
+
+# 线程池（ThreadPool）
+
+在面向对象编程中，创建和销毁对象是很费时间的，因为创建一个对象要获取内存资源或者其它更多资源。
+在Java中虚拟机将试图跟踪每一个对象，以便能够在对象销毁后进行垃圾回收。所以提高服务程序效率的一个
+手段就是尽可能减少创建和销毁对象的次数，特别是一些很耗资源的对象创建和销毁。
+如何利用已有对象来服务就是一个解决的关键问题，这也就是"池化资源"技术产生的原因。
+
+
+线程池是一种多线程处理形式，处理过程中将任务添加到队列，然后在创建线程后自动启动这些任务。
+
+>线程是稀缺资源，使用线程池可以减少创建和销毁线程的次数，每个工作线程都可以重复使用。 
+>
+>可以根据系统的承受能力，调整线程池中工作线程的数量，防止因为消耗过多内存导致服务器崩溃。
+
+一个线程池包括以下四个基本组成部分：
+
+- 线程池管理器（ThreadPool）：用于创建并管理线程池，包括创建线程池、销毁线程池，添加新任务；
+- 工作线程（PoolWorker）：线程池中线程，在没有任务时处于等待状态，可以循环的执行任务；
+- 任务接口（Task）：每个任务必须实现的接口，以供工作线程调度任务的执行，它主要规定了任务的入口，任务执行完后的收尾工作，任务的执行状态等；
+- 任务队列（taskQueue）：用于存放没有处理的任务。提供一种缓冲机制。
+
+详细内容请点：[线程池详解](https://fanzhongwei.com/mutlithreading/thread-pool.html)
 
 # 产考文献
 
-- http://ifeve.com/java-concurrency-thread-directory/
-- http://tutorials.jenkov.com/java-concurrency/index.html
-- https://fanzhongwei.com/thread/h5/thread.html
+- https://fanzhongwei.com/mutlithreading/thread-pool.html
+
+- 《深入Java虚拟机：JVM高级特性与最佳实践（第2版）》
