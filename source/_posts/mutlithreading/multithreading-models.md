@@ -12,19 +12,23 @@ categories:
 
 ![多线程编程](https://pic4.zhimg.com/v2-6886a471843d6982483ee682b724f31c_b.jpg)
 
-# 内存模型
+# 并行
 
 
 
-# 同步异步
+# 流水线
 
 
 
-# 线程间通信
+# 响应式
 
 
 
-# 异常处理
+# 生产者消费者
+
+
+
+# Fork-Join
 
 
 
@@ -32,4 +36,4 @@ categories:
 
 # 产考文献
 
-- http://tutorials.jenkov.com/java-concurrency/java-memory-model.html
+- [http://ifeve.com/并发编程模型](http://ifeve.com/并发编程模型)
