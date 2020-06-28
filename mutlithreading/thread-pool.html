@@ -115,9 +115,10 @@
 <meta property="og:image" content="https://s2.ax1x.com/2019/04/13/ALMKeg.png">
 <meta property="og:image" content="https://s2.ax1x.com/2019/04/13/ALMO0g.md.png">
 <meta property="og:image" content="https://s2.ax1x.com/2019/03/16/AZCAdH.png">
-<meta property="og:image" content="https://s2.ax1x.com/2019/03/17/AZHzp4.png">
+<meta property="og:image" content="https://s1.ax1x.com/2020/06/14/txXRp9.png">
+<meta property="og:image" content="https://s1.ax1x.com/2020/06/14/txO6xI.png">
 <meta property="og:image" content="https://s2.ax1x.com/2019/03/22/A8ofeS.png">
-<meta property="og:updated_time" content="2020-03-30T15:34:02.371Z">
+<meta property="og:updated_time" content="2020-06-16T03:58:16.037Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="线程池详解">
 <meta name="twitter:description" content="所谓线程池通俗的理解就是有一个池子，里面存放着已经创建好的线程，当有任务提交给线程池执行时，池子中的 某个线程会主动执行该任务。如果池子中的线程数量不够应付数量众多的任务时，则需要自动扩充新的线程到池子中，但是该数量是有限的，就好比池塘的水界线一样。当任务比较少的时候，池子中的线程能够自动回收，释放 资源。为了能够异步地提交任务和缓存未被处理的任务，需要有一个任务队列。">
@@ -465,7 +466,7 @@
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2020-03-30 23:34:02" itemprop="dateModified" datetime="2020-03-30T23:34:02+08:00">2020-03-30</time>
+                <time title="修改时间：2020-06-16 11:58:16" itemprop="dateModified" datetime="2020-06-16T11:58:16+08:00">2020-06-16</time>
               
             
           </span>
@@ -743,6 +744,7 @@
 </ul>
 <h3 id="executors"><a class="header-anchor" href="#executors">¶</a>Executors</h3>
 <p>Executors利用工厂模式向我们提供了4种线程池实现方式：</p>
+<p><img src="https://s1.ax1x.com/2020/06/14/txXRp9.png" alt="Executors.png"></p>
 <ul>
 <li>newSingleThreadExecutor</li>
 </ul>
@@ -782,7 +784,7 @@
 <h3 id="threadpoolexecutor"><a class="header-anchor" href="#threadpoolexecutor">¶</a>ThreadPoolExecutor</h3>
 <h4 id="构造函数"><a class="header-anchor" href="#构造函数">¶</a>构造函数</h4>
 <p>先来看一下ThreadPoolExecutor的构造函数吧。</p>
-<p><img src="https://s2.ax1x.com/2019/03/17/AZHzp4.png" alt="AZHzp4.png"></p>
+<p><img src="https://s1.ax1x.com/2020/06/14/txO6xI.png" alt="AZHzp4.png"></p>
 <p>在这里着重介绍几个参数</p>
 <ul>
 <li>阻塞队列</li>
@@ -1003,7 +1005,7 @@ IO密集型任务CPU使用率并不高，因此可以让CPU在等待IO的时候�
                 
                   <a href="/archives/">
                 
-                    <span class="site-state-item-count">14</span>
+                    <span class="site-state-item-count">16</span>
                     <span class="site-state-item-name">日志</span>
                   </a>
                 </div>
@@ -1107,7 +1109,11 @@ IO密集型任务CPU使用率并不高，因此可以让CPU在等待IO的时候�
                     
                       
                     
-                    <span class="site-state-item-count">28</span>
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">30</span>
                     <span class="site-state-item-name">标签</span>
                   </a>
                 </div>

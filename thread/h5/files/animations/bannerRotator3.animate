@@ -1,0 +1,16 @@
+/* 
+  Name:			BannerRotator3
+  Type:			Entrance
+  Description:	BannerRotator3 Effect
+  Version:		2.0	
+  locale:		{"zh-Hans":"百叶窗3", "en-US":"Banner Rotator3"}
+  Class:        BannerRotator3
+ */
+ 
+@keyframes bannerRotator3{
+	
+}
+
+.bannerRotator3{
+	animation-duration: 2s;
+}

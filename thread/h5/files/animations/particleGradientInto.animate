@@ -1,0 +1,16 @@
+/* 
+  Name:			ParticleGradientInto
+  Type:			Entrance
+  Description:	ParticleGradientInto
+  Version:		2.0	
+  locale:		{"zh-Hans":"颗粒渐变", "en-US":"Particle Gradient"}
+  Class:        ParticleGradientInto
+ */
+ 
+@keyframes particleGradientInto{
+	
+}
+
+.particleGradientInto{
+	animation-duration: 3s;
+}

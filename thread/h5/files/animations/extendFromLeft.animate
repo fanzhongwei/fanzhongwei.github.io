@@ -1,0 +1,16 @@
+/* 
+  Name:			ExtendFromLeft
+  Type:			Entrance
+  Description:	ExtendFromLeft Effect
+  Version:		2.0	
+  locale:		{"zh-Hans":"从左边伸展", "en-US":"Extend From Left"}
+  Class:        ExtendFromLeft
+ */
+ 
+@keyframes extendFromLeft{
+	
+}
+
+.extendFromLeft{
+	animation-duration: 2s;
+}

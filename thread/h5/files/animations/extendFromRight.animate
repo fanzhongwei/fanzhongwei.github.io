@@ -1,0 +1,16 @@
+/* 
+  Name:			ExtendFromRight
+  Type:			Entrance
+  Description:	ExtendFromRight Effect
+  Version:		2.0	
+  locale:		{"zh-Hans":"从右边伸展", "en-US":"Extend From Right"}
+  Class:        ExtendFromRight
+ */
+ 
+@keyframes extendFromRight {
+	
+}
+
+.extendFromRight{
+	animation-duration: 2s;
+}
