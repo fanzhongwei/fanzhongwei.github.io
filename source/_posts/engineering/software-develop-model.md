@@ -84,7 +84,7 @@ categories:
 
 ​		螺旋模型（Spiral Model）是在快速原型的基础上扩展而成，实际上，它是**软件生命周期模型与原型模型的一个结合**，如下图所示：
 
-![螺旋模型.png](https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1578241562076&di=db491622b4faa6fcd83ed170ce9e13b6&imgtype=jpg&src=http%3A%2F%2Fimg4.imgtn.bdimg.com%2Fit%2Fu%3D920587864%2C3768004844%26fm%3D214%26gp%3D0.jpg)
+![螺旋模型.png](https://s1.ax1x.com/2020/08/16/dVCeEV.png)
 
 该模型将整个软件开发流程分为多个阶段，每个阶段都由4部分组成：
 
@@ -111,9 +111,7 @@ categories:
 
 增量模型（Incremental Model）把待开发的软件系统模块化，将每个模块作为一个增量组件，从而分批次地分析、设计、编码和测试这些增量组件，如下图所示：
 
-![增量模型.png](https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1578284082568&di=a665e58c158964f839fc739660580cce&imgtype=jpg&src=http%3A%2F%2Fimg3.imgtn.bdimg.com%2Fit%2Fu%3D2873046283%2C4198849095%26fm%3D214%26gp%3D0.jpg)
-
-**困难**:
+![增量模型.png](https://s1.ax1x.com/2020/08/16/dVC8D1.png)
 
 每个新的构件集成到现有的软件结构中必须破坏原来以开发的产品，所以必须定义很好的接口。
 
