@@ -113,16 +113,13 @@
 <meta property="og:description" content="现在计算机已经渗透到各行各业，在使用过程中产生了大量的电子数据，在通信时如何保证传输数据的安全，如何防止人为、病毒、自然灾害对数据的的侵害，信息安全技术显得越发重要。">
 <meta property="og:locale" content="zh-CN">
 <meta property="og:image" content="https://s1.ax1x.com/2020/08/16/dVkEzF.png">
-<meta property="og:image" content="https://bkimg.cdn.bcebos.com/pic/9f510fb30f2442a754ef9a91d843ad4bd1130224?x-bce-process=image/watermark,image_d2F0ZXIvYmFpa2U4MA==,g_7,xp_5,yp_5">
-<meta property="og:image" content="https://bkimg.cdn.bcebos.com/formula/f0dac18152076624d87832b62709895c.svg">
-<meta property="og:image" content="https://bkimg.cdn.bcebos.com/formula/c33d8c66364a636b051d82f0ee202a36.svg">
-<meta property="og:image" content="https://bkimg.cdn.bcebos.com/formula/da8649c0078a0a842779394d64011776.svg">
-<meta property="og:image" content="https://bkimg.cdn.bcebos.com/formula/4dee3f4df52a81983db0e3c619f96058.svg">
-<meta property="og:image" content="https://bkimg.cdn.bcebos.com/formula/679e809a0d964785d0aa4cfcb4218742.svg">
-<meta property="og:image" content="https://bkimg.cdn.bcebos.com/formula/5947116555169dc6fe9e3f5cdf347706.svg">
-<meta property="og:image" content="https://bkimg.cdn.bcebos.com/formula/1a8b337167e4d4b2c23855d88ec4c67f.svg">
+<meta property="og:image" content="https://s1.ax1x.com/2020/09/01/dvcUzV.png">
+<meta property="og:image" content="https://s1.ax1x.com/2020/09/01/dvc7FA.png">
 <meta property="og:image" content="https://s1.ax1x.com/2020/08/16/dVHmjO.png">
-<meta property="og:updated_time" content="2020-08-19T12:09:47.885Z">
+<meta property="og:image" content="https://s1.ax1x.com/2020/08/31/dXOgxg.png">
+<meta property="og:image" content="https://s1.ax1x.com/2020/08/31/djenzQ.png">
+<meta property="og:image" content="https://s1.ax1x.com/2020/09/01/djgxzV.png">
+<meta property="og:updated_time" content="2020-09-01T06:17:37.664Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="信息安全技术">
 <meta name="twitter:description" content="现在计算机已经渗透到各行各业，在使用过程中产生了大量的电子数据，在通信时如何保证传输数据的安全，如何防止人为、病毒、自然灾害对数据的的侵害，信息安全技术显得越发重要。">
@@ -470,7 +467,7 @@
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2020-08-19 20:09:47" itemprop="dateModified" datetime="2020-08-19T20:09:47+08:00">2020-08-19</time>
+                <time title="修改时间：2020-09-01 14:17:37" itemprop="dateModified" datetime="2020-09-01T14:17:37+08:00">2020-09-01</time>
               
             
           </span>
@@ -609,7 +606,7 @@
 </li>
 </ul>
 <p>DES算法的示意图如下：</p>
-<p><img src="https://bkimg.cdn.bcebos.com/pic/9f510fb30f2442a754ef9a91d843ad4bd1130224?x-bce-process=image/watermark,image_d2F0ZXIvYmFpa2U4MA==,g_7,xp_5,yp_5" alt="DES算法.png"></p>
+<p><img src="https://s1.ax1x.com/2020/09/01/dvcUzV.png" alt="DES算法.png"></p>
 <h4 id="idea算法"><a class="header-anchor" href="#idea算法">¶</a>IDEA算法</h4>
 <p>国际数据加密算法（International Data Encryption Standard，IDEA），IDEA分组长度为64b，秘钥长度为128b，具有如下特点：</p>
 <ul>
@@ -632,13 +629,7 @@
 </ul>
 <p>RSA公开密钥密码体制的原理是：根据数论，寻求两个大素数比较简单，而将它们的乘积进行因式分解却极其困难，因此可以将乘积公开作为加密密钥。</p>
 <p>RSA算法的具体描述如下：</p>
-<p>（1）任意选取两个不同的大素数p和q计算乘积<img src="https://bkimg.cdn.bcebos.com/formula/f0dac18152076624d87832b62709895c.svg" alt="img"></p>
-<p>（2）任意选取一个大整数e，满足<img src="https://bkimg.cdn.bcebos.com/formula/c33d8c66364a636b051d82f0ee202a36.svg" alt="img"></p>
-<p>，整数e用做加密钥（注意：e的选取是很容易的，例如，所有大于p和q的素数都可用）。</p>
-<p>（3）确定的解密钥d，满足<img src="https://bkimg.cdn.bcebos.com/formula/da8649c0078a0a842779394d64011776.svg" alt="img">，即<img src="https://bkimg.cdn.bcebos.com/formula/4dee3f4df52a81983db0e3c619f96058.svg" alt="img">是一个任意的整数；所以，若知道e和<img src="https://bkimg.cdn.bcebos.com/formula/679e809a0d964785d0aa4cfcb4218742.svg" alt="img">，则很容易计算出；</p>
-<p>（4）公开整数n和e，秘密保存d ；</p>
-<p>（5）将明文m（m&lt;n是一个整数）加密成密文c，加密算法为<img src="https://bkimg.cdn.bcebos.com/formula/5947116555169dc6fe9e3f5cdf347706.svg" alt="img"></p>
-<p>（6）将密文c解密为明文m，解密算法为<img src="https://bkimg.cdn.bcebos.com/formula/1a8b337167e4d4b2c23855d88ec4c67f.svg" alt="img"></p>
+<p><img src="https://s1.ax1x.com/2020/09/01/dvc7FA.png" alt="RSA算法描述.png"></p>
 <p>然而只根据n和e（注意：不是p和q）要计算出d是不可能的。因此，任何人都可对明文进行加密，但只有授权用户（知道d）才可对密文解密 。</p>
 <h2 id="散列函数和数字签名"><a class="header-anchor" href="#散列函数和数字签名">¶</a>散列函数和数字签名</h2>
 <h4 id="散列函数"><a class="header-anchor" href="#散列函数">¶</a>散列函数</h4>
@@ -688,11 +679,171 @@
 <li>与原始数据紧密结合并隐藏其中</li>
 <li>在一些不破坏源数据使用价值或商用价值的操作后仍然能够保存下来</li>
 </ul>
+<p>水印嵌入和提取的流程如下图所示：</p>
+<p><img src="https://s1.ax1x.com/2020/08/31/dXOgxg.png" alt="数字水印"></p>
+<p>数字水印主要应用领域：版权保护、加指纹、标题与注释、篡改提示、使用控制。</p>
+<p>常用的数字水印算法：空域算法、变换域算法、压缩域算法、NEC算法和生理模型算法。</p>
 <h2 id="秘钥分配中心与公钥基础设施"><a class="header-anchor" href="#秘钥分配中心与公钥基础设施">¶</a>秘钥分配中心与公钥基础设施</h2>
+<p>在现代密码体系中，算法本身的保密性已经不重要了，对于数据的保密在很大程度上、甚至完全依赖于对密钥的保密。因此在密码系统中，如何高效地分配密钥、安全地管理密钥对保证数据安全来说至关重要。</p>
+<h3 id="密钥分配中心-key-distribution-center-kdc"><a class="header-anchor" href="#密钥分配中心-key-distribution-center-kdc">¶</a>密钥分配中心（Key Distribution Center，KDC）</h3>
+<p>在KDC方案中，每一个用户都只保存自己的私钥SK和KDC的公钥PK<sub>KDC</sub>，在通信时再从KDC获取其他用户的公钥或者仅仅在某一次通信中可以使用的对称秘钥加密算法的临时秘钥K。</p>
+<p>在KDC方案中，假设用户A保存私钥SK<sub>A</sub>、用户B保存私钥SK<sub>B</sub>，假设用对称秘钥来加密他们的对话，秘钥的分配流程如下：</p>
+<ul>
+<li>A向KDC发送SK<sub>A</sub>(A,B)，请求使用SK<sub>A</sub>加密</li>
+<li>KDC收到加密消息，<strong>用A的公钥来验证</strong>请求是由A发出的</li>
+<li>根据某种算法生成供A、B之间会话使用的对称秘钥K</li>
+<li>KDC向A返回PK<sub>A</sub>(K, PK<sub>B</sub>(A, K))，该应答是用A的公钥加密，只有A能使用SK<sub>A</sub>解密</li>
+<li>A使用SK<sub>A</sub>解密得到秘钥K，并将PK<sub>B</sub>(A, K)发送给B，表示想与B进行会话</li>
+<li>B用自己的私钥解密得到会话秘钥K</li>
+</ul>
+<h3 id="数字证书和公开密钥基础设施"><a class="header-anchor" href="#数字证书和公开密钥基础设施">¶</a>数字证书和公开密钥基础设施</h3>
+<p>数字签名和公钥加密都是基于不对称加密技术，存在的问题有：</p>
+<ul>
+<li>如何保证公开密钥的持有者是真实的</li>
+<li>大规模信息系统下公开密钥如何产生、分发和管理</li>
+</ul>
+<h4 id="数字证书"><a class="header-anchor" href="#数字证书">¶</a>数字证书</h4>
+<p>数字证书提供了一个在公钥和拥有相应私钥的实体之间建立关系的体制。数字证书中采用公钥体制，利用一对互相匹配的秘钥进行加密、解密。每个用户自己保存私钥，用它进行解密和签名。</p>
+<p>数字证书是用户在系统中作为确认身份的证据，数字证书的内容一般包括：</p>
+<ul>
+<li>唯一标识证书所有者的名称</li>
+<li>唯一标识证书签发者的名称</li>
+<li>证书所有者的公开密钥</li>
+<li>证书签发者的数字签名</li>
+<li>证书的有效期</li>
+<li>证书的序列号</li>
+</ul>
+<h4 id="公钥基础设施kpi"><a class="header-anchor" href="#公钥基础设施kpi">¶</a>公钥基础设施KPI</h4>
+<p>KPI（Public Key Infrastructure，公钥基础设施）为用户和应用程序提供公开密钥的管理服务。PKI的结构模型中有三类实体：</p>
+<ul>
+<li>管理实体：是KPI的核心，服务的提供者
+<ul>
+<li>CA：框架中唯一能够发布和撤销证书的实体，维护证书的生命周期</li>
+<li>RA：处理用户请求，在验证了请求的有效性后，代替用户想CA提交</li>
+</ul>
+</li>
+<li>端实体：PKI的用户，服务的使用者
+<ul>
+<li>持有者</li>
+<li>验证者</li>
+</ul>
+</li>
+<li>证书库：分布式的数据库，用于证书和CRL的存放和检索</li>
+</ul>
 <h2 id="访问控制"><a class="header-anchor" href="#访问控制">¶</a>访问控制</h2>
+<p>访问控制是通过某种途径限制和允许对资源的访问能力以及范围的一种方法。访问控制技术可以通过对计算机系统的控制，自动、有效地防止对系统资源进行非法访问或者不当的使用，它是建立在身份认证的基础之上，但不能取代身份认证。</p>
+<h3 id="身份认证"><a class="header-anchor" href="#身份认证">¶</a>身份认证</h3>
+<p>识别用户的身份有两种不同的形式</p>
+<ul>
+<li>身份认证：要求对用户的所有权限角色或自身的身份进行认证</li>
+<li>身份鉴定：要求对使用者本身的身份进行检查</li>
+</ul>
+<p>认证的方法多种多样，其安全强度也不同，具体方法可以总结为三大类：</p>
+<ul>
+<li><strong>用户知道什么</strong>：用户名和口令认证</li>
+<li><strong>用户拥有什么</strong>：使用令牌认证</li>
+<li><strong>用户是什么</strong>：生物识别与三因素认证</li>
+</ul>
+<p>在安全性要求较高的系统中，认证必须能对用户进行身份鉴定，要将用户知道什么、拥有什么、是什么结合起来，同时对认证用的秘钥进行保护。</p>
+<h3 id="访问控制技术"><a class="header-anchor" href="#访问控制技术">¶</a>访问控制技术</h3>
+<p>根据控制手段和具体目的的不同，通常将访问控制技术划分为如下几个方面：</p>
+<ul>
+<li>入网访问控制</li>
+<li>网络权限控制</li>
+<li>目录级安全控制</li>
+<li>属性安全控制</li>
+<li>网络服务器的安全控制</li>
+</ul>
 <h2 id="安全协议"><a class="header-anchor" href="#安全协议">¶</a>安全协议</h2>
+<h3 id="ipsec协议"><a class="header-anchor" href="#ipsec协议">¶</a>IPSec协议</h3>
+<p>IPSec在IP层上对数据包进行高强度的安全处理提供数据源验证、无连接数据完整性、抗重播和有限通信流机密性等安全服务。</p>
+<p>IPSec像Internet秘钥交换（Internet Key Exchange，IKE）协议这样的秘钥管理过程和协议，通过使用两种通信安全协议来为数据提供高质量的安全性：</p>
+<ul>
+<li>认证头（AH）协议</li>
+<li>封装安全载荷（ESP）协议</li>
+</ul>
+<p>IPSec协议既可以用来保护一个完整的IP载荷，也可以用来保护某个IP载荷的上层协议。这两方面的保护分别由IPSec的两种不同的“模式”来提供，如下图所示：</p>
+<p><img src="https://s1.ax1x.com/2020/08/31/djenzQ.png" alt="IPSec数据结构"></p>
+<h3 id="ssl协议"><a class="header-anchor" href="#ssl协议">¶</a>SSL协议</h3>
+<p>SSL协议（Secure Socket Layer）是Natscape推出的一种网络安全协议，是在传输过程通信协议（TCP/IP）上实现的一种安全协议。</p>
+<p>在SSL中，所有数据被封装在记录中，记录层把从上层获得的数据分成可管理的块、可选的压缩数据、应用MAC（Message Authentication Code）、加密、增加SSL首部、在TCP报文段中传输结果单元。被接收的数据通过解密、验证、解压和重新装配，然后交付给更高级的用户。SSL中两个重要的概念是SSL连接和SSL会话：</p>
+<ul>
+<li>SSL连接：提供恰当类型服务的传输</li>
+<li>SSL会话：客户和服务器之间的关联，会话通过握手协议来创建</li>
+</ul>
+<p>SSL协议工作过程如下如所示：</p>
+<p><img src="https://s1.ax1x.com/2020/09/01/djgxzV.png" alt="SSL协议工作示意图.png"></p>
 <h2 id="数据备份"><a class="header-anchor" href="#数据备份">¶</a>数据备份</h2>
+<p>作为信息安全的重要成员——数据备份却经常被人们遗忘，这样可能导致大量的有用信息被破坏，造成的后果有时是毁灭性的。</p>
+<h3 id="备份类型"><a class="header-anchor" href="#备份类型">¶</a>备份类型</h3>
+<p>数据备份包括一下几种类型，在不同的情况下应该根据具体情况，选出最合适的方案：</p>
+<ul>
+<li>完全备份：备份时间最长，恢复时间最短，操作最方便可靠。</li>
+<li>差异备份：备份时间较长，占用空间较多，但恢复时间较短。</li>
+<li>增量备份：备份时间较短，占用空间较少，单恢复时间较长。</li>
+<li>按需备份：有很好的选择性。</li>
+</ul>
+<h3 id="异地备份"><a class="header-anchor" href="#异地备份">¶</a>异地备份</h3>
+<p>数据异地备份是容灾系统的核心技术，通过有效的数据复制，实现远程的业务数据与本地业务数据的同步，确保一旦本地系统出现故障，远程的容灾中心能够迅速进行完整的业务接管。例如“9.11”期间，美国金融行业虽然遭受巨大的损失，但还是能够正常运行，也得益于数据的异地备份做得非常好。</p>
+<h3 id="新型的备份解决方案"><a class="header-anchor" href="#新型的备份解决方案">¶</a>新型的备份解决方案</h3>
+<p>一个优秀的备份解决方案应该做到：</p>
+<ul>
+<li>最大限度地降低对应用数据流量的影响，从而保证通信性能</li>
+<li>最大限度地降低服务器的负载，保证服务器的性能</li>
+<li>优化备份资源的使用，包括服务器、驱动器等</li>
+</ul>
+<p>下面介绍集中备份解决方案。</p>
+<ul>
+<li>网络备份模式：把一个磁带设备放置在LAN上，供多个服务器共享。</li>
+<li>用存储网络备份：让每个应用服务器都可以通过一个专用的存储网络，直接将数据备份到某个磁带设备，而不需要经过专门的备份服务器。</li>
+<li>磁带和磁带质检直接传输数据的备份：为了减轻服务器在备份时的CPU负载，需要在数据不经过服务器本身的情况下，将备份数据从磁盘发送到磁带，这是通过磁盘和磁带质检直接传输数据的机制（即SCSI扩展复制命令的方法）来实现的。</li>
+</ul>
 <h2 id="计算机病毒与免疫"><a class="header-anchor" href="#计算机病毒与免疫">¶</a>计算机病毒与免疫</h2>
+<h3 id="计算机病毒"><a class="header-anchor" href="#计算机病毒">¶</a>计算机病毒</h3>
+<p>病毒的定义最早由F.B.Cohen于1984年提出的，在他的经典文章Computer Viruses-Theory and Experiments（计算机病毒理论与时间）中，描述如下：</p>
+<p>计算机病毒是这样一种程序，它通过修改其他程序使之含有该程序本身或它的一个变体。病毒具有感染力，它可借助其使用者的权限感染他们的程序，在一个计算机系统中或网络中得已繁殖、传播。每个被感染的程序也像病毒一样可以感染其他程序，从而使更多的程序受到感染。</p>
+<p>病毒的特征：</p>
+<ul>
+<li>感染性</li>
+<li>潜伏性</li>
+<li>可触发性</li>
+<li>破坏性</li>
+<li>人为性</li>
+<li>衍生性</li>
+</ul>
+<p>计算机病毒的分类：</p>
+<ul>
+<li>引导区病毒（boot sector virus）</li>
+<li>文件感染病毒（file infector virus)</li>
+<li>宏病毒（Marco virus）</li>
+<li>特洛伊木马（Trojan/Trojan Horse)</li>
+<li>蠕虫病毒（Worm）</li>
+</ul>
+<h3 id="计算机病毒免疫的原理"><a class="header-anchor" href="#计算机病毒免疫的原理">¶</a>计算机病毒免疫的原理</h3>
+<p>计算机病毒的传染模块一般包括传染条件判断和实施传染两个部分，在病毒被激活的状态下，病毒程序通过判断传染条件的满足与否，以决定是否对目标对象进行传染。</p>
+<p>从实现计算机病毒免疫的角度看病毒的传染，可以将病毒的传染分为两种：</p>
+<ul>
+<li>判断传染标记，如果不存在传染标记，就进行传染。</li>
+<li>不判断传染标记，找到可以传染的对象就进行一次传染。</li>
+</ul>
+<p>目前常用的免疫方法有如下两种：</p>
+<ul>
+<li>针对某一种病毒进行的计算机病毒免疫：为文件添加免疫标记，标识该文件已被传染，骗过病毒
+<ul>
+<li>病毒变异时，免疫标记会失效</li>
+<li>某些病毒免疫标志不容易仿制</li>
+<li>病毒种类较多，不可能添加各种病毒的免疫标识</li>
+<li>能阻止传染，但不能阻止病毒的破坏行为</li>
+</ul>
+</li>
+<li>基于自我完整性检查的计算机病毒的免疫
+<ul>
+<li>只能用于文件，不能用于引导扇区</li>
+<li>为可执行程序增加一个免疫外壳</li>
+<li>执行时，先运行免疫外壳，检查自身的程序大小、校验生成日期和时间等信息，没有异常才执行受保护的程序。</li>
+</ul>
+</li>
+</ul>
 
       
     </div>
@@ -731,8 +882,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/eclipse/eclipse-plugin-modify.html" rel="next" title="Eclipse插件修改之旅">
-                <i class="fa fa-chevron-left"></i> Eclipse插件修改之旅
+              <a href="/mutlithreading/multithreading-models.html" rel="next" title="多线程编程--并发模型">
+                <i class="fa fa-chevron-left"></i> 多线程编程--并发模型
               </a>
             
           </div>
@@ -741,8 +892,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/algorithm/algorithm-design.html" rel="prev" title="算法设计">
-                算法设计 <i class="fa fa-chevron-right"></i>
+              <a href="/eclipse/eclipse-plugin-modify.html" rel="prev" title="Eclipse插件修改之旅">
+                Eclipse插件修改之旅 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -1011,7 +1162,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#信息安全技术"><span class="nav-number">1.</span> <span class="nav-text">¶信息安全技术</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#加密和解密"><span class="nav-number">1.1.</span> <span class="nav-text">¶加密和解密</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#对称秘钥密码体制及典型算法"><span class="nav-number">1.1.1.</span> <span class="nav-text">¶对称秘钥密码体制及典型算法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#des算法"><span class="nav-number">1.1.1.1.</span> <span class="nav-text">¶DES算法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#idea算法"><span class="nav-number">1.1.1.2.</span> <span class="nav-text">¶IDEA算法</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#非对称加密算法"><span class="nav-number">1.1.2.</span> <span class="nav-text">¶非对称加密算法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#散列函数和数字签名"><span class="nav-number">1.2.</span> <span class="nav-text">¶散列函数和数字签名</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#散列函数"><span class="nav-number">1.2.0.1.</span> <span class="nav-text">¶散列函数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#数字签名"><span class="nav-number">1.2.0.2.</span> <span class="nav-text">¶数字签名</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#数字水印"><span class="nav-number">1.2.0.3.</span> <span class="nav-text">¶数字水印</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#秘钥分配中心与公钥基础设施"><span class="nav-number">1.3.</span> <span class="nav-text">¶秘钥分配中心与公钥基础设施</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#访问控制"><span class="nav-number">1.4.</span> <span class="nav-text">¶访问控制</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#安全协议"><span class="nav-number">1.5.</span> <span class="nav-text">¶安全协议</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#数据备份"><span class="nav-number">1.6.</span> <span class="nav-text">¶数据备份</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#计算机病毒与免疫"><span class="nav-number">1.7.</span> <span class="nav-text">¶计算机病毒与免疫</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#信息安全技术"><span class="nav-number">1.</span> <span class="nav-text">¶信息安全技术</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#加密和解密"><span class="nav-number">1.1.</span> <span class="nav-text">¶加密和解密</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#对称秘钥密码体制及典型算法"><span class="nav-number">1.1.1.</span> <span class="nav-text">¶对称秘钥密码体制及典型算法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#des算法"><span class="nav-number">1.1.1.1.</span> <span class="nav-text">¶DES算法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#idea算法"><span class="nav-number">1.1.1.2.</span> <span class="nav-text">¶IDEA算法</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#非对称加密算法"><span class="nav-number">1.1.2.</span> <span class="nav-text">¶非对称加密算法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#散列函数和数字签名"><span class="nav-number">1.2.</span> <span class="nav-text">¶散列函数和数字签名</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#散列函数"><span class="nav-number">1.2.0.1.</span> <span class="nav-text">¶散列函数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#数字签名"><span class="nav-number">1.2.0.2.</span> <span class="nav-text">¶数字签名</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#数字水印"><span class="nav-number">1.2.0.3.</span> <span class="nav-text">¶数字水印</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#秘钥分配中心与公钥基础设施"><span class="nav-number">1.3.</span> <span class="nav-text">¶秘钥分配中心与公钥基础设施</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#密钥分配中心-key-distribution-center-kdc"><span class="nav-number">1.3.1.</span> <span class="nav-text">¶密钥分配中心（Key Distribution Center，KDC）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#数字证书和公开密钥基础设施"><span class="nav-number">1.3.2.</span> <span class="nav-text">¶数字证书和公开密钥基础设施</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#数字证书"><span class="nav-number">1.3.2.1.</span> <span class="nav-text">¶数字证书</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#公钥基础设施kpi"><span class="nav-number">1.3.2.2.</span> <span class="nav-text">¶公钥基础设施KPI</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#访问控制"><span class="nav-number">1.4.</span> <span class="nav-text">¶访问控制</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#身份认证"><span class="nav-number">1.4.1.</span> <span class="nav-text">¶身份认证</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#访问控制技术"><span class="nav-number">1.4.2.</span> <span class="nav-text">¶访问控制技术</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#安全协议"><span class="nav-number">1.5.</span> <span class="nav-text">¶安全协议</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#ipsec协议"><span class="nav-number">1.5.1.</span> <span class="nav-text">¶IPSec协议</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ssl协议"><span class="nav-number">1.5.2.</span> <span class="nav-text">¶SSL协议</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#数据备份"><span class="nav-number">1.6.</span> <span class="nav-text">¶数据备份</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#备份类型"><span class="nav-number">1.6.1.</span> <span class="nav-text">¶备份类型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#异地备份"><span class="nav-number">1.6.2.</span> <span class="nav-text">¶异地备份</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#新型的备份解决方案"><span class="nav-number">1.6.3.</span> <span class="nav-text">¶新型的备份解决方案</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#计算机病毒与免疫"><span class="nav-number">1.7.</span> <span class="nav-text">¶计算机病毒与免疫</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#计算机病毒"><span class="nav-number">1.7.1.</span> <span class="nav-text">¶计算机病毒</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#计算机病毒免疫的原理"><span class="nav-number">1.7.2.</span> <span class="nav-text">¶计算机病毒免疫的原理</span></a></li></ol></li></ol></div>
             
 
           </div>
@@ -1032,7 +1183,7 @@
 
     <footer id="footer" class="footer">
       <div class="footer-inner">
-        <div class="copyright">&copy; 2019 – <span itemprop="copyrightYear">2020</span>
+        <div class="copyright">&copy; 2019 – <span itemprop="copyrightYear">2021</span>
   <span class="with-love" id="animate">
     <i class="fa fa-user"></i>
   </span>
