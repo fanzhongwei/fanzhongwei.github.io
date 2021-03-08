@@ -65,7 +65,7 @@
   </url>
   
   <url>
-    <loc>https://www.fanzhongwei.com/linux/Windows_to_Linux.html</loc>
+    <loc>https://www.fanzhongwei.com/linux/shadowsocks.html</loc>
     
     <lastmod>2020-03-30T15:34:02.371Z</lastmod>
     
@@ -100,7 +100,7 @@
   </url>
   
   <url>
-    <loc>https://www.fanzhongwei.com/linux/shadowsocks.html</loc>
+    <loc>https://www.fanzhongwei.com/hexo/pull-refresh.html</loc>
     
     <lastmod>2020-03-30T15:34:02.371Z</lastmod>
     
@@ -114,13 +114,6 @@
   </url>
   
   <url>
-    <loc>https://www.fanzhongwei.com/mutlithreading/thread-lock.html</loc>
-    
-    <lastmod>2020-03-30T15:34:02.371Z</lastmod>
-    
-  </url>
-  
-  <url>
     <loc>https://www.fanzhongwei.com/mutlithreading/mutlithreading.html</loc>
     
     <lastmod>2020-03-30T15:34:02.371Z</lastmod>
@@ -128,7 +121,14 @@
   </url>
   
   <url>
-    <loc>https://www.fanzhongwei.com/hexo/pull-refresh.html</loc>
+    <loc>https://www.fanzhongwei.com/mutlithreading/thread-lock.html</loc>
+    
+    <lastmod>2020-03-30T15:34:02.371Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://www.fanzhongwei.com/linux/Windows_to_Linux.html</loc>
     
     <lastmod>2020-03-30T15:34:02.371Z</lastmod>
     
