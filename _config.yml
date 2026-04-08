@@ -82,6 +82,11 @@ deploy:
   type: git
   repository: https://github.com/fanzhongwei/fanzhongwei.github.io.git
   branch: master
+  
+# 可选发布目标（由 redeploy.sh 参数切换）
+deploy_targets:
+  github: https://github.com/fanzhongwei/fanzhongwei.github.io.git
+  gitee: git@gitee.com:fanzhongwei/fanzhongwei.gitee.io.git
 
 
 search:
