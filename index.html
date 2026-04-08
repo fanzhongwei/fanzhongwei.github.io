@@ -1048,7 +1048,7 @@
                 
                   <span class="post-meta-item-text">更新于</span>
                 
-                <time title="修改时间：2026-04-08 21:31:51" itemprop="dateModified" datetime="2026-04-08T21:31:51+08:00">2026-04-08</time>
+                <time title="修改时间：2026-04-08 21:37:01" itemprop="dateModified" datetime="2026-04-08T21:37:01+08:00">2026-04-08</time>
               
             
           </span>
@@ -1120,7 +1120,7 @@
 <p>上篇讲了 MCP 协议与网关设计思路；本篇介绍落地实现 <strong>MCP Gateway</strong>：导入 OpenAPI/Swagger 文档即可一键发布 MCP 服务，大模型通过标准协议直接调用你的接口，业务侧零侵入。Spring Boot + MCP SDK，GitHub 已开源，欢迎 Star。</p>
 </blockquote>
 <hr>
-<p><img src="https://github.com/fanzhongwei/mcp-gateway/blob/main/McpGateway.gif" alt="MCP Gateway.gif"></p>
+<p><img src="/images/McpGateway.gif" alt="MCP Gateway.gif"></p>
 <h2 id="一-mcp-gateway-是什么"><a class="header-anchor" href="#一-mcp-gateway-是什么">¶</a>一、MCP Gateway 是什么</h2>
 <p><strong>MCP Gateway</strong> 是一个基于 Spring Boot 的 MCP 服务网关，核心做一件事：<strong>把 OpenAPI/Swagger 文档自动转换成 MCP 工具</strong>，让大模型通过标准 MCP 协议（<code>tools/list</code>、<code>tools/call</code>）直接调用你的业务接口，而无需改业务代码。</p>
 <p>你可以把它理解成「API 与 MCP 之间的翻译官」：在管理端导入或手动录入 API 文档，配置好转发地址与认证，发布后就会得到一个独立的 MCP Server；客户端（如 Claude Desktop、Cursor、自研 AI 应用）按 MCP 规范连上来，就能把文档里的接口当作「工具」来调用。原有后端保持 REST/OpenAPI 形态不变，零侵入。</p>
