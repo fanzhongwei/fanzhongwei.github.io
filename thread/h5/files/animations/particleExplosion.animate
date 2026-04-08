@@ -1,0 +1,17 @@
+/* 
+  Name:			ParticleExplosion
+  Type:			Entrance
+  Description:	
+  Version:		2.0	
+  locale:		{"zh-Hans":"粒子爆炸", "en-US":"Particle Explosion"}
+  Class:        ParticleExplosion
+  Parameter:    <^   {"Options":{"color":"0xFF3300","shape":0}}   $>
+ */
+ 
+@keyframes particleExplosion {
+	
+}
+
+.particleExplosion{
+	animation-duration: 2s;
+}

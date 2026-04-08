@@ -1,0 +1,25 @@
+/* 
+  Name:			Expand Open
+  Type:			Entrance
+  Description:	Expand Open Effect
+  Version:		2.0	
+  locale:		{"zh-Hans":"展开", "en-US":"Expand Open"}
+ */
+ 
+@keyframes expandOpen {
+	0% {
+		transform: scale(1.8);		
+	}
+	50% {
+		transform: scale(0.95);
+	}	
+	80% {
+		transform: scale(1.05);
+	}
+	90% {
+		transform: scale(0.98);
+	}	
+	100% {
+		transform: scale(1);
+	}			
+}

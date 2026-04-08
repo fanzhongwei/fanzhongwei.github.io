@@ -1,0 +1,24 @@
+/* 
+  Name:			DrawEffect
+  Type:			Entrance
+  Description:	DrawEffect
+  Version:		2.0	
+  locale:		{"zh-Hans":"手绘", "en-US":"Draw Effect"}
+  Class:        DrawEffect
+  Order:		00
+  Parameter:   	<^   
+  					{"Options":{
+  							"customPen":false, "customCols":0, "customAlpha":1, "customWidth":1
+  						}
+  					}   
+  				$>
+  LimitType:    MSvg,MImage
+ */
+ 
+@keyframes drawEffect {
+	
+}
+
+.drawEffect{
+	animation-duration: 10s;
+}

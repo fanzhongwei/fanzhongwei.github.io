@@ -1,0 +1,1904 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+  <meta http-equiv="Cache-Control" content="no-transform">
+  <meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+  <meta name="google-site-verification" content="5LFoOb-y-oi59dy2QaWFWoDyyW34_mMWX5MMvqJmVYo">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
+
+<link rel="stylesheet" href="/css/main.css?v=7.1.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/imagesfavicon.ico?v=7.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico?v=7.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.ico?v=7.1.0">
+
+
+  <link rel="mask-icon" href="/images/favicon.ico?v=7.1.0" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '7.1.0',
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false,"dimmer":false},
+    back2top: true,
+    back2top_sidebar: false,
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+<link rel="stylesheet" href="/lib/mescroll/mescroll.min.css?v=1.4.1">
+<script src="/lib/mescroll/mescroll.min.js?v=1.4.1" charset="utf-8"></script>
+
+
+  <meta name="description" content="¶Dify知识检索准确性探讨 ¶Embedding模型与Rerank模型 Rerank模型的主要任务是对Embedding模型初步筛选出的候选集进行重新排序，确保最相关的结果排在最前面。它通常基于更复杂的语义分析，评估候选文档和查询之间的深层次匹配关系。在Rerank阶段，模型会分析查询与候选文档之间的上下文、语义关系等信息。它可以使用诸如BERT/GPT等预训练语言模型来捕捉更细腻的语义和句子间">
+<meta name="keywords" content="AI,RAG,Dify">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Dify知识检索准确性探讨">
+<meta property="og:url" content="https://www.fanzhongwei.com/ai/develop/dify-retrieval.html">
+<meta property="og:site_name" content="fanzhongwei">
+<meta property="og:description" content="¶Dify知识检索准确性探讨 ¶Embedding模型与Rerank模型 Rerank模型的主要任务是对Embedding模型初步筛选出的候选集进行重新排序，确保最相关的结果排在最前面。它通常基于更复杂的语义分析，评估候选文档和查询之间的深层次匹配关系。在Rerank阶段，模型会分析查询与候选文档之间的上下文、语义关系等信息。它可以使用诸如BERT/GPT等预训练语言模型来捕捉更细腻的语义和句子间">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2026-04-08T12:51:34.174Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Dify知识检索准确性探讨">
+<meta name="twitter:description" content="¶Dify知识检索准确性探讨 ¶Embedding模型与Rerank模型 Rerank模型的主要任务是对Embedding模型初步筛选出的候选集进行重新排序，确保最相关的结果排在最前面。它通常基于更复杂的语义分析，评估候选文档和查询之间的深层次匹配关系。在Rerank阶段，模型会分析查询与候选文档之间的上下文、语义关系等信息。它可以使用诸如BERT/GPT等预训练语言模型来捕捉更细腻的语义和句子间">
+
+
+
+
+
+  
+  
+  <link rel="canonical" href="https://www.fanzhongwei.com/ai/develop/dify-retrieval">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>Dify知识检索准确性探讨 | fanzhongwei</title>
+  
+
+
+
+
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?c7a6634d526ddd253a5092f6656f4ef6";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">fanzhongwei</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <h1 class="site-subtitle" itemprop="description">blog</h1>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+
+      
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>搜索</a>
+        </li>
+      
+    </ul>
+  
+
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+  
+  
+
+  
+
+  <span class="exturl github-corner" data-url="aHR0cHM6Ly9naXRodWIuY29tL2Zhbnpob25nd2Vp" title="Follow me on GitHub" aria-label="Follow me on GitHub"><svg width="80" height="80" viewbox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"/><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"/><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"/></svg></span>
+
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://www.fanzhongwei.com/ai/develop/dify-retrieval.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="fanzhongwei">
+      <meta itemprop="description" content="个人经验总结：java、JavaScript、HTML、VUE等等">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="fanzhongwei">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">Dify知识检索准确性探讨
+
+              
+            
+          </h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2026-04-08 00:00:00 / 修改时间：20:51:34" itemprop="dateCreated datePublished" datetime="2026-04-08T00:00:00+08:00">2026-04-08</time>
+            
+
+            
+              
+
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/AI/" itemprop="url" rel="index"><span itemprop="name">AI</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+              
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+            
+                <span class="post-meta-item-text">评论数：</span>
+                <a href="/ai/develop/dify-retrieval.html#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="ai/develop/dify-retrieval.html" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="post-meta-item-icon">
+            <i class="fa fa-eye"></i>
+             阅读次数： 
+            <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="dify知识检索准确性探讨"><a class="header-anchor" href="#dify知识检索准确性探讨">¶</a>Dify知识检索准确性探讨</h1>
+<h2 id="embedding模型与rerank模型"><a class="header-anchor" href="#embedding模型与rerank模型">¶</a>Embedding模型与Rerank模型</h2>
+<p>Rerank模型的主要任务是对Embedding模型初步筛选出的候选集进行重新排序，确保最相关的结果排在最前面。它通常基于更复杂的语义分析，评估候选文档和查询之间的深层次匹配关系。在Rerank阶段，模型会分析查询与候选文档之间的上下文、语义关系等信息。它可以使用诸如BERT/GPT等预训练语言模型来捕捉更细腻的语义和句子间的关系，从而对初步候选文档进行更精确的评分与排序。Rerank模型一般比Embedding模型计算更复杂，通常需要更多的计算资源，因此适合处理Embedding模型初步检索后的数据。</p>
+<ul>
+<li>
+<p>初步检索（Embedding模型）：用户输入查询后，Embedding模型首先将查询和文档表示为向量，然后通过向量相似度计算，快速从大规模数据集中筛选出若干个候选文档或候选答案。</p>
+</li>
+<li>
+<p>重新排序（Rerank模型）：在得到初步候选集后，Rerank模型进一步分析这些候选文档或答案与查询之间的精确匹配程度，并根据复杂的语义关系重新打分，对候选集进行排序。使用Docker安装</p>
+</li>
+</ul>
+<p>常见的向量库（Vector Database）主要用于高效存储和检索高维向量数据（如嵌入向量），广泛应用于语义搜索、推荐系统、AI知识库等场景。以下是主流向量库及其特点，以及 <strong>Dify</strong> 知识库的选择建议：</p>
+<h2 id="提升准确性"><a class="header-anchor" href="#提升准确性">¶</a>提升准确性</h2>
+<p>提升知识库向量检索的准确率需要从<strong>数据预处理、模型选择、检索策略优化</strong>等多方面入手。以下是系统化的解决方案，结合最新技术实践（如 2025 年主流方法）：</p>
+<hr>
+<h3 id="数据预处理优化"><a class="header-anchor" href="#数据预处理优化">¶</a><strong>数据预处理优化</strong></h3>
+<h4 id="文本清洗与增强"><a class="header-anchor" href="#文本清洗与增强">¶</a><strong>文本清洗与增强</strong></h4>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>说明</th>
+<th>效果提升（实测）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>实体标准化</strong></td>
+<td>统一同义词（如&quot;AI&quot;和&quot;人工智能&quot;）、缩写扩展</td>
+<td>+5%~8% Recall</td>
+</tr>
+<tr>
+<td><strong>去噪处理</strong></td>
+<td>移除HTML标签、特殊符号、停用词（保留领域关键词）</td>
+<td>+3%~5% Precision</td>
+</tr>
+<tr>
+<td><strong>领域术语增强</strong></td>
+<td>注入领域词典（如医疗术语表），使用LLM生成同义表述</td>
+<td>+7%~10% MRR</td>
+</tr>
+</tbody>
+</table>
+<h4 id="分块-chunking-策略"><a class="header-anchor" href="#分块-chunking-策略">¶</a><strong>分块（Chunking）策略</strong></h4>
+<table>
+<thead>
+<tr>
+<th>策略</th>
+<th>适用场景</th>
+<th>推荐工具</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>语义分块</strong></td>
+<td>长文档（合同/论文）</td>
+<td>LlamaIndex <code>SemanticSplitter</code></td>
+</tr>
+<tr>
+<td><strong>滑动窗口重叠</strong></td>
+<td>保持上下文连续性</td>
+<td>重叠率15%~20%（128token窗口）</td>
+</tr>
+<tr>
+<td><strong>表格/代码特殊处理</strong></td>
+<td>结构化数据单独提取</td>
+<td><span class="exturl" data-url="aHR0cDovL1Vuc3RydWN0dXJlZC5pbw==" title="http://Unstructured.io">Unstructured.io<i class="fa fa-external-link"></i></span> 或 <code>pdfplumber</code></td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h3 id="向量模型选型与微调"><a class="header-anchor" href="#向量模型选型与微调">¶</a><strong>向量模型选型与微调</strong></h3>
+<h4 id="1-嵌入模型对比-2025主流"><a class="header-anchor" href="#1-嵌入模型对比-2025主流">¶</a>1. <strong>嵌入模型对比（2025主流）</strong></h4>
+<table>
+<thead>
+<tr>
+<th>模型</th>
+<th>特点</th>
+<th>MTEB检索得分（2025）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>BAAI/bge-v3</strong></td>
+<td>支持指令微调，中文优化</td>
+<td>85.7</td>
+</tr>
+<tr>
+<td><strong>Cohere Embed v4</strong></td>
+<td>多语言检索强，支持1024维稀疏向量</td>
+<td>87.2</td>
+</tr>
+<tr>
+<td><strong>OpenAI text-embedding-3-large</strong></td>
+<td>上下文窗口8K，价格低</td>
+<td>86.9</td>
+</tr>
+<tr>
+<td><strong>DeepSeek-Embed</strong></td>
+<td>动态稀疏编码，显存占用减少40%</td>
+<td>84.5</td>
+</tr>
+</tbody>
+</table>
+<h4 id="2-领域微调方法"><a class="header-anchor" href="#2-领域微调方法">¶</a>2. <strong>领域微调方法</strong></h4>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 使用LoRA微调示例（基于BGE模型）</span></span><br><span class="line"><span class="keyword">from</span> peft <span class="keyword">import</span> LoraConfig</span><br><span class="line"><span class="keyword">from</span> transformers <span class="keyword">import</span> AutoModel</span><br><span class="line"></span><br><span class="line">model = AutoModel.from_pretrained(<span class="string">"BAAI/bge-v3"</span>)</span><br><span class="line">peft_config = LoraConfig(</span><br><span class="line">    r=<span class="number">8</span>,  <span class="comment"># 秩</span></span><br><span class="line">    target_modules=[<span class="string">"query"</span>, <span class="string">"key"</span>, <span class="string">"value"</span>],</span><br><span class="line">    lora_alpha=<span class="number">16</span>,</span><br><span class="line">    lora_dropout=<span class="number">0.1</span></span><br><span class="line">)</span><br><span class="line">model.add_adapter(peft_config)  <span class="comment"># 添加轻量适配层</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li><strong>数据量要求</strong>：500<sub>1000条领域QA对即可提升10%</sub>15%效果</li>
+<li><strong>技巧</strong>：混合通用数据（如MS MARCO）防止过拟合</li>
+</ul>
+<hr>
+<h3 id="检索流程优化"><a class="header-anchor" href="#检索流程优化">¶</a><strong>检索流程优化</strong></h3>
+<h4 id="1-混合检索策略"><a class="header-anchor" href="#1-混合检索策略">¶</a>1. <strong>混合检索策略</strong></h4>
+<table>
+<thead>
+<tr>
+<th>方法</th>
+<th>实现方式</th>
+<th>适用场景</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>向量+关键词混合</strong></td>
+<td>结合BM25与余弦相似度加权（权重0.7:0.3）</td>
+<td>精确术语查询</td>
+</tr>
+<tr>
+<td><strong>多向量融合</strong></td>
+<td>对标题/正文分别编码后加权</td>
+<td>长文档检索</td>
+</tr>
+<tr>
+<td><strong>递归检索</strong></td>
+<td>先粗筛（低维向量），再精排（高维）</td>
+<td>千万级以上知识库</td>
+</tr>
+</tbody>
+</table>
+<h4 id="重排序-rerank"><a class="header-anchor" href="#重排序-rerank">¶</a><strong>重排序（Rerank）</strong></h4>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"># 使用Cohere Reranker示例</span><br><span class="line">from cohere import Client</span><br><span class="line"></span><br><span class="line">co = Client(&quot;API_KEY&quot;)</span><br><span class="line">results = co.rerank(</span><br><span class="line">    query=&quot;量子计算原理&quot;,</span><br><span class="line">    documents=top_100_candidates,  # 首轮检索结果</span><br><span class="line">    top_n=10,</span><br><span class="line">    model=&quot;rerank-english-v3.0&quot;  # 中文可用rerank-multilingual-v2</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+<ul>
+<li><strong>性能对比</strong>：
+<ul>
+<li>无Rerank：MRR@10=0.42</li>
+<li>加入Rerank：MRR@10=0.61（+45%）</li>
+</ul>
+</li>
+</ul>
+<h3 id="后处理与评估"><a class="header-anchor" href="#后处理与评估">¶</a><strong>后处理与评估</strong></h3>
+<h4 id="1-动态阈值过滤"><a class="header-anchor" href="#1-动态阈值过滤">¶</a>1. <strong>动态阈值过滤</strong></h4>
+<ul>
+<li><strong>相似度校准</strong>：统计分布后设定动态阈值（如均值+2σ）</li>
+<li><strong>领域适配</strong>：医疗领域阈值通常比通用领域高0.15~0.2</li>
+</ul>
+<h4 id="2-评估指标优化"><a class="header-anchor" href="#2-评估指标优化">¶</a>2. <strong>评估指标优化</strong></h4>
+<table>
+<thead>
+<tr>
+<th>指标</th>
+<th>计算方法</th>
+<th>目标值（行业基准）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>MRR@10</strong></td>
+<td>首位相关结果排名的倒数均值</td>
+<td>&gt;0.65</td>
+</tr>
+<tr>
+<td><strong>Recall@100</strong></td>
+<td>前100结果中覆盖真实答案的比例</td>
+<td>&gt;0.85</td>
+</tr>
+<tr>
+<td><strong>Precision@5</strong></td>
+<td>前5结果中正确结果的比例</td>
+<td>&gt;0.75</td>
+</tr>
+</tbody>
+</table>
+<h4 id="3-持续学习机制"><a class="header-anchor" href="#3-持续学习机制">¶</a>3. <strong>持续学习机制</strong></h4>
+<ul>
+<li><strong>反馈闭环</strong>：记录用户点击数据，每周增量训练</li>
+<li><strong>A/B测试</strong>：对比新旧模型在相同query下的MRR变化</li>
+</ul>
+<h2 id="常见向量库分类及对比"><a class="header-anchor" href="#常见向量库分类及对比">¶</a><strong>常见向量库分类及对比</strong></h2>
+<h3 id="专用向量数据库"><a class="header-anchor" href="#专用向量数据库">¶</a><strong>专用向量数据库</strong></h3>
+<table>
+<thead>
+<tr>
+<th>名称</th>
+<th>特点</th>
+<th>适用场景</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Pinecone</strong></td>
+<td>全托管云服务，简单易用，支持实时更新和过滤</td>
+<td>快速搭建生产级应用，适合中小团队</td>
+</tr>
+<tr>
+<td><strong>Milvus</strong></td>
+<td>开源，高性能，支持分布式和多种索引（IVF_FLAT、HNSW等）</td>
+<td>大规模数据、高吞吐场景</td>
+</tr>
+<tr>
+<td><strong>Weaviate</strong></td>
+<td>开源，支持多模态和语义检索，内置GraphQL接口</td>
+<td>复杂查询、多模态搜索</td>
+</tr>
+<tr>
+<td><strong>Qdrant</strong></td>
+<td>开源，Rust编写，高性能，支持过滤和稀疏向量</td>
+<td>需要低延迟和高并发的场景</td>
+</tr>
+<tr>
+<td><strong>Chroma</strong></td>
+<td>轻量级，嵌入式，适合本地开发</td>
+<td>原型开发或小规模应用</td>
+</tr>
+<tr>
+<td><strong>Faiss</strong></td>
+<td>Meta开源库，本地运行，需自行管理存储</td>
+<td>研究或离线批量处理</td>
+</tr>
+</tbody>
+</table>
+<h3 id="扩展型数据库-支持向量"><a class="header-anchor" href="#扩展型数据库-支持向量">¶</a><strong>扩展型数据库（支持向量）</strong></h3>
+<table>
+<thead>
+<tr>
+<th>名称</th>
+<th>特点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>PostgreSQL + pgvector</strong></td>
+<td>传统数据库扩展，支持向量搜索，适合已有PG生态的项目</td>
+</tr>
+<tr>
+<td><strong>Redis + RedisSearch</strong></td>
+<td>内存数据库，支持向量检索，低延迟但容量有限</td>
+</tr>
+<tr>
+<td><strong>Elasticsearch</strong></td>
+<td>支持向量搜索插件，适合结合全文检索的场景</td>
+</tr>
+</tbody>
+</table>
+<h2 id="dify-知识库的向量库选择"><a class="header-anchor" href="#dify-知识库的向量库选择">¶</a><strong>Dify 知识库的向量库选择</strong></h2>
+<p>根据 <strong>Dify 官方文档</strong> 和开源代码：</p>
+<ul>
+<li><strong>默认使用 Chroma</strong>：轻量级，内置集成，适合快速启动和本地开发。</li>
+<li><strong>支持切换其他数据库</strong>：如 Milvus、Weaviate、Qdrant 和 pgvector，用户可根据生产需求配置（需自行部署）。</li>
+</ul>
+<p><strong>推荐场景</strong>：</p>
+<ul>
+<li>开发测试：直接用 Chroma。</li>
+<li>生产环境：选择 Milvus 或 Qdrant（需通过Dify的配置文件中修改向量库连接参数）。</li>
+</ul>
+<h2 id="常见大模型对比"><a class="header-anchor" href="#常见大模型对比">¶</a>常见大模型对比</h2>
+<p>以下是2025年市面上常见大模型的对比表格，涵盖国内外主流模型，从<strong>技术架构、核心能力、适用场景、开源/闭源情况</strong>等维度进行对比：</p>
+<h3 id="2025年主流大模型对比表"><a class="header-anchor" href="#2025年主流大模型对比表">¶</a><strong>2025年主流大模型对比表</strong></h3>
+<table>
+<thead>
+<tr>
+<th><strong>模型名称</strong></th>
+<th><strong>发布机构</strong></th>
+<th><strong>参数规模</strong></th>
+<th><strong>核心能力</strong></th>
+<th><strong>适用场景</strong></th>
+<th><strong>开源/闭源</strong></th>
+<th><strong>评测表现</strong>（SuperCLUE 2025）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>GPT-4o</strong></td>
+<td>OpenAI</td>
+<td>~1.8T</td>
+<td>多模态（文本/图像/音频/视频）、超长上下文（100万Token）、复杂推理</td>
+<td>科研分析、跨行业决策、全媒体生成</td>
+<td>闭源（API）</td>
+<td>总分80.4（理科87.3，文科77.1）</td>
+</tr>
+<tr>
+<td><strong>DeepSeek-V3</strong></td>
+<td>深度求索</td>
+<td>6710亿</td>
+<td>低成本训练（仅600万美元）、STEM领域强（代码正确率91%）、长文本处理</td>
+<td>学术研究、代码生成、论文写作</td>
+<td>开源</td>
+<td>总分68.3（理科72.0，文科78.2）</td>
+</tr>
+<tr>
+<td><strong>Gemini 2.0 Ultra</strong></td>
+<td>Google DeepMind</td>
+<td>1.56T</td>
+<td>原生多模态、132种语言实时翻译、超低时延（&lt;20ms）</td>
+<td>全球化协作、实时翻译、边缘计算</td>
+<td>闭源</td>
+<td>总分68.2（理科72.6，文科76.6）</td>
+</tr>
+<tr>
+<td><strong>Claude 3.5 Sonnet</strong></td>
+<td>Anthropic</td>
+<td>未公开</td>
+<td>200K~1M Token上下文、混合推理（快思慢想）、高安全性</td>
+<td>法律分析、医疗诊断、合规对话</td>
+<td>闭源</td>
+<td>总分67.7（理科71.4，文科77.2）</td>
+</tr>
+<tr>
+<td><strong>通义千问 3.0</strong></td>
+<td>阿里巴巴</td>
+<td>720亿</td>
+<td>中文理解领先、电商/金融优化、支持百万级上下文</td>
+<td>企业服务、供应链管理、金融客服</td>
+<td>部分开源</td>
+<td>总分66.2（理科67.4，文科80.0）</td>
+</tr>
+<tr>
+<td><strong>豆包 1.5 Pro</strong></td>
+<td>字节跳动</td>
+<td>未公开</td>
+<td>稀疏MoE架构、低成本高效训练、擅长短视频脚本生成</td>
+<td>社交媒体运营、短视频创作</td>
+<td>闭源</td>
+<td>总分66.5（理科72.3，文科76.6）</td>
+</tr>
+<tr>
+<td><strong>文心一言 4.0</strong></td>
+<td>百度</td>
+<td>未公开</td>
+<td>中文优化（国考题87%正确率）、知识图谱增强、多模态生成</td>
+<td>教育、医疗、金融问答</td>
+<td>闭源</td>
+<td>总分62.2（理科61.4，文科79.5）</td>
+</tr>
+<tr>
+<td><strong>Kimi Chat</strong></td>
+<td>月之暗面</td>
+<td>未公开</td>
+<td>200万汉字长文本处理、法律/科研文档分析</td>
+<td>法律合同、学术文献、长文本总结</td>
+<td>闭源</td>
+<td>总分59.4（理科58.1，文科76.6）</td>
+</tr>
+<tr>
+<td><strong>盘古大模型 5.5</strong></td>
+<td>华为</td>
+<td>万亿级</td>
+<td>工业级多模态（12K图像识别）、复杂推理优化、制造业/气象预测</td>
+<td>智能制造、自动驾驶、气象分析</td>
+<td>闭源</td>
+<td>未上榜（行业定制化强）</td>
+</tr>
+<tr>
+<td><strong>Llama-3.3-70B</strong></td>
+<td>Meta</td>
+<td>700亿</td>
+<td>开源高性能、推理速度提升200%、多语言优化</td>
+<td>中小企业定制、学术研究</td>
+<td>开源</td>
+<td>总分59.4（理科66.4，文科72.9）</td>
+</tr>
+</tbody>
+</table>
+<h3 id="关键对比维度补充"><a class="header-anchor" href="#关键对比维度补充">¶</a><strong>关键对比维度补充</strong></h3>
+<ol>
+<li>
+<p><strong>开源 vs 闭源</strong></p>
+<ul>
+<li><strong>开源（DeepSeek、Llama）</strong>：适合企业私有化部署、学术研究。</li>
+<li><strong>闭源（GPT-4o、Claude）</strong>：API调用方便，但依赖厂商服务。</li>
+</ul>
+</li>
+<li>
+<p><strong>语言侧重</strong></p>
+<ul>
+<li><strong>英文优先</strong>：GPT-4o、Gemini、Claude。</li>
+<li><strong>中文优化</strong>：通义千问、文心一言、DeepSeek-V3。</li>
+</ul>
+</li>
+<li>
+<p><strong>多模态支持</strong></p>
+<ul>
+<li><strong>最强</strong>：GPT-4o（8K视频生成）、Gemini（实时多语言翻译）、盘古（工业级多模态）。</li>
+<li><strong>较弱</strong>：DeepSeek（仅文本/代码）、Kimi（长文本处理突出）。</li>
+</ul>
+</li>
+<li>
+<p><strong>成本与部署</strong></p>
+<ul>
+<li><strong>低成本</strong>：DeepSeek（训练成本仅GPT-4o的1/70）、豆包（稀疏MoE架构高效）。</li>
+<li><strong>高成本</strong>：GPT-4o（私有化部署超500万美元/年）、盘古（需华为昇腾芯片支持）。</li>
+</ul>
+</li>
+</ol>
+<h3 id="选型建议"><a class="header-anchor" href="#选型建议">¶</a><strong>选型建议</strong></h3>
+<ul>
+<li><strong>企业通用AI</strong>：GPT-4o（综合最强）、Claude（安全合规）。</li>
+<li><strong>中文场景</strong>：通义千问（电商/金融）、文心一言（教育/医疗）。</li>
+<li><strong>开源研究</strong>：DeepSeek-V3（STEM强）、Llama-3（社区生态好）。</li>
+<li><strong>长文本分析</strong>：Kimi Chat（200万字上下文）、Claude（200K Token）。</li>
+</ul>
+<p>参考链接：</p>
+<ul>
+<li><span class="exturl" data-url="aHR0cHM6Ly9tcC53ZWl4aW4ucXEuY29tL3MvLTdqdnhfOE05bDJ5RHlqbTgwa29zdw==" title="https://mp.weixin.qq.com/s/-7jvx_8M9l2yDyjm80kosw">https://mp.weixin.qq.com/s/-7jvx_8M9l2yDyjm80kosw<i class="fa fa-external-link"></i></span></li>
+</ul>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/AI/" rel="tag"># AI</a>
+          
+            <a href="/tags/RAG/" rel="tag"># RAG</a>
+          
+            <a href="/tags/Dify/" rel="tag"># Dify</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/ai/mcp/mcp-gateway-release.html" rel="next" title="MCP Gateway：零代码改造，把现有 API 发布为MCP服务">
+                <i class="fa fa-chevron-left"></i> MCP Gateway：零代码改造，把现有 API 发布为MCP服务
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+      </div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">fanzhongwei</p>
+              <div class="site-description motion-element" itemprop="description">个人经验总结：java、JavaScript、HTML、VUE等等</div>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">36</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  
+                    
+                      <a href="/categories/">
+                    
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">13</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  
+                    
+                      <a href="/tags/">
+                    
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">53</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL2Zhbnpob25nd2Vp" title="GitHub &rarr; https://github.com/fanzhongwei"><i class="fa fa-fw fa-github"></i>GitHub</span>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <span class="exturl" data-url="bWFpbHRvOmZ6d3Rpbmd5dUAxNjMuY29t" title="E-Mail &rarr; mailto:fzwtingyu@163.com"><i class="fa fa-fw fa-envelope"></i>E-Mail</span>
+                </span>
+              
+            </div>
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#dify知识检索准确性探讨"><span class="nav-number">1.</span> <span class="nav-text">¶Dify知识检索准确性探讨</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#embedding模型与rerank模型"><span class="nav-number">1.1.</span> <span class="nav-text">¶Embedding模型与Rerank模型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#提升准确性"><span class="nav-number">1.2.</span> <span class="nav-text">¶提升准确性</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#数据预处理优化"><span class="nav-number">1.2.1.</span> <span class="nav-text">¶数据预处理优化</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#文本清洗与增强"><span class="nav-number">1.2.1.1.</span> <span class="nav-text">¶文本清洗与增强</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#分块-chunking-策略"><span class="nav-number">1.2.1.2.</span> <span class="nav-text">¶分块（Chunking）策略</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#向量模型选型与微调"><span class="nav-number">1.2.2.</span> <span class="nav-text">¶向量模型选型与微调</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-嵌入模型对比-2025主流"><span class="nav-number">1.2.2.1.</span> <span class="nav-text">¶1. 嵌入模型对比（2025主流）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-领域微调方法"><span class="nav-number">1.2.2.2.</span> <span class="nav-text">¶2. 领域微调方法</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#检索流程优化"><span class="nav-number">1.2.3.</span> <span class="nav-text">¶检索流程优化</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-混合检索策略"><span class="nav-number">1.2.3.1.</span> <span class="nav-text">¶1. 混合检索策略</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#重排序-rerank"><span class="nav-number">1.2.3.2.</span> <span class="nav-text">¶重排序（Rerank）</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#后处理与评估"><span class="nav-number">1.2.4.</span> <span class="nav-text">¶后处理与评估</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-动态阈值过滤"><span class="nav-number">1.2.4.1.</span> <span class="nav-text">¶1. 动态阈值过滤</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-评估指标优化"><span class="nav-number">1.2.4.2.</span> <span class="nav-text">¶2. 评估指标优化</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-持续学习机制"><span class="nav-number">1.2.4.3.</span> <span class="nav-text">¶3. 持续学习机制</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#常见向量库分类及对比"><span class="nav-number">1.3.</span> <span class="nav-text">¶常见向量库分类及对比</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#专用向量数据库"><span class="nav-number">1.3.1.</span> <span class="nav-text">¶专用向量数据库</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#扩展型数据库-支持向量"><span class="nav-number">1.3.2.</span> <span class="nav-text">¶扩展型数据库（支持向量）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#dify-知识库的向量库选择"><span class="nav-number">1.4.</span> <span class="nav-text">¶Dify 知识库的向量库选择</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#常见大模型对比"><span class="nav-number">1.5.</span> <span class="nav-text">¶常见大模型对比</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2025年主流大模型对比表"><span class="nav-number">1.5.1.</span> <span class="nav-text">¶2025年主流大模型对比表</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#关键对比维度补充"><span class="nav-number">1.5.2.</span> <span class="nav-text">¶关键对比维度补充</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#选型建议"><span class="nav-number">1.5.3.</span> <span class="nav-text">¶选型建议</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2019 – <span itemprop="copyrightYear">2026</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">fanzhongwei</span>
+
+  
+
+  
+</div>
+
+
+  <div class="powered-by">由 <span class="exturl theme-link" data-url="aHR0cHM6Ly9oZXhvLmlv">Hexo</span> 强力驱动 v3.9.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 – <span class="exturl theme-link" data-url="aHR0cHM6Ly90aGVtZS1uZXh0Lm9yZw==">NexT.Pisces</span> v7.1.0</div>
+
+	<div class="BbeiAn-info">
+		<a target="_blank" href="http://www.beian.miit.gov.cn/">蜀ICP备17004833号-1</a>
+	</div>
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+
+  
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+          <span id="scrollpercent"><span>0</span>%</span>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+      <div>
+        <div class="addthis_inline_share_toolbox">
+  <script src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-5caee68d1b93531b" async="async"></script>
+</div>
+
+      </div>
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+    
+    
+  
+  <script color="0,0,255" opacity="0.5" zindex="-1" count="99" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/utils.js?v=7.1.0"></script>
+
+  <script src="/js/motion.js?v=7.1.0"></script>
+
+  <script src="/js/pull-refresh.js?v=7.1.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/affix.js?v=7.1.0"></script>
+
+  <script src="/js/schemes/pisces.js?v=7.1.0"></script>
+
+
+
+  
+  <script src="/js/scrollspy.js?v=7.1.0"></script>
+<script src="/js/post-details.js?v=7.1.0"></script>
+
+
+
+  
+
+
+  <script src="/js/next-boot.js?v=7.1.0"></script>
+
+
+  
+
+  
+  <script src="/js/exturl.js?v=7.1.0"></script>
+
+
+  
+
+  
+  
+  <script id="dsq-count-scr" src="https://fanzhongwei.disqus.com/count.js" async></script>
+
+
+<script>
+  var disqus_config = function() {
+    this.page.url = "https://www.fanzhongwei.com/ai/develop/dify-retrieval.html";
+    this.page.identifier = "ai/develop/dify-retrieval.html";
+    this.page.title = 'Dify知识检索准确性探讨';
+    };
+  function loadComments() {
+    var d = document, s = d.createElement('script');
+    s.src = 'https://fanzhongwei.disqus.com/embed.js';
+    s.setAttribute('data-timestamp', '' + +new Date());
+    (d.head || d.body).appendChild(s);
+  }
+  
+    $(function() {
+      var offsetTop = $('#comments').offset().top - $(window).height();
+      if (offsetTop <= 0) {
+        // load directly when there's no a scrollbar
+        loadComments();
+      } else {
+        $(window).on('scroll.disqus_scroll', function() {
+          // offsetTop may changes because of manually resizing browser window or lazy loading images.
+          var offsetTop = $('#comments').offset().top - $(window).height();
+          var scrollTop = $(window).scrollTop();
+
+          // pre-load comments a bit? (margin or anything else)
+          if (offsetTop - scrollTop < 60) {
+            $(window).off('.disqus_scroll');
+            loadComments();
+          }
+        });
+      }
+    });
+  
+</script>
+
+
+
+
+
+  
+    
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/disqusjs@1/dist/disqusjs.css">
+
+
+
+<script src="//cdn.jsdelivr.net/npm/disqusjs@1/dist/disqus.js"></script>
+
+<script>
+  var dsqjs = new DisqusJS({
+    api: 'https://disqus.skk.moe/disqus/' || 'https://disqus.com/api/',
+    apikey: 'yeI3c68e36COmAnaJ0W8enNe62iyRL60APc1qYStSbMXCuXb1Hl57OKpqbA3AXjB',
+    shortname: 'fanzhongwei'
+  });
+</script>
+
+  
+
+
+  
+  <script>
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url).replace(/\/{2,}/g, '/');
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x"></i></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x"></i></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

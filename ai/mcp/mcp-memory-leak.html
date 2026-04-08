@@ -1,0 +1,1563 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+  <meta http-equiv="Cache-Control" content="no-transform">
+  <meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+  <meta name="google-site-verification" content="5LFoOb-y-oi59dy2QaWFWoDyyW34_mMWX5MMvqJmVYo">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
+
+<link rel="stylesheet" href="/css/main.css?v=7.1.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/imagesfavicon.ico?v=7.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico?v=7.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.ico?v=7.1.0">
+
+
+  <link rel="mask-icon" href="/images/favicon.ico?v=7.1.0" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '7.1.0',
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false,"dimmer":false},
+    back2top: true,
+    back2top_sidebar: false,
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+<link rel="stylesheet" href="/lib/mescroll/mescroll.min.css?v=1.4.1">
+<script src="/lib/mescroll/mescroll.min.js?v=1.4.1" charset="utf-8"></script>
+
+
+  <meta name="description" content="¶Spring AI MCP服务内存泄漏排查实录：从堆分析到源码修复  Spring AI构建的MCP服务频繁OOM？本文完整记录问题排查全链路： 1️⃣ 通过MAT精准定位WebMvcSseServerTransport中未释放的会话占99.59%内存 2️⃣ 发现SDK 0.7.0版本仅在异常时清理会话的设计缺陷 3️⃣ 升级1.0.0版本后仍存在异步连接残留问题 4️⃣ 最后采用&amp;quot;">
+<meta name="keywords" content="AI,性能优化,MCP">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Spring AI MCP服务内存泄漏排查实录：从堆分析到源码修复">
+<meta property="og:url" content="https://www.fanzhongwei.com/ai/mcp/mcp-memory-leak.html">
+<meta property="og:site_name" content="fanzhongwei">
+<meta property="og:description" content="¶Spring AI MCP服务内存泄漏排查实录：从堆分析到源码修复  Spring AI构建的MCP服务频繁OOM？本文完整记录问题排查全链路： 1️⃣ 通过MAT精准定位WebMvcSseServerTransport中未释放的会话占99.59%内存 2️⃣ 发现SDK 0.7.0版本仅在异常时清理会话的设计缺陷 3️⃣ 升级1.0.0版本后仍存在异步连接残留问题 4️⃣ 最后采用&amp;quot;">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="https://mmbiz.qpic.cn/mmbiz_png/14Blum0GwI7qnJcG2Fy61JgxGRia35guVicKn8Fp6IwEasDAuhldqkPvWL4HrXz3jRDS41WrFYHbcbGBIiaqI37MA/640?wx_fmt=png&from=appmsg">
+<meta property="og:image" content="https://mmbiz.qpic.cn/mmbiz_png/14Blum0GwI7qnJcG2Fy61JgxGRia35guVjyjLhlxSicRkso4VVxPup46Id1YP2dHEccRhnuAT2N1EqT27hK536Ug/640?wx_fmt=png&from=appmsg">
+<meta property="og:updated_time" content="2026-04-08T12:56:16.230Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Spring AI MCP服务内存泄漏排查实录：从堆分析到源码修复">
+<meta name="twitter:description" content="¶Spring AI MCP服务内存泄漏排查实录：从堆分析到源码修复  Spring AI构建的MCP服务频繁OOM？本文完整记录问题排查全链路： 1️⃣ 通过MAT精准定位WebMvcSseServerTransport中未释放的会话占99.59%内存 2️⃣ 发现SDK 0.7.0版本仅在异常时清理会话的设计缺陷 3️⃣ 升级1.0.0版本后仍存在异步连接残留问题 4️⃣ 最后采用&amp;quot;">
+<meta name="twitter:image" content="https://mmbiz.qpic.cn/mmbiz_png/14Blum0GwI7qnJcG2Fy61JgxGRia35guVicKn8Fp6IwEasDAuhldqkPvWL4HrXz3jRDS41WrFYHbcbGBIiaqI37MA/640?wx_fmt=png&from=appmsg">
+
+
+
+
+
+  
+  
+  <link rel="canonical" href="https://www.fanzhongwei.com/ai/mcp/mcp-memory-leak">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>Spring AI MCP服务内存泄漏排查实录：从堆分析到源码修复 | fanzhongwei</title>
+  
+
+
+
+
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?c7a6634d526ddd253a5092f6656f4ef6";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">fanzhongwei</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <h1 class="site-subtitle" itemprop="description">blog</h1>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+
+      
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>搜索</a>
+        </li>
+      
+    </ul>
+  
+
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+  
+  
+
+  
+
+  <span class="exturl github-corner" data-url="aHR0cHM6Ly9naXRodWIuY29tL2Zhbnpob25nd2Vp" title="Follow me on GitHub" aria-label="Follow me on GitHub"><svg width="80" height="80" viewbox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"/><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"/><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"/></svg></span>
+
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://www.fanzhongwei.com/ai/mcp/mcp-memory-leak.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="fanzhongwei">
+      <meta itemprop="description" content="个人经验总结：java、JavaScript、HTML、VUE等等">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="fanzhongwei">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">Spring AI MCP服务内存泄漏排查实录：从堆分析到源码修复
+
+              
+            
+          </h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2025-07-03 00:00:00" itemprop="dateCreated datePublished" datetime="2025-07-03T00:00:00+08:00">2025-07-03</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2026-04-08 20:56:16" itemprop="dateModified" datetime="2026-04-08T20:56:16+08:00">2026-04-08</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/AI/" itemprop="url" rel="index"><span itemprop="name">AI</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+              
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+            
+                <span class="post-meta-item-text">评论数：</span>
+                <a href="/ai/mcp/mcp-memory-leak.html#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="ai/mcp/mcp-memory-leak.html" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="post-meta-item-icon">
+            <i class="fa fa-eye"></i>
+             阅读次数： 
+            <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="spring-ai-mcp服务内存泄漏排查实录：从堆分析到源码修复"><a class="header-anchor" href="#spring-ai-mcp服务内存泄漏排查实录：从堆分析到源码修复">¶</a>Spring AI MCP服务内存泄漏排查实录：从堆分析到源码修复</h1>
+<blockquote>
+<p>Spring AI构建的MCP服务频繁OOM？本文完整记录问题排查全链路：<br>
+1️⃣ 通过MAT精准定位WebMvcSseServerTransport中未释放的会话占99.59%内存<br>
+2️⃣ 发现SDK 0.7.0版本仅在异常时清理会话的设计缺陷<br>
+3️⃣ 升级1.0.0版本后仍存在异步连接残留问题<br>
+4️⃣ 最后采用&quot;心跳检测+异常熔断&quot;双保险机制<br>
+👉 关键方案：定时发送轻量级消息sendNotification，实现自动回收失效连接，彻底解决内存泄漏。附完整堆分析截图、源码对比！</p>
+</blockquote>
+<p>上一篇文章我们介绍了如何使用Spring AI快速构建一个MCP Server：<span class="exturl" data-url="aHR0cHM6Ly9tcC53ZWl4aW4ucXEuY29tL3MvQnZuMklWdUFRTnJoc3NpRlNTTVROUT9wb2NfdG9rZW49SEd0bVltaWp5NFpicVJ1My1LRmVENHNNY2xKc2hSYWJMTzBxZGVGZw==" title="https://mp.weixin.qq.com/s/Bvn2IVuAQNrhssiFSSMTNQ?poc_token=HGtmYmijy4ZbqRu3-KFeD4sMclJshRabLO0qdeFg">Spring AI+MCP实战：零代码改造将传统服务接入大模型生态<i class="fa fa-external-link"></i></span>，但是服务启动一段时间后，总是是内存溢出，导致MCP服务时不时就不可用，必须得重启才能解决。</p>
+<p>配置java参数当内存溢出时自动转储堆，然后分析堆内存，终于发现了罪魁祸首，接下来就让我们一起来看看罪魁祸首是谁。</p>
+<h2 id="分析堆内存"><a class="header-anchor" href="#分析堆内存">¶</a>分析堆内存</h2>
+<p>使用<code>MAT（Eclipse Memory Analyzer）</code>打开自动转储的堆文件，加载完成后打开<code>Leak Suspects</code>可以发现内存泄露的可疑点：</p>
+<p><img src="https://mmbiz.qpic.cn/mmbiz_png/14Blum0GwI7qnJcG2Fy61JgxGRia35guVicKn8Fp6IwEasDAuhldqkPvWL4HrXz3jRDS41WrFYHbcbGBIiaqI37MA/640?wx_fmt=png&amp;from=appmsg" alt="内存泄露疑点.png"></p>
+<p>从上图可以发现，由<code>io.modelcontextprotocol.server.transport.WebMvcSseServerTransport @ 0x700730098</code>对象持有的<code>java.util.concurrent.ConcurrentHashMap$Node[]</code>占用了99.59%的内存。</p>
+<p>到这里基本就可以确定内存泄露的罪魁祸首就是<code>WebMvcSseServerTransport</code>，具体是其中的哪个对象呢，让我们继续分析。</p>
+<p>点击<code>Eclipse Memory Analyzer</code>上的<code>dominator_tree</code>可以看到堆内存中对象的树形结构信息，这里根据<code>Retained Heap</code>降序排列，可以看到占用内存最多的对象<code>java.util.concurrent.ConcurrentHashMap$Node[]</code>，右键 -》Path To GC Roots -》with all references，可以看到泄露对象到gc roots的路径，可以清晰的看到是被谁持有但一直未释放。</p>
+<p><img src="https://mmbiz.qpic.cn/mmbiz_png/14Blum0GwI7qnJcG2Fy61JgxGRia35guVjyjLhlxSicRkso4VVxPup46Id1YP2dHEccRhnuAT2N1EqT27hK536Ug/640?wx_fmt=png&amp;from=appmsg" alt="内存泄露GcRoots.png"></p>
+<p>到这里我们知道了是<code>WebMvcSseServerTransport#sessions</code>属性持有了有大量的Map节点，但一直没释放，最终导致JVM内存溢出了。</p>
+<blockquote>
+<p>MAT工具的文档详见文末的参考链接</p>
+</blockquote>
+<h2 id="源码分析"><a class="header-anchor" href="#源码分析">¶</a>源码分析</h2>
+<p>之前2025年3月份根据官方文档: <span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNwcmluZy5pby9zcHJpbmctYWkvcmVmZXJlbmNlL2FwaS9tY3AvbWNwLXNlcnZlci1ib290LXN0YXJ0ZXItZG9jcy5odG1s" title="https://docs.spring.io/spring-ai/reference/api/mcp/mcp-server-boot-starter-docs.html">https://docs.spring.io/spring-ai/reference/api/mcp/mcp-server-boot-starter-docs.html<i class="fa fa-external-link"></i></span>集成的时候，引入starter为：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.ai<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-ai-mcp-server-webmvc-spring-boot-starter<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>1.0.0-M6<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>其中引入的<code>io.modelcontextprotocol.sdk:mcp-spring-webmvc</code>的版本为0.7.0，<code>WebMvcSseServerTransport</code>的**核心实现（省略部分与本次内存溢出问题无关的代码）**如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br></pre></td><td class="code"><pre><span class="line">public class WebMvcSseServerTransport implements ServerMcpTransport &#123;</span><br><span class="line"></span><br><span class="line">    private final ConcurrentHashMap&lt;String, ClientSession&gt; sessions;</span><br><span class="line">    </span><br><span class="line">    private ServerResponse handleSseConnection(ServerRequest request) &#123;</span><br><span class="line">        if (this.isClosing) &#123;</span><br><span class="line">            return ServerResponse.status(HttpStatus.SERVICE_UNAVAILABLE).body(&quot;Server is shutting down&quot;);</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            String sessionId = UUID.randomUUID().toString();</span><br><span class="line">            logger.debug(&quot;Creating new SSE connection for session: &#123;&#125;&quot;, sessionId);</span><br><span class="line"></span><br><span class="line">            try &#123;</span><br><span class="line">                return ServerResponse.sse((sseBuilder) -&gt; &#123;</span><br><span class="line">                    ClientSession session = new ClientSession(sessionId, sseBuilder);</span><br><span class="line">                    this.sessions.put(sessionId, session);</span><br><span class="line"></span><br><span class="line">                    try &#123;</span><br><span class="line">                        session.sseBuilder.id(session.id).event(&quot;endpoint&quot;).data(this.messageEndpoint);</span><br><span class="line">                    &#125; catch (Exception e) &#123;</span><br><span class="line">                        logger.error(&quot;Failed to poll event from session queue: &#123;&#125;&quot;, e.getMessage());</span><br><span class="line">                        sseBuilder.error(e);</span><br><span class="line">                    &#125;</span><br><span class="line"></span><br><span class="line">                &#125;);</span><br><span class="line">            &#125; catch (Exception e) &#123;</span><br><span class="line">                logger.error(&quot;Failed to send initial endpoint event to session &#123;&#125;: &#123;&#125;&quot;, sessionId, e.getMessage());</span><br><span class="line">                // 只有出现异常的时候才将session移除</span><br><span class="line">                this.sessions.remove(sessionId);</span><br><span class="line">                return ServerResponse.status(HttpStatus.INTERNAL_SERVER_ERROR).build();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    private static class ClientSession &#123;</span><br><span class="line">        private final String id;</span><br><span class="line">        private final ServerResponse.SseBuilder sseBuilder;</span><br><span class="line"></span><br><span class="line">        ClientSession(String id, ServerResponse.SseBuilder sseBuilder) &#123;</span><br><span class="line">            this.id = id;</span><br><span class="line">            this.sseBuilder = sseBuilder;</span><br><span class="line">            WebMvcSseServerTransport.logger.debug(&quot;Session &#123;&#125; initialized with SSE emitter&quot;, id);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        void close() &#123;</span><br><span class="line">            WebMvcSseServerTransport.logger.debug(&quot;Closing session: &#123;&#125;&quot;, this.id);</span><br><span class="line"></span><br><span class="line">            try &#123;</span><br><span class="line">                // session关闭时，只将sseBuilder设置为完成</span><br><span class="line">                this.sseBuilder.complete();</span><br><span class="line">                WebMvcSseServerTransport.logger.debug(&quot;Successfully completed SSE emitter for session &#123;&#125;&quot;, this.id);</span><br><span class="line">            &#125; catch (Exception e) &#123;</span><br><span class="line">                WebMvcSseServerTransport.logger.warn(&quot;Failed to complete SSE emitter for session &#123;&#125;: &#123;&#125;&quot;, this.id, e.getMessage());</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>从上面代码可以发现，在MCP的ClientSession关闭时，只是将sseBuilder设置为完成；仅当<code>handleSseConnection</code>中出现异常时才会将ClientSession从sessions中移除，估计是想客户端一直复用这个连接吧。</p>
+<p>那么正常情况下，这个session就会一直存在于<code>WebMvcSseServerTransport#sessions</code>属性中，而<code>WebMvcSseServerTransport</code>对象在MCP服务运行时会一直存活，因此一段时间后MCP服务就会因为<code>WebMvcSseServerTransport#sessions</code>属性内存泄露最终导致jvm的内存溢出。</p>
+<h2 id="sdk升级"><a class="header-anchor" href="#sdk升级">¶</a>SDK升级</h2>
+<p>经过上面的源码分析，我们知道了内存泄露的具体原因是<code>WebMvcSseServerTransport#sessions</code>的ClientSession一直在增长，因此只需要在ClientSession完成或异常的时候将其从sessions中移除即可。</p>
+<p>经查看最新的官方文档: <span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNwcmluZy5pby9zcHJpbmctYWkvcmVmZXJlbmNlL2FwaS9tY3AvbWNwLXNlcnZlci1ib290LXN0YXJ0ZXItZG9jcy5odG1s" title="https://docs.spring.io/spring-ai/reference/api/mcp/mcp-server-boot-starter-docs.html">https://docs.spring.io/spring-ai/reference/api/mcp/mcp-server-boot-starter-docs.html<i class="fa fa-external-link"></i></span>，其中对于<code>MCP Server Boot Starter</code>已经做了升级，升级到<code>1.0.0</code>版本后，可以看到最新的版本是由<code>WebMvcSseServerTransportProvider</code>来管理see请求的，处理sse请求的源码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> ServerResponse <span class="title">handleSseConnection</span><span class="params">(ServerRequest request)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">this</span>.isClosing) &#123;</span><br><span class="line">        <span class="keyword">return</span> ServerResponse.status(HttpStatus.SERVICE_UNAVAILABLE).body(<span class="string">"Server is shutting down"</span>);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        String sessionId = UUID.randomUUID().toString();</span><br><span class="line">        logger.debug(<span class="string">"Creating new SSE connection for session: &#123;&#125;"</span>, sessionId);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> ServerResponse.sse((sseBuilder) -&gt; &#123;</span><br><span class="line">                sseBuilder.onComplete(() -&gt; &#123;</span><br><span class="line">                    logger.debug(<span class="string">"SSE connection completed for session: &#123;&#125;"</span>, sessionId);</span><br><span class="line">                    <span class="keyword">this</span>.sessions.remove(sessionId);</span><br><span class="line">                &#125;);</span><br><span class="line">                sseBuilder.onTimeout(() -&gt; &#123;</span><br><span class="line">                    logger.debug(<span class="string">"SSE connection timed out for session: &#123;&#125;"</span>, sessionId);</span><br><span class="line">                    <span class="keyword">this</span>.sessions.remove(sessionId);</span><br><span class="line">                &#125;);</span><br><span class="line">                WebMvcMcpSessionTransport sessionTransport = <span class="keyword">new</span> WebMvcMcpSessionTransport(sessionId, sseBuilder);</span><br><span class="line">                McpServerSession session = <span class="keyword">this</span>.sessionFactory.create(sessionTransport);</span><br><span class="line">                <span class="keyword">this</span>.sessions.put(sessionId, session);</span><br><span class="line"></span><br><span class="line">                <span class="keyword">try</span> &#123;</span><br><span class="line">                    sseBuilder.id(sessionId).event(<span class="string">"endpoint"</span>).data(<span class="keyword">this</span>.baseUrl + <span class="keyword">this</span>.messageEndpoint + <span class="string">"?sessionId="</span> + sessionId);</span><br><span class="line">                &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">                    logger.error(<span class="string">"Failed to send initial endpoint event: &#123;&#125;"</span>, e.getMessage());</span><br><span class="line">                    sseBuilder.error(e);</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">            &#125;, Duration.ZERO);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            logger.error(<span class="string">"Failed to send initial endpoint event to session &#123;&#125;: &#123;&#125;"</span>, sessionId, e.getMessage());</span><br><span class="line">            <span class="keyword">this</span>.sessions.remove(sessionId);</span><br><span class="line">            <span class="keyword">return</span> ServerResponse.status(HttpStatus.INTERNAL_SERVER_ERROR).build();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>其中可以看到，在请求完成、超时和异常情况下都会将session移除，这样应该就能解决内存溢出问题了。</p>
+<p><strong>问题到这里真的解决了吗？</strong></p>
+<h2 id="解决方案"><a class="header-anchor" href="#解决方案">¶</a>解决方案</h2>
+<p>经过验证，发现升级后的SDK里面<code>WebMvcSseServerTransport#sessions</code>中存放的<code>McpServerSession</code>还是会一直存在，并没有移除。</p>
+<p>可能是异步请求的请求，Cursor之类的客户端在创建MCP连接后，即使Cursor关闭后也没有主动去<strong>告诉服务端断开连接</strong>，也就是不会触发<code>onComplete</code>、<code>onTimeout</code>方法去将session移除。</p>
+<p>于是，我们可以定时去检测<code>WebMvcSseServerTransport#sessions</code>中的<code>McpServerSession</code>是否还存活，如果客户端已经把连接关闭了，那么就将session移除。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * session管理，避免内存溢出</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@date</span> 2025/07/01 16:18</span></span><br><span class="line"><span class="comment"> **/</span></span><br><span class="line"><span class="meta">@Slf</span>4j</span><br><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="meta">@EnableScheduling</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">McpSessionConfig</span> </span>&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> WebMvcSseServerTransportProvider sseServerTransportProvider;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Value</span>(<span class="string">"$&#123;mcp.session.health-check-enabled:true&#125;"</span>)</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">boolean</span> healthCheckEnabled;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Value</span>(<span class="string">"$&#123;mcp.session.health-check-interval:1800000&#125;"</span>)</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">long</span> healthCheckInterval;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Value</span>(<span class="string">"$&#123;mcp.session.health-check-timeout:5000&#125;"</span>)</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">long</span> healthCheckTimeout;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 定时任务：定期执行session存活检测</span></span><br><span class="line"><span class="comment">     * 从sseServerTransportProvider中获取sessions，遍历检测session是否存活，</span></span><br><span class="line"><span class="comment">     * 使用sendNotification进行检测，检测失败的session需要自动移除</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@Scheduled</span>(fixedRateString = <span class="string">"$&#123;mcp.session.health-check-interval:1800000&#125;"</span>)</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">checkSessionHealth</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 检查是否启用健康检测</span></span><br><span class="line">        <span class="keyword">if</span> (!healthCheckEnabled) &#123;</span><br><span class="line">            log.debug(<span class="string">"MCP session健康检测已禁用"</span>);</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            log.info(<span class="string">"开始执行MCP session存活检测任务"</span>);</span><br><span class="line">            </span><br><span class="line">            <span class="comment">// 获取所有活跃的sessions</span></span><br><span class="line">            Map&lt;String, McpServerSession&gt; sessionsMap = (Map&lt;String, McpServerSession&gt;) getFieldValue(sseServerTransportProvider, <span class="string">"sessions"</span>);</span><br><span class="line">            <span class="keyword">if</span> (<span class="keyword">null</span> == sessionsMap || sessionsMap.isEmpty()) &#123;</span><br><span class="line">                log.info(<span class="string">"当前没有活跃的MCP sessions"</span>);</span><br><span class="line">                <span class="keyword">return</span>;</span><br><span class="line">            &#125;</span><br><span class="line">            </span><br><span class="line">            log.info(<span class="string">"检测到 &#123;&#125; 个活跃sessions，开始进行存活检测"</span>, sessionsMap.size());</span><br><span class="line"></span><br><span class="line">            <span class="comment">// 遍历检测每个session的存活状态</span></span><br><span class="line">            List&lt;CompletableFuture&lt;Void&gt;&gt; futures = <span class="keyword">new</span> CopyOnWriteArrayList&lt;&gt;();</span><br><span class="line">            <span class="keyword">for</span> (McpServerSession session : sessionsMap.values()) &#123;</span><br><span class="line">                <span class="comment">// 使用sendNotification进行检测，getCurrentTime是一个MCP的Tool方法</span></span><br><span class="line">                <span class="comment">// 发送一个轻量级的ping消息来检测连接是否有效</span></span><br><span class="line">                Mono&lt;Void&gt; mono = session.sendNotification(<span class="string">"getCurrentTime"</span>);</span><br><span class="line">                futures.add(mono.toFuture());</span><br><span class="line">            &#125;</span><br><span class="line">            CompletableFuture.allOf(futures.toArray(<span class="keyword">new</span> CompletableFuture[<span class="number">0</span>])).join();</span><br><span class="line">            log.info(<span class="string">"MCP session存活检测任务执行完成，剩余session数量：&#123;&#125;"</span>, sessionsMap.size());</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            log.error(<span class="string">"执行MCP session存活检测任务时发生异常"</span>, e);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> Object <span class="title">getFieldValue</span><span class="params">(Object obj, String fieldName)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            Field field = FieldUtils.getField(obj.getClass(), fieldName, <span class="keyword">true</span>);</span><br><span class="line">            field.setAccessible(<span class="keyword">true</span>);</span><br><span class="line">            <span class="keyword">return</span> field.get(obj);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            log.error(<span class="string">"获取字段值时发生异常"</span>, e);</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>发送检测消息后<code>session.sendNotification(&quot;getCurrentTime&quot;)</code>，Tomcat中间件会检测到该sse连接是否还存活，如果连接已断开会有如下异常信息(省略部分堆栈)：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">2025-07-02 14:01:31.064 [http-nio-8089-exec-13] ERROR o.a.c.c.C.[.[.[.[dispatcherServlet] - Servlet.service() for servlet [dispatcherServlet] threw exception</span><br><span class="line">java.io.IOException: 断开的管道</span><br><span class="line">	at java.base/sun.nio.ch.FileDispatcherImpl.write0(Native Method)</span><br><span class="line">	at java.base/sun.nio.ch.SocketDispatcher.write(SocketDispatcher.java:62)</span><br><span class="line">	at java.base/sun.nio.ch.IOUtil.writeFromNativeBuffer(IOUtil.java:132)</span><br><span class="line">	at java.base/sun.nio.ch.IOUtil.write(IOUtil.java:97)</span><br><span class="line">	at java.base/sun.nio.ch.IOUtil.write(IOUtil.java:53)</span><br><span class="line">	at java.base/sun.nio.ch.SocketChannelImpl.write(SocketChannelImpl.java:532)</span><br><span class="line">	...</span><br><span class="line">	at io.modelcontextprotocol.server.transport.WebMvcSseServerTransportProvider$WebMvcMcpSessionTransport.lambda$sendMessage$0(WebMvcSseServerTransportProvider.java:364)</span><br><span class="line">	at reactor.core.publisher.MonoRunnable.subscribe(MonoRunnable.java:49)</span><br><span class="line">	at reactor.core.publisher.Mono.subscribe(Mono.java:4576)</span><br><span class="line">	at reactor.core.publisher.Mono.subscribeWith(Mono.java:4641)</span><br><span class="line">	at reactor.core.publisher.Mono.toFuture(Mono.java:5153)</span><br><span class="line">	at com.teddy.smd.mcp.config.McpSessionConfig.checkSessionHealth(McpSessionConfig.java:74)</span><br></pre></td></tr></table></figure>
+<p>Tomcat中间件在<code>org.apache.catalina.core.AsyncContextImpl#doInternalDispatch</code>中检测到异常后，会将连接设置为完成：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">doInternalDispatch</span><span class="params">()</span> <span class="keyword">throws</span> ServletException, IOException </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (log.isTraceEnabled()) &#123;</span><br><span class="line">        <span class="keyword">this</span>.logDebug(<span class="string">"intDispatch"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        Runnable runnable = <span class="keyword">this</span>.dispatch;</span><br><span class="line">        <span class="keyword">this</span>.dispatch = <span class="keyword">null</span>;</span><br><span class="line">        runnable.run();</span><br><span class="line">        <span class="keyword">if</span> (!<span class="keyword">this</span>.request.isAsync()) &#123;</span><br><span class="line">            <span class="keyword">this</span>.fireOnComplete();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125; <span class="keyword">catch</span> (RuntimeException x) &#123;</span><br><span class="line">        AtomicBoolean result = <span class="keyword">new</span> AtomicBoolean();</span><br><span class="line">        <span class="keyword">this</span>.request.getCoyoteRequest().action(ActionCode.IS_IO_ALLOWED, result);</span><br><span class="line">        <span class="keyword">if</span> (!result.get()) &#123;</span><br><span class="line">            <span class="comment">// 将连接设置为完成</span></span><br><span class="line">            <span class="keyword">this</span>.fireOnComplete();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (x.getCause() <span class="keyword">instanceof</span> ServletException) &#123;</span><br><span class="line">            <span class="keyword">throw</span> (ServletException)x.getCause();</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (x.getCause() <span class="keyword">instanceof</span> IOException) &#123;</span><br><span class="line">            <span class="keyword">throw</span> (IOException)x.getCause();</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> ServletException(x);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>连接设置为完成后，最终会触发<code>WebMvcSseServerTransport#handleSseConnection</code>方法中的<code>sseBuilder.onComplete</code>回调中将session进行移除</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">sseBuilder.onComplete(() -&gt; &#123;</span><br><span class="line">	logger.debug(<span class="string">"SSE connection completed for session: &#123;&#125;"</span>, sessionId);</span><br><span class="line">	sessions.remove(sessionId);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p>检测的日志输出情况如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">2025-07-02 14:01:31.053 [scheduling-1] INFO  c.t.smd.mcp.config.McpSessionConfig - 检测到 15 个活跃sessions，开始进行存活检测</span><br><span class="line">2025-07-02 14:01:31.062 [scheduling-1] ERROR i.m.s.t.WebMvcSseServerTransportProvider - Failed to send message to session a9af3b98-35fc-4769-b84f-fedbdc384977: ServletOutputStream failed to flush: java.io.IOException: 断开的管道</span><br><span class="line">2025-07-02 14:01:31.063 [scheduling-1] ERROR i.m.s.t.WebMvcSseServerTransportProvider - Failed to send message to session 7b88ebdc-abd3-41fe-be98-75ed217dcfe6: ServletOutputStream failed to flush: java.io.IOException: 断开的管道</span><br><span class="line">...</span><br><span class="line">2025-07-02 14:01:31.063 [scheduling-1] INFO  c.t.smd.mcp.config.McpSessionConfig - MCP session存活检测任务执行完成，剩余session数量：4</span><br></pre></td></tr></table></figure>
+<p>到这里终于完美解决MCP服务因为连接泄露导致的内存溢出问题。</p>
+<p>参考链接：</p>
+<ul>
+<li><span class="exturl" data-url="aHR0cHM6Ly9kb2NzLnNwcmluZy5pby9zcHJpbmctYWkvcmVmZXJlbmNlL2FwaS9tY3AvbWNwLXNlcnZlci1ib290LXN0YXJ0ZXItZG9jcy5odG1s" title="https://docs.spring.io/spring-ai/reference/api/mcp/mcp-server-boot-starter-docs.html">https://docs.spring.io/spring-ai/reference/api/mcp/mcp-server-boot-starter-docs.html<i class="fa fa-external-link"></i></span></li>
+<li><span class="exturl" data-url="aHR0cHM6Ly9oZWxwLmVjbGlwc2Uub3JnL2xhdGVzdC9pbmRleC5qc3A/dG9waWM9L29yZy5lY2xpcHNlLm1hdC51aS5oZWxwL3dlbGNvbWUuaHRtbA==" title="https://help.eclipse.org/latest/index.jsp?topic=/org.eclipse.mat.ui.help/welcome.html">https://help.eclipse.org/latest/index.jsp?topic=/org.eclipse.mat.ui.help/welcome.html<i class="fa fa-external-link"></i></span></li>
+</ul>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/AI/" rel="tag"># AI</a>
+          
+            <a href="/tags/性能优化/" rel="tag"># 性能优化</a>
+          
+            <a href="/tags/MCP/" rel="tag"># MCP</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/ai/mcp/mcp-server-practice.html" rel="next" title="MCP Server开发实践">
+                <i class="fa fa-chevron-left"></i> MCP Server开发实践
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/performance/mybatis-ognl-security.html" rel="prev" title="性能优化-巧解MyBatis高并发下OGNL安全检查导致的全局锁瓶颈">
+                性能优化-巧解MyBatis高并发下OGNL安全检查导致的全局锁瓶颈 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+      </div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">fanzhongwei</p>
+              <div class="site-description motion-element" itemprop="description">个人经验总结：java、JavaScript、HTML、VUE等等</div>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">36</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  
+                    
+                      <a href="/categories/">
+                    
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">13</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  
+                    
+                      <a href="/tags/">
+                    
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">53</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL2Zhbnpob25nd2Vp" title="GitHub &rarr; https://github.com/fanzhongwei"><i class="fa fa-fw fa-github"></i>GitHub</span>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <span class="exturl" data-url="bWFpbHRvOmZ6d3Rpbmd5dUAxNjMuY29t" title="E-Mail &rarr; mailto:fzwtingyu@163.com"><i class="fa fa-fw fa-envelope"></i>E-Mail</span>
+                </span>
+              
+            </div>
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#spring-ai-mcp服务内存泄漏排查实录：从堆分析到源码修复"><span class="nav-number">1.</span> <span class="nav-text">¶Spring AI MCP服务内存泄漏排查实录：从堆分析到源码修复</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#分析堆内存"><span class="nav-number">1.1.</span> <span class="nav-text">¶分析堆内存</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#源码分析"><span class="nav-number">1.2.</span> <span class="nav-text">¶源码分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#sdk升级"><span class="nav-number">1.3.</span> <span class="nav-text">¶SDK升级</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#解决方案"><span class="nav-number">1.4.</span> <span class="nav-text">¶解决方案</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2019 – <span itemprop="copyrightYear">2026</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">fanzhongwei</span>
+
+  
+
+  
+</div>
+
+
+  <div class="powered-by">由 <span class="exturl theme-link" data-url="aHR0cHM6Ly9oZXhvLmlv">Hexo</span> 强力驱动 v3.9.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 – <span class="exturl theme-link" data-url="aHR0cHM6Ly90aGVtZS1uZXh0Lm9yZw==">NexT.Pisces</span> v7.1.0</div>
+
+	<div class="BbeiAn-info">
+		<a target="_blank" href="http://www.beian.miit.gov.cn/">蜀ICP备17004833号-1</a>
+	</div>
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+
+  
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+          <span id="scrollpercent"><span>0</span>%</span>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+      <div>
+        <div class="addthis_inline_share_toolbox">
+  <script src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-5caee68d1b93531b" async="async"></script>
+</div>
+
+      </div>
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+    
+    
+  
+  <script color="0,0,255" opacity="0.5" zindex="-1" count="99" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/utils.js?v=7.1.0"></script>
+
+  <script src="/js/motion.js?v=7.1.0"></script>
+
+  <script src="/js/pull-refresh.js?v=7.1.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/affix.js?v=7.1.0"></script>
+
+  <script src="/js/schemes/pisces.js?v=7.1.0"></script>
+
+
+
+  
+  <script src="/js/scrollspy.js?v=7.1.0"></script>
+<script src="/js/post-details.js?v=7.1.0"></script>
+
+
+
+  
+
+
+  <script src="/js/next-boot.js?v=7.1.0"></script>
+
+
+  
+
+  
+  <script src="/js/exturl.js?v=7.1.0"></script>
+
+
+  
+
+  
+  
+  <script id="dsq-count-scr" src="https://fanzhongwei.disqus.com/count.js" async></script>
+
+
+<script>
+  var disqus_config = function() {
+    this.page.url = "https://www.fanzhongwei.com/ai/mcp/mcp-memory-leak.html";
+    this.page.identifier = "ai/mcp/mcp-memory-leak.html";
+    this.page.title = 'Spring AI MCP服务内存泄漏排查实录：从堆分析到源码修复';
+    };
+  function loadComments() {
+    var d = document, s = d.createElement('script');
+    s.src = 'https://fanzhongwei.disqus.com/embed.js';
+    s.setAttribute('data-timestamp', '' + +new Date());
+    (d.head || d.body).appendChild(s);
+  }
+  
+    $(function() {
+      var offsetTop = $('#comments').offset().top - $(window).height();
+      if (offsetTop <= 0) {
+        // load directly when there's no a scrollbar
+        loadComments();
+      } else {
+        $(window).on('scroll.disqus_scroll', function() {
+          // offsetTop may changes because of manually resizing browser window or lazy loading images.
+          var offsetTop = $('#comments').offset().top - $(window).height();
+          var scrollTop = $(window).scrollTop();
+
+          // pre-load comments a bit? (margin or anything else)
+          if (offsetTop - scrollTop < 60) {
+            $(window).off('.disqus_scroll');
+            loadComments();
+          }
+        });
+      }
+    });
+  
+</script>
+
+
+
+
+
+  
+    
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/disqusjs@1/dist/disqusjs.css">
+
+
+
+<script src="//cdn.jsdelivr.net/npm/disqusjs@1/dist/disqus.js"></script>
+
+<script>
+  var dsqjs = new DisqusJS({
+    api: 'https://disqus.skk.moe/disqus/' || 'https://disqus.com/api/',
+    apikey: 'yeI3c68e36COmAnaJ0W8enNe62iyRL60APc1qYStSbMXCuXb1Hl57OKpqbA3AXjB',
+    shortname: 'fanzhongwei'
+  });
+</script>
+
+  
+
+
+  
+  <script>
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url).replace(/\/{2,}/g, '/');
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x"></i></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x"></i></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

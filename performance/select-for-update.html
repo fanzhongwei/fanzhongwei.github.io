@@ -1,0 +1,1659 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+  <meta http-equiv="Cache-Control" content="no-transform">
+  <meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+  <meta name="google-site-verification" content="5LFoOb-y-oi59dy2QaWFWoDyyW34_mMWX5MMvqJmVYo">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2">
+
+<link rel="stylesheet" href="/css/main.css?v=7.1.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/imagesfavicon.ico?v=7.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.ico?v=7.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.ico?v=7.1.0">
+
+
+  <link rel="mask-icon" href="/images/favicon.ico?v=7.1.0" color="#222">
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '7.1.0',
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false,"dimmer":false},
+    back2top: true,
+    back2top_sidebar: false,
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+<link rel="stylesheet" href="/lib/mescroll/mescroll.min.css?v=1.4.1">
+<script src="/lib/mescroll/mescroll.min.js?v=1.4.1" charset="utf-8"></script>
+
+
+  <meta name="description" content="¶性能优化-高效生成全局唯一自增序列 如何高效地生成全局唯一自增序列，一个设置让性能提升100倍。 ¶背景 系统上线前性能测试时，对生成具有业务含义的全局唯一且自增的序列进行压测；200并发，4个8C16G的应用节点，压测结果如下：    类名名 方法名 调用次数 avg min max 90% pct 95% pct 99% pct     LockUtils forUpdateLockAndR">
+<meta name="keywords" content="性能优化,数据库">
+<meta property="og:type" content="article">
+<meta property="og:title" content="性能优化-高效生成全局唯一自增序列">
+<meta property="og:url" content="https://www.fanzhongwei.com/performance/select-for-update.html">
+<meta property="og:site_name" content="fanzhongwei">
+<meta property="og:description" content="¶性能优化-高效生成全局唯一自增序列 如何高效地生成全局唯一自增序列，一个设置让性能提升100倍。 ¶背景 系统上线前性能测试时，对生成具有业务含义的全局唯一且自增的序列进行压测；200并发，4个8C16G的应用节点，压测结果如下：    类名名 方法名 调用次数 avg min max 90% pct 95% pct 99% pct     LockUtils forUpdateLockAndR">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2026-04-08T12:56:23.962Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="性能优化-高效生成全局唯一自增序列">
+<meta name="twitter:description" content="¶性能优化-高效生成全局唯一自增序列 如何高效地生成全局唯一自增序列，一个设置让性能提升100倍。 ¶背景 系统上线前性能测试时，对生成具有业务含义的全局唯一且自增的序列进行压测；200并发，4个8C16G的应用节点，压测结果如下：    类名名 方法名 调用次数 avg min max 90% pct 95% pct 99% pct     LockUtils forUpdateLockAndR">
+
+
+
+
+
+  
+  
+  <link rel="canonical" href="https://www.fanzhongwei.com/performance/select-for-update">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>性能优化-高效生成全局唯一自增序列 | fanzhongwei</title>
+  
+
+
+
+
+
+
+  <script>
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?c7a6634d526ddd253a5092f6656f4ef6";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">fanzhongwei</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+      
+        <h1 class="site-subtitle" itemprop="description">blog</h1>
+      
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-home"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/about/" rel="section"><i class="menu-item-icon fa fa-fw fa-user"></i> <br>关于</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/tags/" rel="section"><i class="menu-item-icon fa fa-fw fa-tags"></i> <br>标签</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/categories/" rel="section"><i class="menu-item-icon fa fa-fw fa-th"></i> <br>分类</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+
+      
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>搜索</a>
+        </li>
+      
+    </ul>
+  
+
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+  
+
+
+
+</div>
+    </header>
+
+    
+  
+  
+
+  
+
+  <span class="exturl github-corner" data-url="aHR0cHM6Ly9naXRodWIuY29tL2Zhbnpob25nd2Vp" title="Follow me on GitHub" aria-label="Follow me on GitHub"><svg width="80" height="80" viewbox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"/><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"/><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"/></svg></span>
+
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://www.fanzhongwei.com/performance/select-for-update.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="fanzhongwei">
+      <meta itemprop="description" content="个人经验总结：java、JavaScript、HTML、VUE等等">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="fanzhongwei">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">性能优化-高效生成全局唯一自增序列
+
+              
+            
+          </h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+
+            
+            
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2024-09-18 00:00:00" itemprop="dateCreated datePublished" datetime="2024-09-18T00:00:00+08:00">2024-09-18</time>
+            
+
+            
+              
+
+              
+                
+                <span class="post-meta-divider">|</span>
+                
+
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2026-04-08 20:56:23" itemprop="dateModified" datetime="2026-04-08T20:56:23+08:00">2026-04-08</time>
+              
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/性能优化/" itemprop="url" rel="index"><span itemprop="name">性能优化</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+              
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+            
+                <span class="post-meta-item-text">评论数：</span>
+                <a href="/performance/select-for-update.html#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count" data-disqus-identifier="performance/select-for-update.html" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="post-meta-item-icon">
+            <i class="fa fa-eye"></i>
+             阅读次数： 
+            <span class="busuanzi-value" id="busuanzi_value_page_pv"></span>
+            </span>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="性能优化-高效生成全局唯一自增序列"><a class="header-anchor" href="#性能优化-高效生成全局唯一自增序列">¶</a>性能优化-高效生成全局唯一自增序列</h1>
+<p>如何高效地生成全局唯一自增序列，一个设置让性能提升100倍。</p>
+<h2 id="背景"><a class="header-anchor" href="#背景">¶</a>背景</h2>
+<p>系统上线前性能测试时，对生成具有业务含义的全局唯一且自增的序列进行压测；200并发，4个8C16G的应用节点，压测结果如下：</p>
+<table>
+<thead>
+<tr>
+<th>类名名</th>
+<th>方法名</th>
+<th>调用次数</th>
+<th>avg</th>
+<th>min</th>
+<th>max</th>
+<th>90% pct</th>
+<th>95% pct</th>
+<th>99% pct</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>LockUtils</td>
+<td>forUpdateLockAndRun</td>
+<td>5505</td>
+<td>3821</td>
+<td>11</td>
+<td>35020</td>
+<td>9110</td>
+<td>11014</td>
+<td>18045</td>
+</tr>
+<tr>
+<td>LockExecutor</td>
+<td>executeLock</td>
+<td>5505</td>
+<td>36</td>
+<td>6</td>
+<td>389</td>
+<td>88</td>
+<td>122</td>
+<td>208</td>
+</tr>
+</tbody>
+</table>
+<p>这结果可以说是惨不忍睹～～～</p>
+<blockquote>
+<p>如何获取方法级别的性能测试报告，详情请查看：<span class="exturl" data-url="aHR0cHM6Ly9tcC53ZWl4aW4ucXEuY29tL3MvVlFUc3Z0V29jUXg3dmVPM3NhTlVxQQ==" title="https://mp.weixin.qq.com/s/VQTsvtWocQx7veO3saNUqA">性能优化利器-JavaAgent<i class="fa fa-external-link"></i></span></p>
+</blockquote>
+<h2 id="生成全局唯一自增序列"><a class="header-anchor" href="#生成全局唯一自增序列">¶</a>生成全局唯一自增序列</h2>
+<p>生成具有业务含义的全局唯一且自增的序列，是采用SELECT FOR UPDATE方案实现，生成逻辑：</p>
+<ul>
+<li>1、<code>select for update</code>获取数据库序列配置的行锁</li>
+<li>2、对序列配置进行自增操作</li>
+<li>3、更新序列配置</li>
+<li>如果任何一步失败则进行重试，最多重试三次</li>
+</ul>
+<p>核心源码如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> TransactionDefinition TRANSACTION_DEFINITION = <span class="keyword">new</span> DefaultTransactionDefinition();</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">forUpdateLockAndRun</span><span class="params">(Class&lt;IEntity&gt; lockEntityClass, QueryWrapper&lt;IEntity&gt; selectForUpdate, LockExecutor lockExecutor, <span class="keyword">int</span> retryTimes)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (retryTimes &gt;= <span class="number">3</span>) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> ResourceUpdateFailedException(<span class="string">"tryForUpdateLockAndRun失败，重试次数已达到上限，请稍后再试"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    BaseMapper&lt;IEntity&gt; mapper = DB_OPERATE_SERVICE.getMapperByEntityClass(lockEntityClass);</span><br><span class="line">    TransactionStatus transactionStatus = TRANSACTION_MANAGER.getTransaction(TRANSACTION_DEFINITION);</span><br><span class="line">    IEntity lockData = <span class="keyword">null</span>;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        selectForUpdate.last(<span class="string">" for update"</span>);</span><br><span class="line">        lockData = mapper.selectOne(selectForUpdate);</span><br><span class="line">    &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">        log.error(<span class="string">"tryForUpdateLockAndRun异常，获取锁失败，进行重试"</span>, e);</span><br><span class="line">        TRANSACTION_MANAGER.rollback(transactionStatus);</span><br><span class="line">        forUpdateLockAndRun(lockEntityClass, selectForUpdate, lockExecutor, retryTimes + <span class="number">1</span>);</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    Assert.notNull(lockData, <span class="string">"tryForUpdateLockAndRun异常，未获取到需要锁定的数据，无法进行重试"</span>);</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="comment">// 对lockData进行自增操作</span></span><br><span class="line">        IEntity newLockData = lockExecutor.executeLock(lockData);</span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">null</span> != newLockData) &#123;</span><br><span class="line">            selectForUpdate.last(<span class="string">""</span>);</span><br><span class="line">            mapper.update(newLockData, selectForUpdate);</span><br><span class="line">        &#125;</span><br><span class="line">        TRANSACTION_MANAGER.commit(transactionStatus);</span><br><span class="line">    &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">        log.error(<span class="string">"tryForUpdateLockAndRun获取到锁，但更新数据失败，进行重试"</span>, e);</span><br><span class="line">        TRANSACTION_MANAGER.rollback(transactionStatus);</span><br><span class="line">        forUpdateLockAndRun(lockEntityClass, selectForUpdate, lockExecutor, retryTimes + <span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="class"><span class="keyword">interface</span> <span class="title">LockExecutor</span> </span>&#123;</span><br><span class="line">    <span class="function">IEntity <span class="title">executeLock</span><span class="params">(IEntity lockData)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="什么是select-for-update"><a class="header-anchor" href="#什么是select-for-update">¶</a>什么是SELECT FOR UPDATE</h3>
+<p><code>SELECT FOR UPDATE</code>是由数据库（MySQL、PostgreSQL 和 Oracle等）提供的一种事务锁定机制，用于在事务中锁定所选的行，以防止其他事务对这些行进行修改。</p>
+<p>当一个事务执行<code>SELECT FOR UPDATE</code>语句时，数据库会对查询结果集中的每一行进行加锁。这些锁会一直保持到事务提交或回滚时才会释放。在此期间，其他事务无法对这些被锁定的行进行修改或删除操作，从而确保了数据的一致性。</p>
+<p>SELECT FOR UPDATE的实际应用有：</p>
+<ul>
+<li>生成自增全局唯一标识：生成具有业务含义的全局唯一且自增的序列，避免生成重复序列。</li>
+<li>库存管理：确保在扣减库存时，只有一个事务能够成功更新库存数量，避免超卖问题。</li>
+<li>账户余额更新：在金融系统中，账户余额的更新需要确保数据的一致性。</li>
+<li>订单处理：锁定订单状态，确保订单状态的更新按照预期的顺序执行，避免并发问题</li>
+</ul>
+<h2 id="性能问题分析过程"><a class="header-anchor" href="#性能问题分析过程">¶</a>性能问题分析过程</h2>
+<p>通过方法的性能测试报告中可以发现forUpdateLockAndRun方法执行时间特别长，但executeLock方法的执行时间又特别短，同时查看应用的jbdc日志发现<code>select for update</code>的sql执行时间居然达到35秒：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> t_wybs_scpz <span class="keyword">where</span> <span class="keyword">key</span>=<span class="string">'xxx_wybs'</span> <span class="keyword">for</span> <span class="keyword">update</span> <span class="comment">##^^## select * from t_wybs_scpz where key=? for update</span></span><br><span class="line"> &#123;executed <span class="keyword">in</span> <span class="number">35004</span> msec&#125;</span><br><span class="line">&#123;resultSet <span class="keyword">rows</span> <span class="number">1</span>, <span class="keyword">build</span> <span class="keyword">in</span> <span class="number">0</span> msec&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="怀疑缺少索引"><a class="header-anchor" href="#怀疑缺少索引">¶</a>怀疑缺少索引</h3>
+<p>查看<code>t_wybs_scpz</code>表结构发现有索引，分析sql的执行计划也确实走了索引：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">explain</span> </span><br><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> t_wybs_scpz <span class="keyword">where</span> <span class="keyword">key</span>=<span class="string">'xxx_wybs'</span> <span class="keyword">for</span> <span class="keyword">update</span></span><br><span class="line"></span><br><span class="line">=================================================================================================</span><br><span class="line">|<span class="keyword">ID</span>|<span class="keyword">OPERATOR</span>                        |<span class="keyword">NAME</span>                                 |EST.ROWS|EST.TIME(us)|</span><br><span class="line"><span class="comment">-------------------------------------------------------------------------------------------------</span></span><br><span class="line">|<span class="number">0</span> |MATERIAL                        |                                     |<span class="number">1</span>       |<span class="number">32</span>          |</span><br><span class="line">|<span class="number">1</span> |└─<span class="keyword">DISTRIBUTED</span> <span class="keyword">FOR</span> <span class="keyword">UPDATE</span>        |                                     |<span class="number">1</span>       |<span class="number">32</span>          |</span><br><span class="line">|<span class="number">2</span> |  └─<span class="keyword">DISTRIBUTED</span> <span class="keyword">TABLE</span> <span class="keyword">RANGE</span> <span class="keyword">SCAN</span>|T_WYBS_SCPZ(I_WYBS_SCPZ_KEY)         |<span class="number">1</span>       |<span class="number">32</span>          |</span><br><span class="line">=================================================================================================</span><br></pre></td></tr></table></figure>
+<p>因此，可以排除缺少索引的嫌疑。</p>
+<h3 id="怀疑for-update锁表"><a class="header-anchor" href="#怀疑for-update锁表">¶</a>怀疑FOR UPDATE锁表</h3>
+<p>虽然<code>SELECT FOR UPDATE</code>是只索引查询返回的行，但是在某些情况下还是会锁表：</p>
+<h4 id="没有合适的索引或索引未使用"><a class="header-anchor" href="#没有合适的索引或索引未使用">¶</a>没有合适的索引或索引未使用</h4>
+<p>如果查询条件没有使用索引，或者查询的列没有合适的索引，数据库将进行<strong>全表扫描</strong>。数据库进行全表扫描时，需要先将数据加载到内存然后进行匹配（如果某行数据被锁住，这一步就会阻塞），因此即使只锁住一行数据也会表现出锁表的现象。</p>
+<p>通过上面的sql执行计划可以确定索引已生效，排除这种可能。</p>
+<h4 id="锁升级"><a class="header-anchor" href="#锁升级">¶</a>锁升级</h4>
+<p>在某些数据库（如 Oracle）中，锁机制是行级别的。但如果事务中的行锁数量过多，数据库可能会触发锁升级，将行锁升级为表锁。锁升级的发生是为了减少系统开销，但可能会导致表级别的锁定。</p>
+<p>通过jdbc日志<code>{resultSet rows 1, build in 0 msec}</code>发现，只返回了一行数据，排除这种可能。</p>
+<p>综上所述，基本可以排除锁表的嫌疑。</p>
+<h3 id="怀疑事务长时间未结束"><a class="header-anchor" href="#怀疑事务长时间未结束">¶</a>怀疑事务长时间未结束</h3>
+<p><code>forUpdateLockAndRun</code>方法中<code>lockExecutor.executeLock(lockData)</code>执行时间非常短（平均只有36ms），也就是说从获取到锁之后到事务结束平均耗时只有36ms。</p>
+<p>那么是不是就可以排除事务长时间未结束的嫌疑呢，我们可以本地代码调试验证下：</p>
+<ol>
+<li>在<code>IEntity newLockData = lockExecutor.executeLock(lockData);</code>添加断点，然后在数据库查询<code>select * from t_wybs_scpz where key='xxx_wybs' for update</code>，发现被锁住不能返回结果，符合预期。</li>
+<li>在<code>forUpdateLockAndRun</code>方法执行结束后，然后在数据库查询<code>select * from t_wybs_scpz where key='xxx_wybs' for update</code>，发现被锁住不能返回结果，<strong>不符合预期</strong>。</li>
+</ol>
+<p>因此可以判断的确是事务长时间未结束导致数据库行锁长时间未释放。</p>
+<p><strong>为什么<code>forUpdateLockAndRun</code>方法中事务被commit了，但是事务仍然没有结束呢？</strong></p>
+<p>查阅源码发现事务的定义<code>private static TransactionDefinition TRANSACTION_DEFINITION = new DefaultTransactionDefinition();</code>，其中使用事务的传播机制默认使用的<code>PROPAGATION_REQUIRED</code>，通过查阅<code>spring-tx</code>中<code>TransactionDefinition</code>的源码中对其的定义如下：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * Support a current transaction; create a new one if none exists.</span></span><br><span class="line"><span class="comment"> * Analogous to the EJB transaction attribute of the same name.</span></span><br><span class="line"><span class="comment"> * &lt;p&gt;This is typically the default setting of a transaction definition,</span></span><br><span class="line"><span class="comment"> * and typically defines a transaction synchronization scope.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">int</span> PROPAGATION_REQUIRED = <span class="number">0</span>;</span><br></pre></td></tr></table></figure>
+<p>也就是说<code>forUpdateLockAndRun</code>方法中<code>TransactionStatus transactionStatus = TRANSACTION_MANAGER.getTransaction(TRANSACTION_DEFINITION);</code>开启事务的逻辑为：创建一个事务，如果当前已存在事务则加入到这个事务中。</p>
+<p>通过查看<code>forUpdateLockAndRun</code>的上层调用链，发现在上层调用链的入口果然也在事务中：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Transactional</span>(rollbackFor = Exception<span class="class">.<span class="keyword">class</span>)</span></span><br><span class="line"><span class="class"><span class="title">public</span> <span class="title">void</span> <span class="title">saveData</span>() </span>&#123;</span><br><span class="line">    ...</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 下层调用forUpdateLockAndRun</span></span><br><span class="line">    createWybs()</span><br><span class="line">    </span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>至此终于找到了<code>SELECT FOR UPDATE</code>慢的原因了：由于<code>forUpdateLockAndRun</code>方法中的<code>SELECT FOR UPDATE</code><font color="red">必须要等到外层事务结束后才能释放数据库的行锁</font>，因此高并发下请求<code>forUpdateLockAndRun</code>方法就出现了大量排队的情况。</p>
+<h2 id="解决方案"><a class="header-anchor" href="#解决方案">¶</a>解决方案</h2>
+<p>将事务定义的传播方式设置为<code>PROPAGATION_REQUIRES_NEW</code>：创建一个新事务，如果当前存在事务，则把当前事务挂起，<code>private static TransactionDefinition TRANSACTION_DEFINITION = new DefaultTransactionDefinition(TransactionDefinition.PROPAGATION_REQUIRES_NEW);</code></p>
+<p>调整完成后再次进行压测，结果如下：</p>
+<table>
+<thead>
+<tr>
+<th>类名名</th>
+<th>方法名</th>
+<th>调用次数</th>
+<th>avg</th>
+<th>min</th>
+<th>max</th>
+<th>90% pct</th>
+<th>95% pct</th>
+<th>99% pct</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>LockUtils</td>
+<td>forUpdateLockAndRun</td>
+<td>7248</td>
+<td>37</td>
+<td>14</td>
+<td>523</td>
+<td>51</td>
+<td>106</td>
+<td>271</td>
+</tr>
+<tr>
+<td>LockExecutor</td>
+<td>executeLock</td>
+<td>7248</td>
+<td>22</td>
+<td>6</td>
+<td>251</td>
+<td>24</td>
+<td>51</td>
+<td>107</td>
+</tr>
+</tbody>
+</table>
+<p><code>forUpdateLockAndRun</code>的平均耗时从3821ms提升到37ms，性能提升<strong>100倍</strong>。</p>
+<p>注意：<strong>将事务定义的传播方式设置为<code>PROPAGATION_REQUIRES_NEW</code>后，锁定的数据修改是单独提交的，如果<code>forUpdateLockAndRun</code>执行成功后（修改已提交到数据库）上层事务处理失败回滚时需要由上层调用方判断<code>forUpdateLockAndRun</code>中修改的数据是否需要回滚，如果需要回滚则需要手动回滚。</strong></p>
+<p>如果锁的竞争不是非常大，可以考虑使用乐观锁代替<code>SELECT FOR UPDATE</code>。乐观锁可以通过版本号或时间戳机制来实现并发控制，避免了悲观锁的锁竞争问题。</p>
+<blockquote>
+<p>这里补充一下Spring的7种事务传播机制：</p>
+<ol>
+<li>REQUIRED（默认）：如果当前存在事务，则加入该事务；如果当前没有事务，则创建一个新的事务。</li>
+<li>SUPPORTS：如果当前存在事务，则加入该事务；如果当前没有事务，则以非事务的方式继续运行。</li>
+<li>MANDATORY：如果当前存在事务，则加入该事务；如果当前没有事务，则抛出异常。</li>
+<li>REQUIRES_NEW：创建一个新的事务,如果当前存在事务,则把当前事务挂起。</li>
+<li>NOT_SUPPORTED：以非事务方式运行，如果当前存在事务，则把当前事务挂起。</li>
+<li>NEVER：以非事务方式运行，如果当前存在事务，则抛出异常。</li>
+<li>NESTED：如果当前存在事务，则创建一个事务作为当前事务的嵌套事务来运行；如果当前没有事务，则该取值等价于REQUIRED</li>
+</ol>
+</blockquote>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/性能优化/" rel="tag"># 性能优化</a>
+          
+            <a href="/tags/数据库/" rel="tag"># 数据库</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/performance/connection-pool-queue.html" rel="next" title="性能优化-连接池排队问题">
+                <i class="fa fa-chevron-left"></i> 性能优化-连接池排队问题
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/ai/ai-industrial-revolution.html" rel="prev" title="时代洪流中的新工业革命：AI大模型如何重塑人类未来">
+                时代洪流中的新工业革命：AI大模型如何重塑人类未来 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="disqus_thread">
+        <noscript>Please enable JavaScript to view the comments powered by Disqus.</noscript>
+      </div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">fanzhongwei</p>
+              <div class="site-description motion-element" itemprop="description">个人经验总结：java、JavaScript、HTML、VUE等等</div>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">36</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  
+                    
+                      <a href="/categories/">
+                    
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">13</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  
+                    
+                      <a href="/tags/">
+                    
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">53</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+            <div class="links-of-author motion-element">
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <span class="exturl" data-url="aHR0cHM6Ly9naXRodWIuY29tL2Zhbnpob25nd2Vp" title="GitHub &rarr; https://github.com/fanzhongwei"><i class="fa fa-fw fa-github"></i>GitHub</span>
+                </span>
+              
+                <span class="links-of-author-item">
+                  
+                  
+                    
+                  
+                  
+                    
+                  
+                  <span class="exturl" data-url="bWFpbHRvOmZ6d3Rpbmd5dUAxNjMuY29t" title="E-Mail &rarr; mailto:fzwtingyu@163.com"><i class="fa fa-fw fa-envelope"></i>E-Mail</span>
+                </span>
+              
+            </div>
+          
+
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#性能优化-高效生成全局唯一自增序列"><span class="nav-number">1.</span> <span class="nav-text">¶性能优化-高效生成全局唯一自增序列</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#背景"><span class="nav-number">1.1.</span> <span class="nav-text">¶背景</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#生成全局唯一自增序列"><span class="nav-number">1.2.</span> <span class="nav-text">¶生成全局唯一自增序列</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#什么是select-for-update"><span class="nav-number">1.2.1.</span> <span class="nav-text">¶什么是SELECT FOR UPDATE</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#性能问题分析过程"><span class="nav-number">1.3.</span> <span class="nav-text">¶性能问题分析过程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#怀疑缺少索引"><span class="nav-number">1.3.1.</span> <span class="nav-text">¶怀疑缺少索引</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#怀疑for-update锁表"><span class="nav-number">1.3.2.</span> <span class="nav-text">¶怀疑FOR UPDATE锁表</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#没有合适的索引或索引未使用"><span class="nav-number">1.3.2.1.</span> <span class="nav-text">¶没有合适的索引或索引未使用</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#锁升级"><span class="nav-number">1.3.2.2.</span> <span class="nav-text">¶锁升级</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#怀疑事务长时间未结束"><span class="nav-number">1.3.3.</span> <span class="nav-text">¶怀疑事务长时间未结束</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#解决方案"><span class="nav-number">1.4.</span> <span class="nav-text">¶解决方案</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2019 – <span itemprop="copyrightYear">2026</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">fanzhongwei</span>
+
+  
+
+  
+</div>
+
+
+  <div class="powered-by">由 <span class="exturl theme-link" data-url="aHR0cHM6Ly9oZXhvLmlv">Hexo</span> 强力驱动 v3.9.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 – <span class="exturl theme-link" data-url="aHR0cHM6Ly90aGVtZS1uZXh0Lm9yZw==">NexT.Pisces</span> v7.1.0</div>
+
+	<div class="BbeiAn-info">
+		<a target="_blank" href="http://www.beian.miit.gov.cn/">蜀ICP备17004833号-1</a>
+	</div>
+
+
+
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+
+  
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+          <span id="scrollpercent"><span>0</span>%</span>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+      <div>
+        <div class="addthis_inline_share_toolbox">
+  <script src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-5caee68d1b93531b" async="async"></script>
+</div>
+
+      </div>
+    
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+    
+    
+  
+  <script color="0,0,255" opacity="0.5" zindex="-1" count="99" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+  
+
+
+  <script src="/js/utils.js?v=7.1.0"></script>
+
+  <script src="/js/motion.js?v=7.1.0"></script>
+
+  <script src="/js/pull-refresh.js?v=7.1.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/affix.js?v=7.1.0"></script>
+
+  <script src="/js/schemes/pisces.js?v=7.1.0"></script>
+
+
+
+  
+  <script src="/js/scrollspy.js?v=7.1.0"></script>
+<script src="/js/post-details.js?v=7.1.0"></script>
+
+
+
+  
+
+
+  <script src="/js/next-boot.js?v=7.1.0"></script>
+
+
+  
+
+  
+  <script src="/js/exturl.js?v=7.1.0"></script>
+
+
+  
+
+  
+  
+  <script id="dsq-count-scr" src="https://fanzhongwei.disqus.com/count.js" async></script>
+
+
+<script>
+  var disqus_config = function() {
+    this.page.url = "https://www.fanzhongwei.com/performance/select-for-update.html";
+    this.page.identifier = "performance/select-for-update.html";
+    this.page.title = '性能优化-高效生成全局唯一自增序列';
+    };
+  function loadComments() {
+    var d = document, s = d.createElement('script');
+    s.src = 'https://fanzhongwei.disqus.com/embed.js';
+    s.setAttribute('data-timestamp', '' + +new Date());
+    (d.head || d.body).appendChild(s);
+  }
+  
+    $(function() {
+      var offsetTop = $('#comments').offset().top - $(window).height();
+      if (offsetTop <= 0) {
+        // load directly when there's no a scrollbar
+        loadComments();
+      } else {
+        $(window).on('scroll.disqus_scroll', function() {
+          // offsetTop may changes because of manually resizing browser window or lazy loading images.
+          var offsetTop = $('#comments').offset().top - $(window).height();
+          var scrollTop = $(window).scrollTop();
+
+          // pre-load comments a bit? (margin or anything else)
+          if (offsetTop - scrollTop < 60) {
+            $(window).off('.disqus_scroll');
+            loadComments();
+          }
+        });
+      }
+    });
+  
+</script>
+
+
+
+
+
+  
+    
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/disqusjs@1/dist/disqusjs.css">
+
+
+
+<script src="//cdn.jsdelivr.net/npm/disqusjs@1/dist/disqus.js"></script>
+
+<script>
+  var dsqjs = new DisqusJS({
+    api: 'https://disqus.skk.moe/disqus/' || 'https://disqus.com/api/',
+    apikey: 'yeI3c68e36COmAnaJ0W8enNe62iyRL60APc1qYStSbMXCuXb1Hl57OKpqbA3AXjB',
+    shortname: 'fanzhongwei'
+  });
+</script>
+
+  
+
+
+  
+  <script>
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url).replace(/\/{2,}/g, '/');
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x"></i></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x"></i></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  <script>
+    (function(){
+      var bp = document.createElement('script');
+      var curProtocol = window.location.protocol.split(':')[0];
+      bp.src = (curProtocol === 'https') ? 'https://zz.bdstatic.com/linksubmit/push.js' : 'http://push.zhanzhang.baidu.com/push.js';
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(bp, s);
+    })();
+  </script>
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

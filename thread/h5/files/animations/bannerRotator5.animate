@@ -1,0 +1,16 @@
+/* 
+  Name:			BannerRotator5
+  Type:			Entrance
+  Description:	BannerRotator5 Effect
+  Version:		2.0	
+  locale:		{"zh-Hans":"百叶窗5", "en-US":"Banner Rotator5"}
+  Class:        BannerRotator5
+ */
+ 
+@keyframes bannerRotator5{
+	
+}
+
+.bannerRotator5{
+	animation-duration: 2s;
+}

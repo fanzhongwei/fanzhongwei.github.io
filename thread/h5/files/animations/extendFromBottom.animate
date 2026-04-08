@@ -1,0 +1,16 @@
+/* 
+  Name:			ExtendFromBottom
+  Type:			Entrance
+  Description:	ExtendFromBottom Effect
+  Version:		2.0	
+  locale:		{"zh-Hans":"从底部伸展", "en-US":"Extend From Bottom"}
+  Class:        ExtendFromBottom
+ */
+ 
+@keyframes extendFromBottom{
+	
+}
+
+.extendFromBottom{
+	animation-duration: 2s;
+}
